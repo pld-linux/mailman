@@ -1,10 +1,12 @@
+# TODO:
+# - are *.po files (beside *.mo) needed in binary package?
 Summary:	The GNU Mailing List Management System
 Summary(es):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1
-Release:	1
+Release:	2
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
@@ -13,6 +15,8 @@ Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.
 Source2:	%{name}.conf
 Source3:	%{name}.init
 Source4:	%{name}.sysconfig
+# renamed from http://linux.gda.pl/pub/Mailman-pl/20030228-BArtek/v2.1.tgz
+Source5:	%{name}-v%{version}-pl.tgz
 Patch0:		%{name}-xss.patch
 URL:		http://www.list.org/
 Requires(pre):	/usr/bin/getgid
@@ -112,8 +116,10 @@ Veja o site do Mailman para saber o estado atual, incluindo novas versões
 e problemas conhecidos: http://mailman.sourceforge.net.
 
 %prep
-%setup -q
-%patch0 -p 1
+%setup -q -a5
+%patch0 -p1
+
+mv -f v2.1/README README.pl
 
 %build
 %{__aclocal}
@@ -151,6 +157,10 @@ sed 's#/usr#mailman /usr#' cron/crontab.in > $RPM_BUILD_ROOT/etc/cron.d/%{name}
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/%{name}.conf
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
+
+install -d $RPM_BUILD_ROOT/var/lib/%{name}/messages/pl/LC_MESSAGES
+install v2.1/messages/pl/LC_MESSAGES/mailman.{mo,po} $RPM_BUILD_ROOT/var/lib/%{name}/messages/pl/LC_MESSAGES
+cp -rf v2.1/templates/pl $RPM_BUILD_ROOT/var/lib/%{name}/templates
 
 mv $RPM_BUILD_ROOT/var/lib/%{name}/Mailman/mm_cfg.py $RPM_BUILD_ROOT/etc/%{name}
 ln -s /etc/%{name}/mm_cfg.py $RPM_BUILD_ROOT/var/lib/%{name}/Mailman/mm_cfg.py
@@ -246,6 +256,7 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc BUGS FAQ NEWS README README.LINUX README.EXIM README.SENDMAIL README.QMAIL TODO UPGRADING INSTALL
+%lang(pl) %doc README.pl
 %{_mandir}/man?/*
 %attr(640,root,http) %config(noreplace) %verify(not size mtime md5) /etc/httpd/%{name}.conf
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/%{name}
@@ -273,7 +284,7 @@ fi
 
 %{_var}/lib/mailman/Mailman
 %{_var}/lib/mailman/bin/p*
-%attr(2755,root,mailman) %{_var}/lib/mailman/bin/[^p]*
+%attr(2755,root,mailman) %{_var}/lib/mailman/bin/[!p]*
 %{_var}/lib/mailman/cron/*
 %{_var}/lib/mailman/scripts/*
 %{_var}/lib/mailman/icons/*
