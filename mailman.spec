@@ -3,11 +3,12 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Name:		mailman
 Version:	2.0.3
 Release:	1
-Copyright:	GPL
-Group:		Utilities/System
-Group(pl):	Narzêdzia/System
+License:	GPL
+Group:		Applications/System
+Group(de):	Applikationen/System
+Group(pl):	Aplikacje/System
 Source0:	ftp://ftp.gnu.org/gnu/mailman/%{name}-%{version}.tgz
-Patch0:		mailman-configure.patch
+Patch0:		%{name}-configure.patch
 URL:		http://www.gnu.org/software/mailman/mailman.html
 BuildRequires:	autoconf
 BuildRequires:	python >= 2.0
@@ -15,33 +16,43 @@ Requires:	python >= 2.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-Mailman -- The GNU Mailing List Management System --
-is a mailing list management system written mostly in
-Python. Features:
-o Most standard mailing list features, including: moderation, mail based commands, digests, etc...
-o An extensive Web interface, customizable on a per-list basis.
-o Web based list administration interface for *all* admin-type tasks
-o Automatic Web based hypermail-style archives (using pipermail or other external archiver), including provisions for private archives
-o Integrated mail list to newsgroup gatewaying
-o Integrated newsgroup to mail list gatewaying (polling-based... if you have access to the nntp server, you should be able to easily do non-polling based news->mail list gatewaying; email viega@list.org,I'd like to help get that going and come up with instructions)
-o Smart bounce detection and correction
-o Integrated fast bulk mailing
-o Smart spam protection
-o Extensible logging
-o Multiple list owners and moderators are possible
-o Optional MIME-compliant digests
-o Nice about which machine you subscribed from if you're from the right domain
+Mailman -- The GNU Mailing List Management System -- is a mailing list
+management system written mostly in Python. Features:
+- most standard mailing list features, including: moderation, mail
+  based commands, digests, etc...
+- an extensive Web interface, customizable on a per-list basis,
+- web based list administration interface for *all* admin-type tasks
+- automatic Web based hypermail-style archives (using pipermail or
+  other external archiver), including provisions for private archives
+- integrated mail list to newsgroup gatewaying
+- integrated newsgroup to mail list gatewaying (polling-based... if
+  you have access to the nntp server, you should be able to easily do
+  non-polling based news->mail list gatewaying; email viega@list.org (I'd
+  like to help get that going and come up with instructions)
+- smart bounce detection and correction
+- integrated fast bulk mailing
+- smart spam protection
+- extensible logging
+- multiple list owners and moderators are possible
+- optional MIME-compliant digests,
+- nice about which machine you subscribed from if you're from the
+  right domain,
+
 %description -l pl
-Mailman -- System Zarz±dzania Listami Pocztowymi GNU -- zosta³ napisany
-g³ównie w Pythonie. Jego mo¿liwo¶ci to:
-o Standardowe mo¿liwo¶ci: moderowanie, komendy przesy³ane poczt±, digesty itp.
-o Interfejs WWW konfigurowalny dla ka¿dej listy.
-o Automatyczny system archiwizowania (z u¿yciem pipermaila lub innego zewnêtrznego archiwizera) w³±czaj±c w to odpowiednie zarz±dzanie prywatnymi archiwami.
-o Bramki mail <-> news
-o Doskona³y system wykrywania odbiæ i korekcji odbitej poczty.
-o System ochrony przed spamem.
-o Rozszerzone logowanie.
-o Listy mog± byæ w³asno¶ci± wielu osób oraz moderatorów mo¿e byæ kilku.
+Mailman -- System Zarz±dzania Listami Pocztowymi GNU -- zosta³
+napisany g³ównie w Pythonie. Jego mo¿liwo¶ci to:
+- standardowe mo¿liwo¶ci: moderowanie, komendy przesy³ane poczt±,
+  digesty itp,
+- interfejs WWW konfigurowalny dla ka¿dej listy,
+- automatyczny system archiwizowania (z u¿yciem pipermaila lub innego
+  zewnêtrznego archiwizera) w³±czaj±c w to odpowiednie zarz±dzanie
+  prywatnymi archiwami,
+- bramki mail <-> news,
+- doskona³y system wykrywania odbiæ i korekcji odbitej poczty,
+- system ochrony przed spamem,
+- rozszerzone logowanie,
+- listy mog± byæ w³asno¶ci± wielu osób oraz moderatorów mo¿e byæ
+  kilku.
 
 %prep
 %setup -q
