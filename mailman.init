@@ -13,32 +13,47 @@
 # Source function library
 . /etc/rc.d/init.d/functions
 
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+if is_yes "${NETWORKING}"; then
+	if [ ! -f /var/lock/subsys/network ]; then
+		# nls "ERROR: Networking is down. %s can't be run." <service>
+		msg_network_down mailman
+		exit 1
+	fi
+else
+	exit 0
+fi
+
 # Get service config
 [ -f /etc/sysconfig/mailman ] && . /etc/sysconfig/mailman
+
 
 # See how we were called.
 case "$1" in
   start)
 	# Check if the service is already running?
-        if [ ! -f /var/lock/subsys/mailman ]; then
+	if [ ! -f /var/lock/subsys/mailman ]; then
 		msg_starting mailman
 		daemon 'su mailman -s /bin/sh -c "/var/lib/mailman/bin/mailmanctl -u start"'
-	        RETVAL=$?
-    		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/mailman
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/mailman
 	else
-        	msg_already_running mailman
-	        exit 1
+		msg_already_running mailman
+		exit 1
 	fi
 	;;
   stop)
-        # Stop daemons.
+	# Stop daemons.
 	if [ -f /var/lock/subsys/mailman ]; then
-                msg_stopping mailman
+		msg_stopping mailman
 		daemon 'su mailman -s /bin/sh -c "/var/lib/mailman/bin/mailmanctl -u stop"'
-                rm -f /var/lock/subsys/mailman /var/run/mailman.pid
-        else
+		rm -f /var/lock/subsys/mailman /var/run/mailman.pid
+	else
 		msg_not_running mailman
-	        exit 1
+		exit 1
 	fi
 	;;
   status)
@@ -50,7 +65,7 @@ case "$1" in
 	$0 start
 	;;
   *)
-	msg_usage "$0 {start|stop|restart|status}"
+	msg_usage "$0 {start|stop|restart|reload|status}"
 	exit 1
 	;;
 esac
