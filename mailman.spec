@@ -1,3 +1,6 @@
+#
+# TODO: move crontabs to /etc/cron.d
+#
 Summary:	The GNU Mailing List Management System
 Summary(es):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
