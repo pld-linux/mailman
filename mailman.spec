@@ -1,12 +1,16 @@
 Summary:	The GNU Mailing List Management System
+Summary(es):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
+Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.0.8
 Release:	1
 License:	GPL
 Group:		Applications/System
 Group(de):	Applikationen/System
+Group(es):	Aplicaciones/Sistema
 Group(pl):	Aplikacje/System
+Group(pt_BR):	Aplicações/Sistema
 Source0:	ftp://ftp.gnu.org/gnu/mailman/%{name}-%{version}.tgz
 Patch0:		%{name}-configure.patch
 URL:		http://www.list.org/
@@ -28,8 +32,8 @@ management system written mostly in Python. Features:
 - integrated mail list to newsgroup gatewaying
 - integrated newsgroup to mail list gatewaying (polling-based... if
   you have access to the nntp server, you should be able to easily do
-  non-polling based news->mail list gatewaying; email viega@list.org (I'd
-  like to help get that going and come up with instructions)
+  non-polling based news->mail list gatewaying; email viega@list.org
+  (I'd like to help get that going and come up with instructions)
 - smart bounce detection and correction
 - integrated fast bulk mailing
 - smart spam protection
@@ -38,6 +42,13 @@ management system written mostly in Python. Features:
 - optional MIME-compliant digests,
 - nice about which machine you subscribed from if you're from the
   right domain,
+
+Veja o site do Mailman para saber o estado atual, incluindo novas
+versões e problemas conhecidos: http://mailman.sourceforge.net.
+
+%description -l es
+Mailman -- El sistema de manutención de listas de discusión de la
+licencia GNU.
 
 %description -l pl
 Mailman -- System Zarz±dzania Listami Pocztowymi GNU -- zosta³
@@ -54,6 +65,34 @@ napisany g³ównie w Pythonie. Jego mo¿liwo¶ci to:
 - rozszerzone logowanie,
 - listy mog± byæ w³asno¶ci± wielu osób oraz moderatorów mo¿e byæ
   kilku.
+
+%description -l pt_BR
+O Mailman -- O sistema de gerenciamento de listas de discussão do GNU
+-- é um sistema de gerenciamento de listas de discussão escrito em sua
+maior parte em Python. Características:
+
+- Maioria das características de lista de discussão padrão, incluindo:
+  moderação, comandos baseados em e-mail, compiladores (digests), etc...
+- Uma interface extensiva da Web, personalizável lista a lista.
+- Interface de administração de lista baseada na Web para *todas* as
+  tarefas de tipo de admin.
+- Arquivos automáticos de estilo hypermail baseado na Web (usando
+  pipermail ou outros arquivadores externos), incluindo provisões para
+  arquivos privados.
+- Lista de e-mails integrada ao gateway de grupo de notícias.
+- Grupo de notícias integrado ao gateway de lista de e-mail (baseado
+  em consulta... se você tiver acesso ao servidor nntp, deve ser fácil
+  conseguir efetuar notícias baseadas em não-consulta->gateway de lista
+  de e-mails; envie um e-mail a viega@list.org, eu gostaria de ajudar a
+  manter isto e aparecer com instruções).
+- Detecção e correção inteligente de mensagens retornadas.
+- Envio de e-mail em massa rápido e integrado.
+- Proteção inteligente contra spam.
+- Registro ampliável.
+- São possíveis múltiplos donos e moderadores de lista.
+- Compiladores (digests) opcionais compatíveis com MIME.
+- Informa a partir de qual máquina você se inscreveu, caso esteja no
+  domínio correto.
 
 %prep
 %setup -q
