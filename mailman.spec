@@ -23,12 +23,17 @@ Source5:	%{name}-v%{version}-pl.tgz
 Patch0:		%{name}-xss.patch
 Patch1:		%{name}-add_pl.patch
 URL:		http://www.list.org/
+BuildRequires:	autoconf
+BuildRequires:	python >= 2.1
+BuildRequires:	python-devel
+PreReq:		rc-scripts
 Requires(pre): /usr/bin/getgid
 Requires(pre): /bin/id
 Requires(pre): /usr/sbin/useradd
 Requires(pre): /usr/sbin/groupadd
 Requires(postun):      /usr/sbin/userdel
 Requires(postun):      /usr/sbin/groupdel
+Requires(post,preun):	/sbin/chkconfig
 Requires(post):	/bin/hostname
 Requires(post):	grep
 Requires(postun):	fileutils
@@ -37,9 +42,6 @@ Requires:	crondaemon
 Requires:	python-modules
 Requires:	smtpdaemon
 Requires:	webserver
-BuildRequires:	autoconf
-BuildRequires:	python >= 2.1
-BuildRequires:	python-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
