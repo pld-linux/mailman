@@ -31,6 +31,7 @@ Requires:	smtpdaemon
 Requires:	webserver
 BuildRequires:	autoconf
 BuildRequires:	python >= 2.1
+BuildRequires:	python-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
