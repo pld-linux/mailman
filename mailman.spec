@@ -6,7 +6,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.2
-Release:	0.1
+Release:	0.2
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
@@ -19,11 +19,13 @@ Source3:	%{name}.init
 Source4:	%{name}.sysconfig
 # Need to check if it's still useful
 #Patch0:		%{name}-xss.patch
+Patch1:		%{name}-MM_FIND_GROUP_NAME.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	python >= 2.1
 BuildRequires:	python-devel
+BuildRequires:	sed
 PreReq:		rc-scripts
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/bin/id
@@ -123,6 +125,7 @@ versões e problemas conhecidos: http://mailman.sourceforge.net/ .
 %prep
 %setup -q
 #patch0 -p1
+%patch1 -p1
 
 %build
 %{__aclocal}
@@ -135,15 +138,15 @@ versões e problemas conhecidos: http://mailman.sourceforge.net/ .
 	--without-permcheck \
 	--with-username=%{name} \
 	--with-groupname=%{name} \
-	--with-mail-gid='nobody mail root' \
-	--with-cgi-gid='http nobody' \
+	--with-mail-gid='mailman' \
+	--with-cgi-gid='http' \
 	--with-mailhost=localhost.localdomain \
 	--with-urlhost=localhost.localdomain
 %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/etc/{cron.d,httpd,mailman,rc.d/init.d,sysconfig},%{_mandir}}
+install -d $RPM_BUILD_ROOT{/etc/{cron.d,httpd/httpd.conf,mailman,rc.d/init.d,sysconfig},%{_mandir}}
 
 PYTHONPATH=$RPM_BUILD_ROOT/var/lib/mailman/:$RPM_BUILD_ROOT/var/lib/mailman/pythonlib/
 export PYTHONPATH
@@ -156,23 +159,30 @@ export PYTHONPATH
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
 sed 's#/usr#mailman /usr#' cron/crontab.in > $RPM_BUILD_ROOT/etc/cron.d/%{name}
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/%{name}.conf
+install %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/httpd.conf/90_%{name}.conf
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 
 mv $RPM_BUILD_ROOT/var/lib/%{name}/Mailman/mm_cfg.py $RPM_BUILD_ROOT/etc/%{name}
 ln -s /etc/%{name}/mm_cfg.py $RPM_BUILD_ROOT/var/lib/%{name}/Mailman/mm_cfg.py
 
+cat >> $RPM_BUILD_ROOT/etc/%{name}/mm_cfg.py << EOF
+DEFAULT_EMAIL_HOST		= 'YOUR.HOST.NAME.HERE'
+DEFAULT_URL_HOST		= 'YOUR.HOST.NAME.HERE'
+IMAGE_LOGOS			= '/mailman/icons/'
+PUBLIC_ARCHIVE_URL		= '/mailman/pipermail/%%(listname)s'
+MAILMAN_GROUP			= '%{name}'
+MAILMAN_USER			= '%{name}'
+#DEFAULT_SERVER_LANGUAGE		= 'pl'
+
+# For available options and their descriptions see:
+# /var/lib/mailman/Mailman/Defaults.py
+EOF
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if [ -f /var/lib/mailman/Mailman/mm_cfg.py ]; then
-	mkdir -m 755 /etc/mailman
-	cp -f /var/lib/mailman/Mailman/mm_cfg.py /etc/mailman/mm_cfg.py.rpmsave
-	echo /var/lib/mailman/Mailman/mm_cfg.py saved as /etc/mailman/mm_cfg.py.rpmsave >&2
-fi
-
 if [ -n "`getgid %{name}`" ]; then
 	if [ "`getgid %{name}`" != "94" ]; then
 		echo "Error: group %{name} doesn't have gid=94. Correct this before installing %{name}." 1>&2
@@ -195,25 +205,8 @@ fi
 
 %post
 if [ "$1" = "1" ]; then
-	echo "DEFAULT_HOST_NAME	= '`/bin/hostname -f`'" >> /etc/mailman/mm_cfg.py
-	echo "DEFAULT_URL		= 'http://`/bin/hostname -f`/mailman/'" >> /etc/mailman/mm_cfg.py
-	echo "IMAGE_LOGOS		= '/mailman/icons/'" >> /etc/mailman/mm_cfg.py
-	echo "PUBLIC_ARCHIVE_URL	= '/mailman/pipermail/%%(listname)s'" >> /etc/mailman/mm_cfg.py
-	echo "MAILMAN_GROUP		= '%{name}'" >> /etc/mailman/mm_cfg.py
-	echo "MAILMAN_USER		= '%{name}'" >> /etc/mailman/mm_cfg.py
-	echo "#DEFAULT_SERVER_LANGUAGE	= 'pl'" >> /etc/mailman/mm_cfg.py
-
 	if [ -f /var/lock/subsys/crond ]; then
 		/etc/rc.d/init.d/crond restart
-	fi
-	if [ -f /etc/httpd/httpd.conf ] && \
-	    ! grep -q "^Include.*/mailman.conf" /etc/httpd/httpd.conf; then
-		echo "Include /etc/httpd/mailman.conf" >> /etc/httpd/httpd.conf
-	fi
-	if [ -f /var/lock/subsys/httpd ]; then
-		/etc/rc.d/init.d/httpd restart 1>&2
-	else
-		echo "Run \"/etc/rc.d/init.d/httpd start\" to start apache http daemon."
 	fi
 fi
 /sbin/chkconfig --add mailman
@@ -238,13 +231,6 @@ if [ "$1" = "0" ]; then
 	if [ -f /var/lock/subsys/crond ]; then
 		/etc/rc.d/init.d/crond restart
 	fi
-	umask 027
-	grep -E -v "^Include.*mailman.conf" /etc/httpd/httpd.conf > \
-		/etc/httpd/httpd.conf.tmp
-	mv -f /etc/httpd/httpd.conf.tmp /etc/httpd/httpd.conf
-	if [ -f /var/lock/subsys/httpd ]; then
-		/etc/rc.d/init.d/httpd restart 1>&2
-	fi
 fi
 
 %triggerpostun -- mailman <= mailman 3:2.0.13-6
@@ -256,7 +242,7 @@ fi
 %defattr(644,root,root,755)
 %doc BUGS FAQ NEWS README README.LINUX README.EXIM README.SENDMAIL README.QMAIL TODO UPGRADING INSTALL
 %{_mandir}/man?/*
-%attr(640,root,http) %config(noreplace) %verify(not size mtime md5) /etc/httpd/%{name}.conf
+%attr(640,root,http) %config(noreplace) %verify(not size mtime md5) /etc/httpd/httpd.conf/*%{name}.conf
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/%{name}
 %config(noreplace) %verify(not size mtime md5) /etc/cron.d/%{name}
 %dir /etc/%{name}
@@ -295,7 +281,7 @@ fi
 %dir %{_var}/spool/mailman/archives
 %attr(2771,root,mailman) %dir %{_var}/spool/mailman/archives/private
 %dir %{_var}/spool/mailman/archives/public
-%dir %{_var}/spool/mailman/data
+%{_var}/spool/mailman/data
 %dir %{_var}/spool/mailman/lists
 %dir %{_var}/spool/mailman/locks
 %dir %{_var}/spool/mailman/logs
