@@ -240,6 +240,10 @@ fi
 %dir %{_var}/lib/mailman/icons
 %dir %{_var}/lib/mailman/scripts
 %dir %{_var}/lib/mailman/templates
+%dir %{_var}/lib/mailman/pythonlib
+%dir %{_var}/lib/mailman/messages
+%dir %{_var}/lib/mailman/tests
+
 %{_var}/lib/mailman/Mailman
 %{_var}/lib/mailman/bin/p*
 %attr(2755,root,mailman) %{_var}/lib/mailman/bin/[^p]*
@@ -247,17 +251,21 @@ fi
 %{_var}/lib/mailman/scripts/*
 %{_var}/lib/mailman/icons/*
 %{_var}/lib/mailman/templates/*
+%{_var}/lib/mailman/pythonlib/*
+%{_var}/lib/mailman/messages/*
+%{_var}/lib/mailman/tests/*
 
 %dir %{_var}/spool/mailman
 %dir %{_var}/spool/mailman/archives
 %attr(2771,root,mailman) %dir %{_var}/spool/mailman/archives/private
 %dir %{_var}/spool/mailman/archives/public
 %dir %{_var}/spool/mailman/data
-#%dir %{_var}/spool/mailman/filters
 %dir %{_var}/spool/mailman/lists
 %dir %{_var}/spool/mailman/locks
 %dir %{_var}/spool/mailman/logs
 %dir %{_var}/spool/mailman/qfiles
 %dir %{_var}/spool/mailman/spam
+
 #%attr(664,root,mailman) %{_var}/spool/mailman/data/*
 #%attr(664,root,mailman) %{_var}/spool/mailman/filters/*
+#%dir %{_var}/spool/mailman/filters
