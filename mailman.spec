@@ -17,6 +17,8 @@ URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	python >= 2.1
+Requires:	smtpdaemon
+Requires:	logrotate
 Requires:	python >= 2.1
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
