@@ -11,6 +11,7 @@ Group:		Applications/System
 Source0:	ftp://ftp.sourceforge.net/pub/sourceforge/mailman/%{name}-%{version}.tgz
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 Source2:	%{name}.conf
+Source3:	%{name}.init
 URL:		http://www.list.org/
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/bin/id
@@ -130,7 +131,7 @@ e problemas conhecidos: http://mailman.sourceforge.net.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/etc/{httpd,cron.d,mailman},%{_mandir}}
+install -d $RPM_BUILD_ROOT{/etc/{cron.d,httpd,mailman,rc.d/init.d},%{_mandir}}
 
 PYTHONPATH=$RPM_BUILD_ROOT/var/lib/mailman/:$RPM_BUILD_ROOT/var/lib/mailman/pythonlib/
 export PYTHONPATH
@@ -144,6 +145,8 @@ bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
 sed 's#/usr#mailman /usr#' cron/crontab.in > $RPM_BUILD_ROOT/etc/cron.d/%{name}
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/%{name}.conf
+
+install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 
 mv $RPM_BUILD_ROOT/var/lib/%{name}/Mailman/mm_cfg.py $RPM_BUILD_ROOT/etc/%{name}
 ln -s /etc/%{name}/mm_cfg.py $RPM_BUILD_ROOT/var/lib/%{name}/Mailman/mm_cfg.py
@@ -188,14 +191,28 @@ if [ "$1" = "1" ]; then
 		/etc/rc.d/init.d/crond restart
 	fi
 	if [ -f /etc/httpd/httpd.conf ] && \
-	    ! grep -q "^Include.*/mailman.conf" %{_sysconfdir}/httpd/httpd.conf; then
-		echo "Include /etc/httpd/mailman.conf" >> %{_sysconfdir}/httpd/httpd.conf
+	    ! grep -q "^Include.*/mailman.conf" /etc/httpd/httpd.conf; then
+		echo "Include /etc/httpd/mailman.conf" >> /etc/httpd/httpd.conf
 	fi
 	if [ -f /var/lock/subsys/httpd ]; then
         	/etc/rc.d/init.d/httpd restart 1>&2
 	else
         	echo "Run \"/etc/rc.d/init.d/httpd start\" to start apache http daemon."
 	fi
+fi
+chkconfig --add mailman
+if [ -f /var/lock/subsys/mailman ]; then
+	/etc/rc.d/init.d/mailman restart 1>&2
+else
+	echo "Run \"/etc/rc.d/init.d/mailman start\" to start mailman qrunner daemon."
+fi
+
+%preun
+if [ "$1" = "0" ]; then
+	if [ -f /var/lock/subsys/mailman ]; then
+		/etc/rc.d/init.d/mailman stop 1>&2
+	fi
+	/sbin/chkconfig --del mailman
 fi
 
 %postun
@@ -206,9 +223,9 @@ if [ "$1" = "0" ]; then
 		/etc/rc.d/init.d/crond restart
 	fi
 	umask 027
-	grep -E -v "^Include.*mailman.conf" %{_sysconfdir}/httpd/httpd.conf > \
-		%{_sysconfdir}/httpd/httpd.conf.tmp
-	mv -f %{_sysconfdir}/httpd/httpd.conf.tmp %{_sysconfdir}/httpd/httpd.conf
+	grep -E -v "^Include.*mailman.conf" /etc/httpd/httpd.conf > \
+		/etc/httpd/httpd.conf.tmp
+	mv -f /etc/httpd/httpd.conf.tmp /etc/httpd/httpd.conf
 	if [ -f /var/lock/subsys/httpd ]; then
 	        /etc/rc.d/init.d/httpd restart 1>&2
 	fi
@@ -227,6 +244,8 @@ fi
 %config(noreplace) %verify(not size mtime md5) /etc/cron.d/%{name}
 %dir /etc/%{name}
 %config(noreplace) %verify(not size mtime md5) /etc/%{name}/mm_cfg.py
+
+%attr(754,root,root) /etc/rc.d/init.d/mailman
 
 %defattr(644,root,mailman,2775)
 %dir %{_libdir}/mailman
