@@ -4,7 +4,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1
-Release:	0.1
+Release:	0.3
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
@@ -131,9 +131,8 @@ e problemas conhecidos: http://mailman.sourceforge.net.
 	--without-permcheck \
 	--with-username=%{name} \
 	--with-groupname=%{name} \
-	--with-mail-gid=mail,nobody,root \
-	--with-cgi-gid=http,nobody \
-	--with-cgi-ext=.cgi \
+	--with-mail-gid=mail \
+	--with-cgi-gid=http \
 	--with-mailhost=localhost.localdomain \
 	--with-urlhost=localhost.localdomain
 
@@ -218,7 +217,7 @@ fi
 
 %triggerpostun -- mailman <= mailman 3:2.0.13-6
 if [ -f /var/spool/cron/%{name} ]; then
-	crontab -u %{name} -d
+	crontab -u %{name} -r
 fi
 
 %files
