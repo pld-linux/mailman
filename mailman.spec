@@ -100,7 +100,7 @@ maior parte em Python. Características:
 
 %build
 aclocal
-autoconf
+%{__autoconf}
 %configure \
 	--prefix=%{_var}/state/mailman \
 	--exec-prefix=%{_libdir}/mailman \
