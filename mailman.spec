@@ -21,6 +21,7 @@ Source4:	%{name}.sysconfig
 #Patch0:		%{name}-xss.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
+BuildRequires:	automake
 BuildRequires:	python >= 2.1
 BuildRequires:	python-devel
 PreReq:		rc-scripts
