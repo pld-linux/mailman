@@ -6,7 +6,7 @@ Name:		mailman
 Version:	2.0.13
 Release:	1
 Epoch:		3
-License:	GPL
+License:	GPL v2
 Group:		Applications/System
 Source0:	http://prdownloads.sourceforge.net/mailman/%{name}-%{version}.tgz
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
