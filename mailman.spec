@@ -12,10 +12,16 @@ Source0:	ftp://ftp.sourceforge.net/pub/sourceforge/mailman/%{name}-%{version}.tg
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 Source2:	%{name}.conf
 URL:		http://www.list.org/
-Requires(pre):	%{_sbindir}/useradd
-Requires(pre):	%{_sbindir}/groupadd
-Requires(postun): %{_sbindir}/userdel
-Requires(postun): %{_sbindir}/groupdel
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/useradd
+Requires(pre):	/usr/sbin/groupadd
+Requires(post):	/bin/hostname
+Requires(post):	grep
+Requires(postun):	/usr/sbin/userdel
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	fileutils
+Requires(postun):	grep
 Requires:	crondaemon
 Requires:	python-modules
 Requires:	smtpdaemon
@@ -28,7 +34,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 #Patch1:		%{name}-admin.patch
 #Patch2:		%{name}-multimail.patch
 #Patch3:		%{name}-no_env.patch
-#Requires(post): /bin/hostname
 #Requires:	logrotate
 
 %description
@@ -199,6 +204,7 @@ if [ "$1" = "0" ]; then
 	if [ -f /var/lock/subsys/crond ]; then
 		/etc/rc.d/init.d/crond restart
 	fi
+	umask 027
 	grep -E -v "^Include.*mailman.conf" %{_sysconfdir}/httpd/httpd.conf > \
 		%{_sysconfdir}/httpd/httpd.conf.tmp
 	mv -f %{_sysconfdir}/httpd/httpd.conf.tmp %{_sysconfdir}/httpd/httpd.conf
