@@ -4,7 +4,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.0.13
-Release:	2
+Release:	3
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
@@ -13,6 +13,7 @@ Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.
 Patch0:		%{name}-multimail.patch
 Patch1:		%{name}-admin.patch
 Patch2:		%{name}-configure.patch
+Patch3:		%{name}-no_env.patch
 URL:		http://www.list.org/
 Requires(pre):	%{_sbindir}/useradd
 Requires(pre):	%{_sbindir}/groupadd
@@ -23,7 +24,6 @@ BuildRequires:	automake
 BuildRequires:	python >= 2.1
 Requires:	smtpdaemon
 Requires:	logrotate
-Requires:	python >= 2.1
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -108,9 +108,10 @@ e problemas conhecidos: http://mailman.sourceforge.net.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
-aclocal
+%{__aclocal}
 %{__autoconf}
 
 FQDN=localhost.localdomain \
@@ -130,13 +131,13 @@ MAIL_GID=12,99 \
 
 %install
 rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT%{_mandir}
 
 %{__make} install \
 	prefix=$RPM_BUILD_ROOT%{_var}/state/mailman \
 	exec_prefix=$RPM_BUILD_ROOT%{_libdir}/mailman \
 	var_prefix=$RPM_BUILD_ROOT%{_var}/spool/mailman
 
-install -d $RPM_BUILD_ROOT%{_mandir}
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
 %clean
