@@ -37,7 +37,7 @@ case "$1" in
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/mailman ]; then
 		msg_starting mailman
-		daemon 'su mailman -s /bin/sh -c "/var/lib/mailman/bin/mailmanctl -s -u start"'
+		daemon --user mailman /var/lib/mailman/bin/mailmanctl -s -u start
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/mailman
 	else
