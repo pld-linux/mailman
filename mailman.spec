@@ -4,7 +4,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1
-Release:	0.4
+Release:	0.5
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
@@ -29,12 +29,6 @@ Requires:	webserver
 BuildRequires:	autoconf
 BuildRequires:	python >= 2.1
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-
-#Patch0:		%{name}-configure.patch
-#Patch1:		%{name}-admin.patch
-#Patch2:		%{name}-multimail.patch
-#Patch3:		%{name}-no_env.patch
-#Requires:	logrotate
 
 %description
 Mailman -- The GNU Mailing List Management System -- is a mailing list
@@ -115,10 +109,6 @@ e problemas conhecidos: http://mailman.sourceforge.net.
 
 %prep
 %setup -q
-#%patch0 -p1
-#%patch1 -p1
-#%patch2 -p1
-#%patch3 -p1
 
 %build
 %{__aclocal}
@@ -155,10 +145,19 @@ bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 sed 's#/usr#mailman /usr#' cron/crontab.in > $RPM_BUILD_ROOT/etc/cron.d/%{name}
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/%{name}.conf
 
+mv $RPM_BUILD_ROOT/var/lib/%{name}/Mailman/mm_cfg.py $RPM_BUILD_ROOT/etc/%{name}
+ln -s /etc/%{name}/mm_cfg.py $RPM_BUILD_ROOT/var/lib/%{name}/Mailman/mm_cfg.py
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %pre
+if [ -f /var/lib/mailman/Mailman/mm_cfg.py ]; then
+	mkdir -m 755 /etc/mailman
+	cp -f /var/lib/mailman/Mailman/mm_cfg.py /etc/mailman/mm_cfg.py.rpmsave
+	echo /var/lib/mailman/Mailman/mm_cfg.py saved as /etc/mailman/mm_cfg.py.rpmsave >&2
+fi
+
 if [ -n "`getgid %{name}`" ]; then
 	if [ "`getgid %{name}`" != "94" ]; then
 		echo "Error: group %{name} doesn't have gid=94. Correct this before installing %{name}." 1>&2
@@ -181,10 +180,10 @@ fi
 
 %post
 if [ "$1" = "1" ]; then
-	echo "DEFAULT_HOST_NAME	= '`/bin/hostname -f`'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
-	echo "DEFAULT_URL		= 'http://`/bin/hostname -f`/mailman/'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
-	echo "IMAGE_LOGOS		= '/mailman/icons/'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
-	echo "PUBLIC_ARCHIVE_URL	= '/mailman/pipermail/%%(listname)s'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
+	echo "DEFAULT_HOST_NAME	= '`/bin/hostname -f`'" >> /etc/mailman/mm_cfg.py
+	echo "DEFAULT_URL		= 'http://`/bin/hostname -f`/mailman/'" >> /etc/mailman/mm_cfg.py
+	echo "IMAGE_LOGOS		= '/mailman/icons/'" >> /etc/mailman/mm_cfg.py
+	echo "PUBLIC_ARCHIVE_URL	= '/mailman/pipermail/%%(listname)s'" >> /etc/mailman/mm_cfg.py
 	if [ -f /var/lock/subsys/crond ]; then
 		/etc/rc.d/init.d/crond restart
 	fi
@@ -226,6 +225,8 @@ fi
 %{_mandir}/man?/*
 %attr(640,root,http) %config(noreplace) %verify(not size mtime md5) /etc/httpd/%{name}.conf
 %config(noreplace) %verify(not size mtime md5) /etc/cron.d/%{name}
+%dir /etc/%{name}
+%config(noreplace) %verify(not size mtime md5) /etc/%{name}/mm_cfg.py
 
 %defattr(644,root,mailman,2775)
 %dir %{_libdir}/mailman
@@ -264,7 +265,3 @@ fi
 %dir %{_var}/spool/mailman/logs
 %dir %{_var}/spool/mailman/qfiles
 %dir %{_var}/spool/mailman/spam
-
-#%attr(664,root,mailman) %{_var}/spool/mailman/data/*
-#%attr(664,root,mailman) %{_var}/spool/mailman/filters/*
-#%dir %{_var}/spool/mailman/filters
