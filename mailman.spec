@@ -20,14 +20,9 @@ Source5:	%{name}-v%{version}-pl.tgz
 Patch0:		%{name}-xss.patch
 Patch1:		%{name}-add_pl.patch
 URL:		http://www.list.org/
-Requires(pre):	/usr/bin/getgid
-Requires(pre):	/bin/id
-Requires(pre):	/usr/sbin/useradd
-Requires(pre):	/usr/sbin/groupadd
+Requires(pre):	user-mailman
 Requires(post):	/bin/hostname
 Requires(post):	grep
-Requires(postun):	/usr/sbin/userdel
-Requires(postun):	/usr/sbin/groupdel
 Requires(postun):	fileutils
 Requires(postun):	grep
 Requires:	crondaemon
@@ -177,26 +172,6 @@ if [ -f /var/lib/mailman/Mailman/mm_cfg.py ]; then
 	echo /var/lib/mailman/Mailman/mm_cfg.py saved as /etc/mailman/mm_cfg.py.rpmsave >&2
 fi
 
-if [ -n "`getgid %{name}`" ]; then
-	if [ "`getgid %{name}`" != "94" ]; then
-		echo "Error: group %{name} doesn't have gid=94. Correct this before installing %{name}." 1>&2
-		exit 1
-	fi
-else
-	echo "Adding group %{name} GID=94"
-	/usr/sbin/groupadd -f -g 94 -r %{name}
-fi
-
-if [ -n "`id -u %{name} 2>/dev/null`" ]; then
-	if [ "`id -u %{name}`" != "94" ]; then
-		echo "Error: user %{name} doesn't have uid=94. Correct this before installing %{name}." 1>&2
-		exit 1
-	fi
-else
-	echo "Adding user %{name} UID=94"
-	/usr/sbin/useradd -u 94 -r -d %{_var}/spool/%{name} -s /bin/false -c "GNU Mailing List Manager" -g %{name} %{name} 1>&2
-fi
-
 %post
 if [ "$1" = "1" ]; then
 	echo "DEFAULT_HOST_NAME	= '`/bin/hostname -f`'" >> /etc/mailman/mm_cfg.py
@@ -237,8 +212,6 @@ fi
 
 %postun
 if [ "$1" = "0" ]; then
-        /usr/sbin/userdel %{name}
-        /usr/sbin/groupdel %{name}
 	if [ -f /var/lock/subsys/crond ]; then
 		/etc/rc.d/init.d/crond restart
 	fi
