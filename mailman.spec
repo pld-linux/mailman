@@ -6,11 +6,11 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1
-Release:	2
+Release:	3
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
-Source0:	ftp://ftp.sourceforge.net/pub/sourceforge/mailman/%{name}-%{version}.tgz
+Source0:	http://dl.sourceforge.net/%{name}/%{name}-%{version}.tgz
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 Source2:	%{name}.conf
 Source3:	%{name}.init
@@ -18,6 +18,7 @@ Source4:	%{name}.sysconfig
 # renamed from http://linux.gda.pl/pub/Mailman-pl/20030228-BArtek/v2.1.tgz
 Source5:	%{name}-v%{version}-pl.tgz
 Patch0:		%{name}-xss.patch
+Patch1:		%{name}-add_pl.patch
 URL:		http://www.list.org/
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/bin/id
@@ -118,6 +119,7 @@ e problemas conhecidos: http://mailman.sourceforge.net.
 %prep
 %setup -q -a5
 %patch0 -p1
+%patch1 -p1
 
 mv -f v2.1/README README.pl
 
@@ -132,7 +134,7 @@ mv -f v2.1/README README.pl
 	--without-permcheck \
 	--with-username=%{name} \
 	--with-groupname=%{name} \
-	--with-mail-gid='mail nobody root' \
+	--with-mail-gid='nobody mail root' \
 	--with-cgi-gid='http nobody' \
 	--with-mailhost=localhost.localdomain \
 	--with-urlhost=localhost.localdomain
@@ -203,6 +205,7 @@ if [ "$1" = "1" ]; then
 	echo "PUBLIC_ARCHIVE_URL	= '/mailman/pipermail/%%(listname)s'" >> /etc/mailman/mm_cfg.py
 	echo "MAILMAN_GROUP		= '%{name}'" >> /etc/mailman/mm_cfg.py
 	echo "MAILMAN_USER		= '%{name}'" >> /etc/mailman/mm_cfg.py
+	echo "#DEFAULT_SERVER_LANGUAGE	= 'pl'" >> /etc/mailman/mm_cfg.py
 	
 	if [ -f /var/lock/subsys/crond ]; then
 		/etc/rc.d/init.d/crond restart
