@@ -4,7 +4,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.0.13
-Release:	7.2
+Release:	7.3
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
@@ -172,13 +172,13 @@ else
 fi
 
 %post
-if [ "$1" = "0" ]; then
+if [ "$1" = "1" ]; then
 	echo "DEFAULT_HOST_NAME	= '`/bin/hostname -f`'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
 	echo "DEFAULT_URL		= 'http://`/bin/hostname -f`/mailman/'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
 	echo "IMAGE_LOGOS		= '/mailman/icons/'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
 	echo "PUBLIC_ARCHIVE_URL	= '/mailman/pipermail'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
 	if [ -f /var/lock/subsys/crond ]; then
-		/etc/rc.d/init.d/cron restart
+		/etc/rc.d/init.d/crond restart
 	fi
 	if [ -f /etc/httpd/httpd.conf ] && \
 	    ! grep -q "^Include.*/mailman.conf" %{_sysconfdir}/httpd/httpd.conf; then
@@ -196,7 +196,7 @@ if [ "$1" = "0" ]; then
         /usr/sbin/userdel %{name}
         /usr/sbin/groupdel %{name}
 	if [ -f /var/lock/subsys/crond ]; then
-		/etc/rc.d/init.d/cron restart
+		/etc/rc.d/init.d/crond restart
 	fi
 	grep -E -v "^Include.*mailman.conf" %{_sysconfdir}/httpd/httpd.conf > \
 		%{_sysconfdir}/httpd/httpd.conf.tmp
