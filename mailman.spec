@@ -1,4 +1,5 @@
 # TODO:
+# - make this mess FHS compliant
 # - are *.po files (beside *.mo) needed in binary package?
 Summary:	The GNU Mailing List Management System
 Summary(es):	El Sistema de Mantenimiento de listas de GNU
@@ -6,7 +7,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.5
-Release:	3
+Release:	4
 Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
@@ -247,7 +248,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc BUGS FAQ NEWS README README.LINUX README.EXIM README.SENDMAIL README.QMAIL TODO UPGRADING INSTALL
+%doc BUGS FAQ NEWS README README.LINUX README.EXIM README.POSTFIX README.SENDMAIL README.QMAIL README.USERAGENT TODO UPGRADING INSTALL
 %{_mandir}/man?/*
 %attr(640,root,http) %config(noreplace) %verify(not size mtime md5) /etc/httpd/httpd.conf/*%{name}.conf
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/%{name}
