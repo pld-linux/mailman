@@ -4,7 +4,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.0.13
-Release:	4
+Release:	5
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
@@ -25,6 +25,7 @@ BuildRequires:	automake
 BuildRequires:	python >= 2.1
 Requires:	smtpdaemon
 Requires:	logrotate
+Requires:	python-modules
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
