@@ -10,6 +10,7 @@ Source0:	ftp://ftp.gnu.org/gnu/mailman/%{name}-%{version}.tgz
 Patch0:		mailman-configure.patch
 URL:		http://www.gnu.org/software/mailman/mailman.html
 BuildRequires:	autoconf
+BuildRequires:	python >= 2.0
 Requires:	python >= 2.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
