@@ -4,7 +4,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.0.13
-Release:	3
+Release:	3.1
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
@@ -118,7 +118,7 @@ FQDN=localhost.localdomain \
 URL=localhost.localdomain \
 MAIL_GID=12,99 \
 %configure \
-	--prefix=%{_var}/state/mailman \
+	--prefix=%{_var}/lib/mailman \
 	--exec-prefix=%{_libdir}/mailman \
 	--with-var-prefix=%{_var}/spool/mailman \
 	--with-username=%{name} \
@@ -134,7 +134,7 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_mandir}
 
 %{__make} install \
-	prefix=$RPM_BUILD_ROOT%{_var}/state/mailman \
+	prefix=$RPM_BUILD_ROOT%{_var}/lib/mailman \
 	exec_prefix=$RPM_BUILD_ROOT%{_libdir}/mailman \
 	var_prefix=$RPM_BUILD_ROOT%{_var}/spool/mailman
 
@@ -166,7 +166,7 @@ fi
 
 %post
 echo mailman >> /etc/cron/cron.allow
-crontab -u mailman /var/state/mailman/cron/crontab.in
+crontab -u mailman /var/lib/mailman/cron/crontab.in
 
 %postun
 if [ "$1" = "0" ]; then
@@ -178,20 +178,20 @@ fi
 %defattr(644,root,root,755)
 %doc BUGS FAQ NEWS README README.LINUX README.EXIM README.SENDMAIL README.QMAIL TODO UPGRADING INSTALL
 
-%attr(2775,mailman,mailman) %dir %{_var}/state/mailman
+%attr(2775,mailman,mailman) %dir %{_var}/lib/mailman
 
-%attr(2755,root,mailman) %{_var}/state/mailman/bin/[^p]*
+%attr(2755,root,mailman) %{_var}/lib/mailman/bin/[^p]*
 %attr(2775,root,mailman) %dir %{_libdir}/mailman
 %attr(2775,root,mailman) %dir %{_libdir}/mailman/cgi-bin
 %attr(2775,root,mailman) %dir %{_libdir}/mailman/mail
 %attr(2755,mailman,mailman) %{_libdir}/mailman/*/*
 
-%attr(2775,mailman,mailman) %{_var}/state/mailman/Mailman
-%attr(2775,mailman,mailman) %{_var}/state/mailman/bin/p*
-%attr(2775,mailman,mailman) %{_var}/state/mailman/cron
-%attr(2775,mailman,mailman) %{_var}/state/mailman/icons
-%attr(2775,mailman,mailman) %{_var}/state/mailman/scripts
-%attr(2775,mailman,mailman) %{_var}/state/mailman/templates
+%attr(2775,mailman,mailman) %{_var}/lib/mailman/Mailman
+%attr(2775,mailman,mailman) %{_var}/lib/mailman/bin/p*
+%attr(2775,mailman,mailman) %{_var}/lib/mailman/cron
+%attr(2775,mailman,mailman) %{_var}/lib/mailman/icons
+%attr(2775,mailman,mailman) %{_var}/lib/mailman/scripts
+%attr(2775,mailman,mailman) %{_var}/lib/mailman/templates
 %attr(2775,mailman,mailman) %dir %{_var}/spool/mailman
 %dir %{_var}/spool/mailman/archives
 %attr(2770,mailman,mailman) %{_var}/spool/mailman/archives/private
