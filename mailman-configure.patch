@@ -1,0 +1,93 @@
+diff -urN mailman-2.0.2.org/configure.in mailman-2.0.2/configure.in
+--- mailman-2.0.2.org/configure.in	Sun Mar  4 10:34:36 2001
++++ mailman-2.0.2/configure.in	Sun Mar  4 10:40:54 2001
+@@ -234,11 +234,7 @@
+ MM_FIND_USER_ID(MAILMAN_UID, $USERNAME)
+ if test -z "$MAILMAN_UID"
+ then
+-    AC_MSG_ERROR([
+-***** No \"$USERNAME\" user found!
+-***** Your system must have a \"$USERNAME\" user defined
+-***** (usually in your /etc/passwd file).  Please see the INSTALL
+-***** file for details.])
++MAILMAN_UID="94"
+ fi
+ 
+ 
+@@ -261,11 +257,7 @@
+ MM_FIND_GROUP_ID(MAILMAN_GID, $GROUPNAME)
+ if test -z "$MAILMAN_GID"
+ then
+-    AC_MSG_ERROR([
+-***** No \"$GROUPNAME\" group found!
+-***** Your system must have a \"$GROUPNAME\" group defined
+-***** (usually in your /etc/group file).  Please see the INSTALL
+-***** file for details.])
++MAILMAN_GID="94"
+ fi
+ 
+ 
+@@ -280,49 +272,6 @@
+     prefixcheck=$VAR_PREFIX
+ fi
+ 
+-AC_MSG_CHECKING(permissions on $prefixcheck)
+-changequote(,)
+-cat > conftest.py <<EOF
+-import os, grp, string
+-from stat import *
+-prefix = "$prefixcheck"
+-mailmangid = $MAILMAN_GID
+-problems = []
+-try: statdata = os.stat(prefix)
+-except os.error:
+-    problems.append("Directory doesn't exist: " + prefix)
+-else:    
+-    mode = statdata[ST_MODE]
+-    gid = statdata[ST_GID]
+-    if mailmangid <> gid:
+-	problems.append("Directory must be owned by group mailman: " + prefix)
+-    if (mode & S_ISGID) <> S_ISGID:
+-	problems.append("Set-gid bit must be set for directory: " +prefix)
+-    perms = S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH
+-    if (mode & perms) <> perms:
+-	problems.append("Permissions should be at least 02775: " + prefix)
+-if not problems:
+-    msg = "okay\n"
+-else:
+-    msg = '***** ' + string.join(problems, '\n***** ') + '\n'
+-fp = open("conftest.out", "w")
+-fp.write(msg)
+-fp.close()
+-EOF
+-changequote([, ])
+-$PYTHON conftest.py
+-status=`cat conftest.out`
+-rm -f conftest.out conftest.py
+-if test "$status" != "okay"
+-then
+-    AC_MSG_ERROR([
+-***** Installation directory $prefixcheck is not configured properly!
+-$status])
+-fi
+-
+-AC_MSG_RESULT(okay)
+-
+-
+ # Now find the UIDs and GIDs
+ # Support --with-mail-gid and --with-cgi-gid
+ AC_MSG_CHECKING(for mail wrapper GID)
+@@ -362,12 +311,7 @@
+ MM_FIND_GROUP_ID(CGI_GID, $ac_cv_group_cgi)
+ if test -z "$CGI_GID"
+ then
+-    AC_MSG_ERROR([
+-***** No existing group found for the cgi_wrapper program.
+-***** This is the group that your Web server runs CGI scripts under.
+-***** You might want to specify an existing group with the
+-***** --with-cgi-gid configure option.  Please see your Web server's
+-***** documentation, and the INSTALL file for details])
++CGI_GID=51
+ fi
+ 
+ 
