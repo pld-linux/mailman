@@ -12,7 +12,7 @@ Source0:	ftp://ftp.sourceforge.net/pub/sourceforge/mailman/%{name}-%{version}.tg
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 Source2:	%{name}.conf
 Source3:	%{name}.init
-Source3:	%{name}.sysinit
+Source4:	%{name}.sysconfig
 URL:		http://www.list.org/
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/bin/id
