@@ -7,7 +7,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.5
-Release:	4
+Release:	5
 Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
@@ -44,7 +44,7 @@ Requires(post):	grep
 Requires(postun):	fileutils
 Requires(postun):	grep
 Requires:	crondaemon
-Requires:	python-modules
+%pyrequires_eq	python-modules
 Requires:	smtpdaemon
 Requires:	webserver
 Provides:	group(mailman)
