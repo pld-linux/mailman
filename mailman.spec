@@ -250,6 +250,9 @@ if [ -f /var/spool/cron/%{name} ]; then
 	crontab -u %{name} -r
 fi
 
+%triggerpostun -- mailman < mailman %{epoch}:%{version}-%{release}
+%{_var}/lib/mailman/bin/update
+
 %files
 %defattr(644,root,root,755)
 %doc BUGS FAQ NEWS README README.LINUX README.EXIM README.POSTFIX README.SENDMAIL README.QMAIL README.USERAGENT TODO UPGRADING INSTALL
