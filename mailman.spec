@@ -3,32 +3,33 @@ Summary(es):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
-Version:	2.0.13
-Release:	8
+Version:	2.1
+Release:	0.1
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
-Source0:	http://prdownloads.sourceforge.net/mailman/%{name}-%{version}.tgz
+Source0:	ftp://ftp.sourceforge.net/pub/sourceforge/mailman/%{name}-%{version}.tgz
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 Source2:	%{name}.conf
-Patch0:		%{name}-multimail.patch
-Patch1:		%{name}-admin.patch
-Patch2:		%{name}-configure.patch
-Patch3:		%{name}-no_env.patch
 URL:		http://www.list.org/
-BuildRequires:	autoconf
-BuildRequires:	automake
-BuildRequires:	python >= 2.1
 Requires(pre):	%{_sbindir}/useradd
 Requires(pre):	%{_sbindir}/groupadd
-Requires(post): /bin/hostname
-Requires(postun):	%{_sbindir}/userdel
-Requires(postun):	%{_sbindir}/groupdel
+Requires(postun): %{_sbindir}/userdel
+Requires(postun): %{_sbindir}/groupdel
 Requires:	crondaemon
-Requires:	logrotate
 Requires:	python-modules
 Requires:	smtpdaemon
+Requires:	webserver
+BuildRequires:	autoconf
+BuildRequires:	python >= 2.1
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+#Patch0:		%{name}-configure.patch
+#Patch1:		%{name}-admin.patch
+#Patch2:		%{name}-multimail.patch
+#Patch3:		%{name}-no_env.patch
+#Requires(post): /bin/hostname
+#Requires:	logrotate
 
 %description
 Mailman -- The GNU Mailing List Management System -- is a mailing list
@@ -109,27 +110,27 @@ e problemas conhecidos: http://mailman.sourceforge.net.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
+#%patch0 -p1
+#%patch1 -p1
+#%patch2 -p1
+#%patch3 -p1
 
 %build
 %{__aclocal}
 %{__autoconf}
 
-FQDN=localhost.localdomain \
-URL=localhost.localdomain \
-MAIL_GID=12,99 \
 %configure \
-	--prefix=%{_var}/lib/mailman \
-	--exec-prefix=%{_libdir}/mailman \
-	--with-var-prefix=%{_var}/spool/mailman \
+	--prefix=/var/lib/mailman \ 
+	--exec-prefix=/usr/lib/mailman \
+	--with-var-prefix=/var/spool/mailman \
+	--without-permcheck \
 	--with-username=%{name} \
 	--with-groupname=%{name} \
 	--with-mail-gid=mail,nobody,root \
-	--with-cgi-gid=51 \
-	--with-cgi-ext=.cgi
+	--with-cgi-gid=http,nobody \
+	--with-cgi-ext=.cgi \
+	--with-mailhost=localhost.localdomain \
+	--with-urlhost=localhost.localdomain
 
 %{__make}
 
