@@ -201,7 +201,7 @@ if [ "$1" = "1" ]; then
 	echo "MAILMAN_GROUP		= '%{name}'" >> /etc/mailman/mm_cfg.py
 	echo "MAILMAN_USER		= '%{name}'" >> /etc/mailman/mm_cfg.py
 	echo "#DEFAULT_SERVER_LANGUAGE	= 'pl'" >> /etc/mailman/mm_cfg.py
-	
+
 	if [ -f /var/lock/subsys/crond ]; then
 		/etc/rc.d/init.d/crond restart
 	fi
