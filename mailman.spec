@@ -24,12 +24,12 @@ BuildRequires:	autoconf
 BuildRequires:	python >= 2.1
 BuildRequires:	python-devel
 PreReq:		rc-scripts
-Requires(pre): /usr/bin/getgid
-Requires(pre): /bin/id
-Requires(pre): /usr/sbin/useradd
-Requires(pre): /usr/sbin/groupadd
-Requires(postun):      /usr/sbin/userdel
-Requires(postun):      /usr/sbin/groupdel
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/useradd
+Requires(pre):	/usr/sbin/groupadd
+Requires(postun):	/usr/sbin/userdel
+Requires(postun):	/usr/sbin/groupdel
 Requires(post,preun):	/sbin/chkconfig
 Requires(post):	/bin/hostname
 Requires(post):	grep
@@ -64,8 +64,8 @@ management system written mostly in Python. Features:
 - nice about which machine you subscribed from if you're from the
   right domain,
 
-See the Mailman home site for current status, including new releases and 
-known problems: http://mailman.sourceforge.net.
+See the Mailman home site for current status, including new releases
+and known problems: http://mailman.sourceforge.net/ .
 
 %description -l es
 Mailman -- El sistema de manutención de listas de discusión de la
@@ -93,7 +93,8 @@ O Mailman -- O sistema de gerenciamento de listas de discussão do GNU
 maior parte em Python. Características:
 
 - Maioria das características de lista de discussão padrão, incluindo:
-  moderação, comandos baseados em e-mail, compiladores (digests), etc...
+  moderação, comandos baseados em e-mail, compiladores (digests),
+  etc...
 - Uma interface extensiva da Web, personalizável lista a lista.
 - Interface de administração de lista baseada na Web para *todas* as
   tarefas de tipo de admin.
@@ -103,9 +104,9 @@ maior parte em Python. Características:
 - Lista de e-mails integrada ao gateway de grupo de notícias.
 - Grupo de notícias integrado ao gateway de lista de e-mail (baseado
   em consulta... se você tiver acesso ao servidor nntp, deve ser fácil
-  conseguir efetuar notícias baseadas em não-consulta->gateway de lista
-  de e-mails; envie um e-mail a viega@list.org, eu gostaria de ajudar a
-  manter isto e aparecer com instruções).
+  conseguir efetuar notícias baseadas em não-consulta->gateway de
+  lista de e-mails; envie um e-mail a viega@list.org, eu gostaria de
+  ajudar a manter isto e aparecer com instruções).
 - Detecção e correção inteligente de mensagens retornadas.
 - Envio de e-mail em massa rápido e integrado.
 - Proteção inteligente contra spam.
@@ -115,8 +116,8 @@ maior parte em Python. Características:
 - Informa a partir de qual máquina você se inscreveu, caso esteja no
   domínio correto.
 
-Veja o site do Mailman para saber o estado atual, incluindo novas versões 
-e problemas conhecidos: http://mailman.sourceforge.net.
+Veja o site do Mailman para saber o estado atual, incluindo novas
+versões e problemas conhecidos: http://mailman.sourceforge.net/ .
 
 %prep
 %setup -q
@@ -137,7 +138,6 @@ e problemas conhecidos: http://mailman.sourceforge.net.
 	--with-cgi-gid='http nobody' \
 	--with-mailhost=localhost.localdomain \
 	--with-urlhost=localhost.localdomain
-
 %{__make}
 
 %install
@@ -173,25 +173,24 @@ if [ -f /var/lib/mailman/Mailman/mm_cfg.py ]; then
 fi
 
 if [ -n "`getgid %{name}`" ]; then
-       if [ "`getgid %{name}`" != "94" ]; then
-               echo "Error: group %{name} doesn't have gid=94. Correct this before installing %{name}." 1>&2
-               exit 1
-       fi
+	if [ "`getgid %{name}`" != "94" ]; then
+		echo "Error: group %{name} doesn't have gid=94. Correct this before installing %{name}." 1>&2
+		exit 1
+	fi
 else
-       echo "Adding group %{name} GID=94"
-       /usr/sbin/groupadd -f -g 94 -r %{name}
+	echo "Adding group %{name} GID=94"
+	/usr/sbin/groupadd -f -g 94 -r %{name}
 fi
 
 if [ -n "`id -u %{name} 2>/dev/null`" ]; then
-       if [ "`id -u %{name}`" != "94" ]; then
-               echo "Error: user %{name} doesn't have uid=94. Correct this before installing %{name}." 1>&2
-               exit 1
-       fi
+	if [ "`id -u %{name}`" != "94" ]; then
+		echo "Error: user %{name} doesn't have uid=94. Correct this before installing %{name}." 1>&2
+		exit 1
+	fi
 else
-       echo "Adding user %{name} UID=94"
-       /usr/sbin/useradd -u 94 -r -d %{_var}/spool/%{name} -s /bin/false -c "GNU Mailing List Manager" -g %{name} %{name} 1>&2
+	echo "Adding user %{name} UID=94"
+	/usr/sbin/useradd -u 94 -r -d %{_var}/spool/%{name} -s /bin/false -c "GNU Mailing List Manager" -g %{name} %{name} 1>&2
 fi
-
 
 %post
 if [ "$1" = "1" ]; then
@@ -211,9 +210,9 @@ if [ "$1" = "1" ]; then
 		echo "Include /etc/httpd/mailman.conf" >> /etc/httpd/httpd.conf
 	fi
 	if [ -f /var/lock/subsys/httpd ]; then
-        	/etc/rc.d/init.d/httpd restart 1>&2
+		/etc/rc.d/init.d/httpd restart 1>&2
 	else
-        	echo "Run \"/etc/rc.d/init.d/httpd start\" to start apache http daemon."
+		echo "Run \"/etc/rc.d/init.d/httpd start\" to start apache http daemon."
 	fi
 fi
 /sbin/chkconfig --add mailman
@@ -233,8 +232,8 @@ fi
 
 %postun
 if [ "$1" = "0" ]; then
-        /usr/sbin/userdel %{name}
-        /usr/sbin/groupdel %{name}
+	/usr/sbin/userdel %{name}
+	/usr/sbin/groupdel %{name}
 	if [ -f /var/lock/subsys/crond ]; then
 		/etc/rc.d/init.d/crond restart
 	fi
@@ -243,7 +242,7 @@ if [ "$1" = "0" ]; then
 		/etc/httpd/httpd.conf.tmp
 	mv -f /etc/httpd/httpd.conf.tmp /etc/httpd/httpd.conf
 	if [ -f /var/lock/subsys/httpd ]; then
-	        /etc/rc.d/init.d/httpd restart 1>&2
+		/etc/rc.d/init.d/httpd restart 1>&2
 	fi
 fi
 
