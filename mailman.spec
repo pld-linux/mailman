@@ -125,7 +125,7 @@ e problemas conhecidos: http://mailman.sourceforge.net.
 %{__autoconf}
 
 %configure \
-	--prefix=/var/lib/mailman \ 
+	--prefix=/var/lib/mailman \
 	--exec-prefix=/usr/lib/mailman \
 	--with-var-prefix=/var/spool/mailman \
 	--without-permcheck \
@@ -142,6 +142,9 @@ e problemas conhecidos: http://mailman.sourceforge.net.
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{/etc/{httpd,cron.d},%{_mandir}}
+
+PYTHONPATH=$RPM_BUILD_ROOT/var/lib/mailman/:$RPM_BUILD_ROOT/var/lib/mailman/pythonlib/
+export PYTHONPATH
 
 %{__make} install \
 	prefix=$RPM_BUILD_ROOT%{_var}/lib/mailman \
