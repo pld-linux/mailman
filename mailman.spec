@@ -21,6 +21,7 @@ Source4:	%{name}.sysconfig
 #Patch0:		%{name}-xss.patch
 Patch1:		%{name}-MM_FIND_GROUP_NAME.patch
 Patch2:		%{name}-pl_fix.patch
+Patch3:		%{name}-minus-one-jobs.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -126,7 +127,8 @@ versões e problemas conhecidos: http://mailman.sourceforge.net/ .
 %setup -q
 #patch0 -p1
 %patch1 -p1
-%patch1 -p1
+%patch2 -p1
+%patch3 -p0
 
 %build
 %{__aclocal}
