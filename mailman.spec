@@ -4,7 +4,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1
-Release:	0.5
+Release:	0.8
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
@@ -12,6 +12,7 @@ Source0:	ftp://ftp.sourceforge.net/pub/sourceforge/mailman/%{name}-%{version}.tg
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 Source2:	%{name}.conf
 Source3:	%{name}.init
+Source3:	%{name}.sysinit
 URL:		http://www.list.org/
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/bin/id
@@ -131,7 +132,7 @@ e problemas conhecidos: http://mailman.sourceforge.net.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/etc/{cron.d,httpd,mailman,rc.d/init.d},%{_mandir}}
+install -d $RPM_BUILD_ROOT{/etc/{cron.d,httpd,mailman,rc.d/init.d,sysconfig},%{_mandir}}
 
 PYTHONPATH=$RPM_BUILD_ROOT/var/lib/mailman/:$RPM_BUILD_ROOT/var/lib/mailman/pythonlib/
 export PYTHONPATH
@@ -145,8 +146,8 @@ bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
 sed 's#/usr#mailman /usr#' cron/crontab.in > $RPM_BUILD_ROOT/etc/cron.d/%{name}
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/%{name}.conf
-
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 
 mv $RPM_BUILD_ROOT/var/lib/%{name}/Mailman/mm_cfg.py $RPM_BUILD_ROOT/etc/%{name}
 ln -s /etc/%{name}/mm_cfg.py $RPM_BUILD_ROOT/var/lib/%{name}/Mailman/mm_cfg.py
@@ -241,6 +242,7 @@ fi
 %doc BUGS FAQ NEWS README README.LINUX README.EXIM README.SENDMAIL README.QMAIL TODO UPGRADING INSTALL
 %{_mandir}/man?/*
 %attr(640,root,http) %config(noreplace) %verify(not size mtime md5) /etc/httpd/%{name}.conf
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/%{name}
 %config(noreplace) %verify(not size mtime md5) /etc/cron.d/%{name}
 %dir /etc/%{name}
 %config(noreplace) %verify(not size mtime md5) /etc/%{name}/mm_cfg.py
