@@ -4,7 +4,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.0.13
-Release:	1
+Release:	2
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
@@ -192,6 +192,7 @@ fi
 %attr(2775,mailman,mailman) %{_var}/state/mailman/scripts
 %attr(2775,mailman,mailman) %{_var}/state/mailman/templates
 %attr(2775,mailman,mailman) %dir %{_var}/spool/mailman
+%dir %{_var}/spool/mailman/archives
 %attr(2770,mailman,mailman) %{_var}/spool/mailman/archives/private
 %attr(2775,mailman,mailman) %{_var}/spool/mailman/archives/public
 %attr(2775,mailman,mailman) %{_var}/spool/mailman/data
