@@ -7,10 +7,6 @@ Version:	2.0.8
 Release:	1
 License:	GPL
 Group:		Applications/System
-Group(de):	Applikationen/System
-Group(es):	Aplicaciones/Sistema
-Group(pl):	Aplikacje/System
-Group(pt_BR):	Aplicações/Sistema
 Source0:	ftp://ftp.gnu.org/gnu/mailman/%{name}-%{version}.tgz
 Patch0:		%{name}-configure.patch
 URL:		http://www.list.org/
