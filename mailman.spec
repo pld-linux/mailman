@@ -130,7 +130,7 @@ e problemas conhecidos: http://mailman.sourceforge.net.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/etc/{httpd,cron.d},%{_mandir}}
+install -d $RPM_BUILD_ROOT{/etc/{httpd,cron.d,mailman},%{_mandir}}
 
 PYTHONPATH=$RPM_BUILD_ROOT/var/lib/mailman/:$RPM_BUILD_ROOT/var/lib/mailman/pythonlib/
 export PYTHONPATH
