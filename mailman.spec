@@ -4,10 +4,11 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.0.8
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.gnu.org/gnu/mailman/%{name}-%{version}.tgz
+Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 Patch0:		%{name}-configure.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
@@ -119,6 +120,9 @@ rm -rf $RPM_BUILD_ROOT
 	exec_prefix=$RPM_BUILD_ROOT%{_libdir}/mailman \
 	var_prefix=$RPM_BUILD_ROOT%{_var}/spool/mailman
 
+install -d $RPM_BUILD_ROOT%{_mandir}
+bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
+
 gzip -9nf BUGS FAQ INSTALL NEWS README* TODO UPGRADING
 
 %clean
@@ -128,7 +132,19 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc *.gz
 
-# PERMISSIONS ARE WRONG. FIXME
-%{_var}/state/mailman
-%{_libdir}/mailman
-%{_var}/spool/mailman
+%dir %{_var}/state/mailman
+%dir %{_libdir}/mailman
+%dir %{_var}/spool/mailman
+
+%attr(755,root,root) %{_var}/state/mailman/bin
+%attr(755,root,root) %{_var}/state/mailman/cron
+%attr(755,root,root) %{_var}/state/mailman/scripts
+%attr(755,root,root) %{_libdir}/mailman/cgi-bin
+%attr(755,root,root) %{_var}/spool/mailman/filters
+
+%{_var}/state/mailman/Mailman
+%{_var}/state/mailman/icons
+%{_var}/state/mailman/templates
+%{_libdir}/mailman/mail
+%{_var}/spool/mailman/[^f]*
+%{_mandir}/man8/*
