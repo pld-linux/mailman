@@ -113,7 +113,7 @@ aclocal
 
 FQDN=localhost.localdomain \
 URL=localhost.localdomain \
-MAIL_GID=12,99,0 \
+MAIL_GID=12,99 \
 %configure \
 	--prefix=%{_var}/state/mailman \
 	--exec-prefix=%{_libdir}/mailman \
