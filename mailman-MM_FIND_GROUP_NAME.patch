@@ -1,0 +1,39 @@
+diff -urN mailman-2.1.2.orig/configure.in mailman-2.1.2/configure.in
+--- mailman-2.1.2.orig/configure.in	2003-04-22 05:34:51.000000000 +0200
++++ mailman-2.1.2/configure.in	2003-10-04 10:27:52.070293960 +0200
+@@ -212,31 +212,9 @@
+ # $1 == variable name
+ # $2 == user id to check for
+ AC_SUBST($1)
+-changequote(,)
+-if test -z "$$1"
+-then
+-    cat > conftest.py <<EOF
+-import grp
+-gid = ''
+-for group in "$2".split():
+-    try:
+-        try:
+-            gname = grp.getgrgid(int(group))[0]
+-            break
+-        except ValueError:
+-            gname = grp.getgrnam(group)[0]
+-            break
+-    except KeyError:
+-        gname = ''
+-fp = open("conftest.out", "w")
+-fp.write("%s\n" % gname)
+-fp.close()
+-EOF
+-    $PYTHON conftest.py
+-    $1=`cat conftest.out`
+-fi
+-changequote([, ])
+-rm -f conftest.out conftest.py])
++
++$1=$2
++])
+ 
+ 
+ # new macro for finding UIDs
+
