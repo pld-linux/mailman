@@ -146,7 +146,7 @@ install -d $RPM_BUILD_ROOT{/etc/{httpd,cron.d},%{_mandir}}
 PYTHONPATH=$RPM_BUILD_ROOT/var/lib/mailman/:$RPM_BUILD_ROOT/var/lib/mailman/pythonlib/
 export PYTHONPATH
 
-%{__make} install \
+%{__make} doinstall \
 	prefix=$RPM_BUILD_ROOT%{_var}/lib/mailman \
 	exec_prefix=$RPM_BUILD_ROOT%{_libdir}/mailman \
 	var_prefix=$RPM_BUILD_ROOT%{_var}/spool/mailman
@@ -253,11 +253,11 @@ fi
 %attr(2771,root,mailman) %dir %{_var}/spool/mailman/archives/private
 %dir %{_var}/spool/mailman/archives/public
 %dir %{_var}/spool/mailman/data
-%dir %{_var}/spool/mailman/filters
+#%dir %{_var}/spool/mailman/filters
 %dir %{_var}/spool/mailman/lists
 %dir %{_var}/spool/mailman/locks
 %dir %{_var}/spool/mailman/logs
 %dir %{_var}/spool/mailman/qfiles
 %dir %{_var}/spool/mailman/spam
-%attr(664,root,mailman) %{_var}/spool/mailman/data/*
-%attr(664,root,mailman) %{_var}/spool/mailman/filters/*
+#%attr(664,root,mailman) %{_var}/spool/mailman/data/*
+#%attr(664,root,mailman) %{_var}/spool/mailman/filters/*
