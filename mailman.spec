@@ -3,8 +3,8 @@ Summary(es):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
-Version:	2.0.8
-Release:	2
+Version:	2.0.10
+Release:	1
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.gnu.org/gnu/mailman/%{name}-%{version}.tgz
@@ -133,18 +133,15 @@ rm -rf $RPM_BUILD_ROOT
 %doc *.gz
 
 %dir %{_var}/state/mailman
-%dir %{_libdir}/mailman
-%dir %{_var}/spool/mailman
 
-%attr(755,root,root) %{_var}/state/mailman/bin
-%attr(755,root,root) %{_var}/state/mailman/cron
-%attr(755,root,root) %{_var}/state/mailman/scripts
-%attr(755,root,root) %{_libdir}/mailman/cgi-bin
-%attr(755,root,root) %{_var}/spool/mailman/filters
+%attr(755,root,root) %{_var}/state/mailman/bin/[^p]*
+%attr(755,root,root) %{_libdir}/mailman
 
 %{_var}/state/mailman/Mailman
+%{_var}/state/mailman/bin/p*
+%{_var}/state/mailman/cron
 %{_var}/state/mailman/icons
+%{_var}/state/mailman/scripts
 %{_var}/state/mailman/templates
-%{_libdir}/mailman/mail
-%{_var}/spool/mailman/[^f]*
+%{_var}/spool/mailman
 %{_mandir}/man8/*
