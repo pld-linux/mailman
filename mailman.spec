@@ -4,7 +4,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1
-Release:	0.8
+Release:	0.9
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
@@ -13,6 +13,7 @@ Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.
 Source2:	%{name}.conf
 Source3:	%{name}.init
 Source4:	%{name}.sysconfig
+Patch0:		%{name}-xss.patch
 URL:		http://www.list.org/
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/bin/id
@@ -111,6 +112,7 @@ e problemas conhecidos: http://mailman.sourceforge.net.
 
 %prep
 %setup -q
+%patch0 -p 1
 
 %build
 %{__aclocal}
