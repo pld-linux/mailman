@@ -12,6 +12,7 @@ Source0:	http://prdownloads.sourceforge.net/mailman/%{name}-%{version}.tgz
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 Patch0:		%{name}-multimail.patch
 Patch1:		%{name}-admin.patch
+Patch2:		%{name}-configure.patch
 URL:		http://www.list.org/
 Requires(pre):	%{_sbindir}/useradd
 Requires(pre):	%{_sbindir}/groupadd
@@ -106,6 +107,7 @@ e problemas conhecidos: http://mailman.sourceforge.net.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 aclocal
