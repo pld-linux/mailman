@@ -6,7 +6,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.5
-Release:	1
+Release:	2
 Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
@@ -20,6 +20,7 @@ Source4:	%{name}.sysconfig
 # Need to check if it's still useful
 #Patch0:		%{name}-xss.patch
 Patch1:		%{name}-MM_FIND_GROUP_NAME.patch
+Patch2:		%{name}-pl_fix.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -124,6 +125,7 @@ versões e problemas conhecidos: http://mailman.sourceforge.net/ .
 %prep
 %setup -q
 #patch0 -p1
+%patch1 -p1
 %patch1 -p1
 
 %build
