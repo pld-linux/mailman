@@ -3,15 +3,20 @@ Summary(es):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
-Version:	2.0.12
+Version:	2.0.13
 Release:	1
 Epoch:		3
 License:	GPL
 Group:		Applications/System
-Source0:	ftp://ftp.gnu.org/gnu/mailman/%{name}-%{version}.tgz
+Source0:	http://prdownloads.sourceforge.net/mailman/%{name}-%{version}.tgz
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
-Patch0:		%{name}-configure.patch
+Patch0:		%{name}-multimail.patch
+Patch1:		%{name}-admin.patch
 URL:		http://www.list.org/
+Requires(pre):	%{_sbindir}/useradd
+Requires(pre):	%{_sbindir}/groupadd
+Requires(postun):	%{_sbindir}/userdel
+Requires(postun):	%{_sbindir}/groupdel
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	python >= 2.1
@@ -43,8 +48,8 @@ management system written mostly in Python. Features:
 - nice about which machine you subscribed from if you're from the
   right domain,
 
-Veja o site do Mailman para saber o estado atual, incluindo novas
-versões e problemas conhecidos: http://mailman.sourceforge.net.
+See the Mailman home site for current status, including new releases and 
+known problems: http://mailman.sourceforge.net.
 
 %description -l es
 Mailman -- El sistema de manutención de listas de discusión de la
@@ -94,20 +99,28 @@ maior parte em Python. Características:
 - Informa a partir de qual máquina você se inscreveu, caso esteja no
   domínio correto.
 
+Veja o site do Mailman para saber o estado atual, incluindo novas versões 
+e problemas conhecidos: http://mailman.sourceforge.net.
+
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 aclocal
 %{__autoconf}
+
+FQDN=localhost.localdomain \
+URL=localhost.localdomain \
+MAIL_GID=12,99,0 \
 %configure \
 	--prefix=%{_var}/state/mailman \
 	--exec-prefix=%{_libdir}/mailman \
 	--with-var-prefix=%{_var}/spool/mailman \
 	--with-username=%{name} \
 	--with-groupname=%{name} \
-	--with-mail-gid=12 \
+	--with-mail-gid=mail,nobody,root \
 	--with-cgi-gid=51 \
 	--with-cgi-ext=.cgi
 
@@ -124,25 +137,66 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_mandir}
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
-gzip -9nf BUGS FAQ INSTALL NEWS README* TODO UPGRADING
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre
+if [ -n "`getgid %{name}`" ]; then
+	if [ "`getgid %{name}`" != "94" ]; then
+		echo "Error: group %{name} doesn't have gid=94. Correct this before installing %{name}." 1>&2
+		exit 1
+	fi
+else
+	echo "Adding group %{name} GID=94"
+	/usr/sbin/groupadd -f -g 94 -r %{name}
+fi
+
+if [ -n "`id -u %{name} 2>/dev/null`" ]; then
+	if [ "`id -u %{name}`" != "94" ]; then
+		echo "Error: user %{name} doesn't have uid=94. Correct this before installing %{name}." 1>&2
+		exit 1
+	fi
+else
+	echo "Adding user %{name} UID=94"
+	/usr/sbin/useradd -u 94 -r -d %{_var}/spool/%{name} -s /bin/false -c "GNU Mailing List Manager" -g %{name} %{name} 1>&2
+fi
+
+%post
+echo mailman >> /etc/cron/cron.allow
+crontab -u mailman /var/state/mailman/cron/crontab.in
+
+%postun
+if [ "$1" = "0" ]; then
+        /usr/sbin/userdel       %{name}
+        /usr/sbin/groupdel      %{name}
+fi
+
 %files
 %defattr(644,root,root,755)
-%doc *.gz
+%doc BUGS FAQ NEWS README README.LINUX README.EXIM README.SENDMAIL README.QMAIL TODO UPGRADING INSTALL
 
-%dir %{_var}/state/mailman
+%attr(2775,mailman,mailman) %dir %{_var}/state/mailman
 
-%attr(755,root,root) %{_var}/state/mailman/bin/[^p]*
-%attr(755,root,root) %{_libdir}/mailman
+%attr(2755,root,mailman) %{_var}/state/mailman/bin/[^p]*
+%attr(2775,root,mailman) %dir %{_libdir}/mailman
+%attr(2775,root,mailman) %dir %{_libdir}/mailman/cgi-bin
+%attr(2775,root,mailman) %dir %{_libdir}/mailman/mail
+%attr(2755,mailman,mailman) %{_libdir}/mailman/*/*
 
-%{_var}/state/mailman/Mailman
-%{_var}/state/mailman/bin/p*
-%{_var}/state/mailman/cron
-%{_var}/state/mailman/icons
-%{_var}/state/mailman/scripts
-%{_var}/state/mailman/templates
-%{_var}/spool/mailman
-%{_mandir}/man8/*
+%attr(2775,mailman,mailman) %{_var}/state/mailman/Mailman
+%attr(2775,mailman,mailman) %{_var}/state/mailman/bin/p*
+%attr(2775,mailman,mailman) %{_var}/state/mailman/cron
+%attr(2775,mailman,mailman) %{_var}/state/mailman/icons
+%attr(2775,mailman,mailman) %{_var}/state/mailman/scripts
+%attr(2775,mailman,mailman) %{_var}/state/mailman/templates
+%attr(2775,mailman,mailman) %dir %{_var}/spool/mailman
+%attr(2770,mailman,mailman) %{_var}/spool/mailman/archives/private
+%attr(2775,mailman,mailman) %{_var}/spool/mailman/archives/public
+%attr(2775,mailman,mailman) %{_var}/spool/mailman/data
+%attr(2775,mailman,mailman) %{_var}/spool/mailman/filters
+%attr(2775,mailman,mailman) %{_var}/spool/mailman/lists
+%attr(2775,mailman,mailman) %{_var}/spool/mailman/locks
+%attr(2775,mailman,mailman) %{_var}/spool/mailman/logs
+%attr(2775,mailman,mailman) %{_var}/spool/mailman/qfiles
+%attr(2775,mailman,mailman) %{_var}/spool/mailman/spam
+%{_mandir}/man?/*
