@@ -1,7 +1,7 @@
 Summary:	The GNU Mailing List Management System
 Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Name:		mailman
-Version:	2.0.2
+Version:	2.0.3
 Release:	1
 Copyright:	GPL
 Group:		Utilities/System
