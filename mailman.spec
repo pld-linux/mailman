@@ -3,7 +3,7 @@ Summary(es):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
-Version:	2.0.10
+Version:	2.0.12
 Release:	1
 Epoch:		3
 License:	GPL
