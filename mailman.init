@@ -1,0 +1,58 @@
+#!/bin/sh
+#
+# mailman	mailman qrunner daemon
+#
+# chkconfig:	345 85 15
+# description:	mailman is mailing lists server
+#
+# processname:	mailman
+# pidfile:	/var/run/mailman.pid
+# config:	/etc/mailman/mm_cfg.py
+
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+# Get service config
+[ -f /etc/sysconfig/mailman ] && . /etc/sysconfig/mailman
+
+# See how we were called.
+case "$1" in
+  start)
+	# Check if the service is already running?
+        if [ ! -f /var/lock/subsys/mailman ]; then
+		msg_starting mailman
+		daemon /var/lib/mailman/bin/mailmanctl -u mailman start
+	        RETVAL=$?
+    		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/mailman
+	else
+        	msg_already_running mailman
+	        exit 1
+	fi
+	;;
+  stop)
+        # Stop daemons.
+	if [ -f /var/lock/subsys/mailman ]; then
+                msg_stopping mailman
+		/var/lib/mailman/bin/mailmanctl stop
+                rm -f /var/lock/subsys/mailman /var/run/mailman.pid
+        else
+		msg_not_running mailman
+	        exit 1
+	fi
+	;;
+  status)
+	status mailman
+	exit $?
+	;;
+  restart|reload)
+	$0 stop
+	$0 start
+	;;
+  *)
+	msg_usage "$0 {start|stop|restart|status}"
+	exit 1
+	;;
+esac
+
+exit $RETVAL
