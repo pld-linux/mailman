@@ -167,6 +167,8 @@ fi
 %post
 echo mailman >> /etc/cron/cron.allow
 crontab -u mailman /var/lib/mailman/cron/crontab.in
+echo "DEFAULT_HOST_NAME	= '`/bin/hostname -f`'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
+echo "DEFAULT_URL		= 'http://`/bin/hostname -f`/mailman/'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
 
 %postun
 if [ "$1" = "0" ]; then
