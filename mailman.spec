@@ -17,6 +17,7 @@ Patch3:		%{name}-no_env.patch
 URL:		http://www.list.org/
 Requires(pre):	%{_sbindir}/useradd
 Requires(pre):	%{_sbindir}/groupadd
+Requires(post): /bin/hostname
 Requires(postun):	%{_sbindir}/userdel
 Requires(postun):	%{_sbindir}/groupdel
 BuildRequires:	autoconf
