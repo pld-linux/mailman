@@ -200,7 +200,7 @@ if [ "$1" = "1" ]; then
         	echo "Run \"/etc/rc.d/init.d/httpd start\" to start apache http daemon."
 	fi
 fi
-chkconfig --add mailman
+/sbin/chkconfig --add mailman
 if [ -f /var/lock/subsys/mailman ]; then
 	/etc/rc.d/init.d/mailman restart 1>&2
 else
