@@ -4,12 +4,13 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.0.13
-Release:	6
+Release:	8
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://prdownloads.sourceforge.net/mailman/%{name}-%{version}.tgz
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
+Source2:	%{name}.conf
 Patch0:		%{name}-multimail.patch
 Patch1:		%{name}-admin.patch
 Patch2:		%{name}-configure.patch
@@ -134,7 +135,7 @@ MAIL_GID=12,99 \
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_mandir}
+install -d $RPM_BUILD_ROOT{/etc/{httpd,cron.d},%{_mandir}}
 
 %{__make} install \
 	prefix=$RPM_BUILD_ROOT%{_var}/lib/mailman \
@@ -142,6 +143,9 @@ install -d $RPM_BUILD_ROOT%{_mandir}
 	var_prefix=$RPM_BUILD_ROOT%{_var}/spool/mailman
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
+
+sed 's#/usr#mailman /usr#' cron/crontab.in > $RPM_BUILD_ROOT/etc/cron.d/%{name}
+install %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/%{name}.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -168,31 +172,51 @@ else
 fi
 
 %post
-if [ "$1" = "0" ]; then
-	echo mailman >> /etc/cron/cron.allow
-	crontab -u mailman /var/lib/mailman/cron/crontab.in
+if [ "$1" = "1" ]; then
 	echo "DEFAULT_HOST_NAME	= '`/bin/hostname -f`'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
 	echo "DEFAULT_URL		= 'http://`/bin/hostname -f`/mailman/'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
+	echo "IMAGE_LOGOS		= '/mailman/icons/'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
+	echo "PUBLIC_ARCHIVE_URL	= '/mailman/pipermail'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
 	if [ -f /var/lock/subsys/crond ]; then
-		/etc/rc.d/init.d/cron rstart
+		/etc/rc.d/init.d/crond restart
+	fi
+	if [ -f /etc/httpd/httpd.conf ] && \
+	    ! grep -q "^Include.*/mailman.conf" %{_sysconfdir}/httpd/httpd.conf; then
+		echo "Include /etc/httpd/mailman.conf" >> %{_sysconfdir}/httpd/httpd.conf
+	fi
+	if [ -f /var/lock/subsys/httpd ]; then
+        	/etc/rc.d/init.d/httpd restart 1>&2
+	else
+        	echo "Run \"/etc/rc.d/init.d/httpd start\" to start apache http daemon."
 	fi
 fi
 
 %postun
 if [ "$1" = "0" ]; then
-        /usr/sbin/userdel       %{name}
-        /usr/sbin/groupdel      %{name}
-	grep -v mailman /etc/cron/cron.allow > /etc/cron/cron.allow.tmp
-	mv -f /etc/cron/cron.allow.tmp /etc/cron/cron.allow
+        /usr/sbin/userdel %{name}
+        /usr/sbin/groupdel %{name}
 	if [ -f /var/lock/subsys/crond ]; then
-		/etc/rc.d/init.d/cron rstart
+		/etc/rc.d/init.d/crond restart
 	fi
+	grep -E -v "^Include.*mailman.conf" %{_sysconfdir}/httpd/httpd.conf > \
+		%{_sysconfdir}/httpd/httpd.conf.tmp
+	mv -f %{_sysconfdir}/httpd/httpd.conf.tmp %{_sysconfdir}/httpd/httpd.conf
+	if [ -f /var/lock/subsys/httpd ]; then
+	        /etc/rc.d/init.d/httpd restart 1>&2
+	fi
+fi
+
+%triggerpostun -- mailman <= mailman 3:2.0.13-6
+if [ -f /var/spool/cron/%{name} ]; then
+	crontab -u %{name} -d
 fi
 
 %files
 %defattr(644,root,root,755)
 %doc BUGS FAQ NEWS README README.LINUX README.EXIM README.SENDMAIL README.QMAIL TODO UPGRADING INSTALL
 %{_mandir}/man?/*
+%attr(640,root,http) %config(noreplace) %verify(not size mtime md5) /etc/httpd/%{name}.conf
+%config(noreplace) %verify(not size mtime md5) /etc/cron.d/%{name}
 
 %defattr(644,root,mailman,2775)
 %dir %{_libdir}/mailman
