@@ -1,0 +1,140 @@
+Sendmail runs the wrapper with gid 12 (mail), and postfix runs it with gid 99
+(nobody), and we have to support both.  This patch converts the single GID
+values used for checking that the current GID is okay into comma-separated
+arrays, so it should be fully backward-compatible.  Still needs some work.
+
+--- mailman-2.0.9/configure.in	Fri Sep 22 12:56:44 2000
++++ mailman-2.0.9/configure.in	Tue Jun 26 00:07:28 2001
+@@ -160,7 +160,7 @@
+ if test -z "$$1"
+ then
+     cat > conftest.py <<EOF
+-import grp, string
++import grp, os, string
+ gid = ''
+ for group in string.split("$2"):
+     try:
+@@ -171,7 +171,10 @@
+ 	    gid = grp.getgrnam(group)[2]
+ 	    break
+     except KeyError:
+-        gid = ''
++        try:
++            gid = os.environ["$1"]
++        except KeyError:
++            gid = ''
+ fp = open("conftest.out", "w")
+ fp.write("%s\n" % gid)
+ fp.close()
+@@ -193,7 +196,7 @@
+ if test -z "$$1"
+ then
+     cat > conftest.py <<EOF
+-import pwd, string
++import os, pwd, string
+ uid = ''
+ for user in string.split("$2"):
+     try:
+@@ -204,7 +207,10 @@
+ 	    uid = pwd.getpwnam(user)[2]
+ 	    break
+     except KeyError:
+-        uid = ''
++        try:
++            uid = os.environ["$1"]
++        except KeyError:
++            uid = ''
+ fp = open("conftest.out", "w")
+ fp.write("%s\n" % uid)
+ fp.close()
+@@ -315,7 +321,7 @@
+ rm -f conftest.out conftest.py
+ if test "$status" != "okay"
+ then
+-    AC_MSG_ERROR([
++    AC_MSG_WARN([
+ ***** Installation directory $prefixcheck is not configured properly!
+ $status])
+ fi
+--- mailman-2.0.8/src/cgi-wrapper.c	Tue May 29 09:20:27 2001
++++ mailman-2.0.8/src/cgi-wrapper.c	Mon Mar 18 17:25:45 2002
+@@ -30,7 +30,7 @@
+ 
+ const char* logident = LOG_IDENT;
+ char* script = SCRIPTNAME;
+-const GID_T parentgid = LEGAL_PARENT_GID;
++const GID_T parentgid[] = {LEGAL_PARENT_GID};
+ 
+ 
+ int
+@@ -40,7 +40,8 @@
+ 	char* fake_argv[3];
+ 
+ 	running_as_cgi = 1;
+-	check_caller(logident, parentgid);
++	check_caller(logident, parentgid,
++		     sizeof(parentgid) / sizeof(parentgid[0]));
+ 
+ 	/* for these CGI programs, we can ignore argc and argv since they
+ 	 * don't contain anything useful.  `script' will always be the driver
+--- mailman-2.0.8/src/common.c	Tue May 29 09:20:27 2001
++++ mailman-2.0.8/src/common.c	Mon Mar 18 17:25:03 2002
+@@ -118,14 +118,20 @@
+ /* Is the parent process allowed to call us?
+  */
+ void
+-check_caller(const char* ident, GID_T parentgid)
++check_caller(const char* ident, const GID_T *parentgid, size_t numgids)
+ {
+ 	GID_T mygid = getgid();
+-	if (parentgid != mygid) {
++	int i;
++	for (i = 0; i < numgids; i++) {
++		if (parentgid[i] == mygid) {
++			break;
++		}
++	}
++	if (i >= numgids) {
+ 		fatal(ident, GID_MISMATCH,
+ 		      "Failure to exec script. WANTED gid %ld, GOT gid %ld.  "
+ 		      "(Reconfigure to take %ld?)",
+-		      parentgid, mygid, mygid);
++		      parentgid[0], mygid, mygid);
+ 	}
+ }
+ 
+--- mailman-2.0.8/src/common.h	Tue Mar 21 01:26:41 2000
++++ mailman-2.0.8/src/common.h	Mon Mar 18 17:25:03 2002
+@@ -32,7 +32,7 @@
+ #define GID_T GETGROUPS_T
+ 
+ extern void fatal(const char*, int, char*, ...);
+-extern void check_caller(const char*, GID_T);
++extern void check_caller(const char*, const GID_T*, size_t);
+ extern int run_script(const char*, int, char**, char**);
+ 
+ /* bogus global variable used as a flag */
+--- mailman-2.0.8/src/mail-wrapper.c	Tue Aug  1 23:23:25 2000
++++ mailman-2.0.8/src/mail-wrapper.c	Mon Mar 18 17:25:03 2002
+@@ -25,9 +25,9 @@
+ /* GID that your sendmail runs filter programs as.  See you sendmail.cf
+  * documentation for details
+  */
+-#define LEGAL_PARENT_GID MAIL_GID
++#define LEGAL_PARENT_GIDS MAIL_GID
+ 
+-const GID_T parentgid = LEGAL_PARENT_GID;
++const GID_T parentgid[] = {LEGAL_PARENT_GIDS};
+ const char* logident = "Mailman mail-wrapper";
+ 
+ 
+@@ -69,7 +69,8 @@
+ 		fatal(logident, MAIL_ILLEGAL_COMMAND,
+ 		      "Illegal command: %s", argv[1]);
+ 
+-	check_caller(logident, parentgid);
++	check_caller(logident, parentgid,
++		     sizeof(parentgid) / sizeof(parentgid[0]));
+ 
+ 	/* If we got here, everything must be OK */
+ 	status = run_script(argv[1], argc, argv, env);
