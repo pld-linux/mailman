@@ -11,12 +11,15 @@ Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/%{name}/%{name}-%{version}.tgz
+# Source0-md5:	d486abaa1404e2fe93d72d3cdd9c84af
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
+# Source1-md5:	6b55f9f8051c76961b84a12ed17fc14f
 Source2:	%{name}.conf
 Source3:	%{name}.init
 Source4:	%{name}.sysconfig
 # renamed from http://linux.gda.pl/pub/Mailman-pl/20030228-BArtek/v2.1.tgz
 Source5:	%{name}-v%{version}-pl.tgz
+# Source5-md5:	3b62f19f0d50aa63b6c7a11cdde9e2d0
 Patch0:		%{name}-xss.patch
 Patch1:		%{name}-add_pl.patch
 URL:		http://www.list.org/
