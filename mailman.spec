@@ -4,7 +4,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.0.13
-Release:	8
+Release:	9
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
@@ -208,7 +208,7 @@ fi
 
 %triggerpostun -- mailman <= mailman 3:2.0.13-6
 if [ -f /var/spool/cron/%{name} ]; then
-	crontab -u %{name} -d
+	crontab -u %{name} -r
 fi
 
 %files
