@@ -25,7 +25,6 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	python >= 2.1
 BuildRequires:	python-devel
-BuildRequires:	sed
 PreReq:		rc-scripts
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/bin/id
