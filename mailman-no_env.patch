@@ -1,0 +1,344 @@
+--- mailman-2.0.13/Mailman/Archiver/pipermail.py~	Sun Sep  1 14:35:47 2002
++++ mailman-2.0.13/Mailman/Archiver/pipermail.py	Sun Sep  1 14:35:47 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ 
+ import mailbox
+ import os
+--- mailman-2.0.13/Mailman/pythonlib/smtplib.py~	Sun Sep  1 14:38:18 2002
++++ mailman-2.0.13/Mailman/pythonlib/smtplib.py	Sun Sep  1 14:38:18 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ 
+ '''SMTP/ESMTP client class.
+ 
+--- mailman-2.0.13/bin/add_members~	Sun Sep  1 14:39:56 2002
++++ mailman-2.0.13/bin/add_members	Sun Sep  1 14:39:56 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/arch~	Sun Sep  1 14:40:04 2002
++++ mailman-2.0.13/bin/arch	Sun Sep  1 14:40:04 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/check_db~	Sun Sep  1 14:40:12 2002
++++ mailman-2.0.13/bin/check_db	Sun Sep  1 14:40:12 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/check_perms~	Sun Sep  1 14:40:19 2002
++++ mailman-2.0.13/bin/check_perms	Sun Sep  1 14:40:19 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/clone_member~	Sun Sep  1 14:40:26 2002
++++ mailman-2.0.13/bin/clone_member	Sun Sep  1 14:40:26 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/withlist~	Sun Sep  1 14:40:36 2002
++++ mailman-2.0.13/bin/withlist	Sun Sep  1 14:40:36 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000,2001 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/version~	Sun Sep  1 14:40:45 2002
++++ mailman-2.0.13/bin/version	Sun Sep  1 14:40:45 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/update~	Sun Sep  1 14:40:51 2002
++++ mailman-2.0.13/bin/update	Sun Sep  1 14:40:51 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000,2001 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/sync_members~	Sun Sep  1 14:40:59 2002
++++ mailman-2.0.13/bin/sync_members	Sun Sep  1 14:40:59 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/rmlist~	Sun Sep  1 14:41:05 2002
++++ mailman-2.0.13/bin/rmlist	Sun Sep  1 14:41:05 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/remove_members~	Sun Sep  1 14:41:10 2002
++++ mailman-2.0.13/bin/remove_members	Sun Sep  1 14:41:10 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/newlist~	Sun Sep  1 14:41:17 2002
++++ mailman-2.0.13/bin/newlist	Sun Sep  1 14:41:17 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000,2001 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/move_list~	Sun Sep  1 14:41:23 2002
++++ mailman-2.0.13/bin/move_list	Sun Sep  1 14:41:23 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/mmsitepass~	Sun Sep  1 14:41:30 2002
++++ mailman-2.0.13/bin/mmsitepass	Sun Sep  1 14:41:30 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/list_members~	Sun Sep  1 14:41:38 2002
++++ mailman-2.0.13/bin/list_members	Sun Sep  1 14:41:38 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/list_lists~	Sun Sep  1 14:41:44 2002
++++ mailman-2.0.13/bin/list_lists	Sun Sep  1 14:41:44 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/find_member~	Sun Sep  1 14:41:51 2002
++++ mailman-2.0.13/bin/find_member	Sun Sep  1 14:41:51 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/dumpdb~	Sun Sep  1 14:41:56 2002
++++ mailman-2.0.13/bin/dumpdb	Sun Sep  1 14:41:56 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/digest_arch~	Sun Sep  1 14:42:04 2002
++++ mailman-2.0.13/bin/digest_arch	Sun Sep  1 14:42:04 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/bin/config_list~	Sun Sep  1 14:42:10 2002
++++ mailman-2.0.13/bin/config_list	Sun Sep  1 14:42:10 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/scripts/request~	Sun Sep  1 14:43:44 2002
++++ mailman-2.0.13/scripts/request	Sun Sep  1 14:43:44 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/scripts/post~	Sun Sep  1 14:43:52 2002
++++ mailman-2.0.13/scripts/post	Sun Sep  1 14:43:52 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/scripts/owner~	Sun Sep  1 14:43:57 2002
++++ mailman-2.0.13/scripts/owner	Sun Sep  1 14:43:57 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/scripts/mailowner~	Sun Sep  1 14:44:05 2002
++++ mailman-2.0.13/scripts/mailowner	Sun Sep  1 14:44:05 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/scripts/mailcmd~	Sun Sep  1 14:44:13 2002
++++ mailman-2.0.13/scripts/mailcmd	Sun Sep  1 14:44:13 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/scripts/answer_majordomo_mail~	Sun Sep  1 14:44:22 2002
++++ mailman-2.0.13/scripts/answer_majordomo_mail	Sun Sep  1 14:44:22 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/misc/Cookie.py~	Sun Sep  1 14:46:15 2002
++++ mailman-2.0.13/misc/Cookie.py	Sun Sep  1 14:46:15 2002
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ 
+ """
+ ####
+--- mailman-2.0.13/filters/bowa-strip~	Sun Sep  1 14:46:51 2002
++++ mailman-2.0.13/filters/bowa-strip	Sun Sep  1 14:46:51 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/cron/checkdbs~	Sun Sep  1 14:47:34 2002
++++ mailman-2.0.13/cron/checkdbs	Sun Sep  1 14:47:34 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/cron/senddigests~	Sun Sep  1 14:47:42 2002
++++ mailman-2.0.13/cron/senddigests	Sun Sep  1 14:47:42 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/cron/qrunner~	Sun Sep  1 14:47:50 2002
++++ mailman-2.0.13/cron/qrunner	Sun Sep  1 14:47:50 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000,2001 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/cron/nightly_gzip~	Sun Sep  1 14:47:57 2002
++++ mailman-2.0.13/cron/nightly_gzip	Sun Sep  1 14:47:57 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ # 
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/cron/mailpasswds~	Sun Sep  1 14:48:04 2002
++++ mailman-2.0.13/cron/mailpasswds	Sun Sep  1 14:48:04 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/cron/gate_news~	Sun Sep  1 14:48:11 2002
++++ mailman-2.0.13/cron/gate_news	Sun Sep  1 14:48:11 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/cron/bumpdigests~	Sun Sep  1 14:48:42 2002
++++ mailman-2.0.13/cron/bumpdigests	Sun Sep  1 14:48:42 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/contrib/securelinux_fix.py~	Sun Sep  1 14:49:48 2002
++++ mailman-2.0.13/contrib/securelinux_fix.py	Sun Sep  1 14:49:48 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000,2001 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/contrib/rotatelogs.py~	Sun Sep  1 14:49:54 2002
++++ mailman-2.0.13/contrib/rotatelogs.py	Sun Sep  1 14:49:54 2002
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/contrib/qmail-to-mailman.py~	Sun Sep  1 14:49:59 2002
++++ mailman-2.0.13/contrib/qmail-to-mailman.py	Sun Sep  1 14:49:59 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ 
+ # Configuration variables - Change these for your site if necessary.
+ MailmanHome = "/home/mailman"; # Mailman home directory.
+--- mailman-2.0.13/admin/bin/mm2do~	Sun Sep  1 15:04:15 2002
++++ mailman-2.0.13/admin/bin/mm2do	Sun Sep  1 15:04:15 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
+--- mailman-2.0.13/admin/bin/faq2ht.py~	Sun Sep  1 15:04:23 2002
++++ mailman-2.0.13/admin/bin/faq2ht.py	Sun Sep  1 15:04:23 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ 
+ """Convert the plain text FAQ file to its .ht template.
+ 
+--- mailman-2.0.13/admin/bin/Release.py~	Sun Sep  1 15:04:28 2002
++++ mailman-2.0.13/admin/bin/Release.py	Sun Sep  1 15:04:28 2002
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/usr/bin/python
+ #
+ # Copyright (C) 1998,1999,2000 by the Free Software Foundation, Inc.
+ #
