@@ -4,7 +4,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1
-Release:	0.9
+Release:	1
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
@@ -190,6 +190,9 @@ if [ "$1" = "1" ]; then
 	echo "DEFAULT_URL		= 'http://`/bin/hostname -f`/mailman/'" >> /etc/mailman/mm_cfg.py
 	echo "IMAGE_LOGOS		= '/mailman/icons/'" >> /etc/mailman/mm_cfg.py
 	echo "PUBLIC_ARCHIVE_URL	= '/mailman/pipermail/%%(listname)s'" >> /etc/mailman/mm_cfg.py
+	echo "MAILMAN_GROUP		= '%{name}'" >> /etc/mailman/mm_cfg.py
+	echo "MAILMAN_USER		= '%{name}'" >> /etc/mailman/mm_cfg.py
+	
 	if [ -f /var/lock/subsys/crond ]; then
 		/etc/rc.d/init.d/crond restart
 	fi
@@ -247,7 +250,7 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/%{name}
 %config(noreplace) %verify(not size mtime md5) /etc/cron.d/%{name}
 %dir /etc/%{name}
-%config(noreplace) %verify(not size mtime md5) /etc/%{name}/mm_cfg.py
+%attr(644,root,mailman) %config(noreplace) %verify(not size mtime md5) /etc/%{name}/mm_cfg.py
 
 %attr(754,root,root) /etc/rc.d/init.d/mailman
 
