@@ -1,7 +1,7 @@
 Summary:	The GNU Mailing List Management System
 Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Name:		mailman
-Version:	2.0.3
+Version:	2.0.8
 Release:	1
 License:	GPL
 Group:		Applications/System
@@ -9,11 +9,11 @@ Group(de):	Applikationen/System
 Group(pl):	Aplikacje/System
 Source0:	ftp://ftp.gnu.org/gnu/mailman/%{name}-%{version}.tgz
 Patch0:		%{name}-configure.patch
-URL:		http://www.gnu.org/software/mailman/mailman.html
+URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	python >= 2.0
-Requires:	python >= 2.0
+BuildRequires:	python >= 2.1
+Requires:	python >= 2.1
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
