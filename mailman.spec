@@ -4,7 +4,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1
-Release:	0.3
+Release:	0.4
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
@@ -131,8 +131,8 @@ e problemas conhecidos: http://mailman.sourceforge.net.
 	--without-permcheck \
 	--with-username=%{name} \
 	--with-groupname=%{name} \
-	--with-mail-gid=mail \
-	--with-cgi-gid=http \
+	--with-mail-gid='mail nobody root' \
+	--with-cgi-gid='http nobody' \
 	--with-mailhost=localhost.localdomain \
 	--with-urlhost=localhost.localdomain
 
@@ -184,7 +184,7 @@ if [ "$1" = "1" ]; then
 	echo "DEFAULT_HOST_NAME	= '`/bin/hostname -f`'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
 	echo "DEFAULT_URL		= 'http://`/bin/hostname -f`/mailman/'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
 	echo "IMAGE_LOGOS		= '/mailman/icons/'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
-	echo "PUBLIC_ARCHIVE_URL	= '/mailman/pipermail'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
+	echo "PUBLIC_ARCHIVE_URL	= '/mailman/pipermail/%%(listname)s'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
 	if [ -f /var/lock/subsys/crond ]; then
 		/etc/rc.d/init.d/crond restart
 	fi
