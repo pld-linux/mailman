@@ -22,7 +22,7 @@ case "$1" in
 	# Check if the service is already running?
         if [ ! -f /var/lock/subsys/mailman ]; then
 		msg_starting mailman
-		daemon /var/lib/mailman/bin/mailmanctl -u start
+		daemon 'su mailman -s /bin/sh -c "/var/lib/mailman/bin/mailmanctl -u start"'
 	        RETVAL=$?
     		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/mailman
 	else
@@ -34,7 +34,7 @@ case "$1" in
         # Stop daemons.
 	if [ -f /var/lock/subsys/mailman ]; then
                 msg_stopping mailman
-		/var/lib/mailman/bin/mailmanctl -u stop
+		daemon 'su mailman -s /bin/sh -c "/var/lib/mailman/bin/mailmanctl -u stop"'
                 rm -f /var/lock/subsys/mailman /var/run/mailman.pid
         else
 		msg_not_running mailman
@@ -42,7 +42,7 @@ case "$1" in
 	fi
 	;;
   status)
-	status mailman
+	status mailman qrunner
 	exit $?
 	;;
   restart|reload)
