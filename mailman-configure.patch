@@ -1,6 +1,6 @@
 diff -urN mailman-2.0.2.org/configure.in mailman-2.0.2/configure.in
 --- mailman-2.0.2.org/configure.in	Sun Mar  4 10:34:36 2001
-+++ mailman-2.0.2/configure.in	Sun Mar  4 10:40:54 2001
++++ mailman-2.0.2/configure.in	Sun Mar  4 19:26:52 2001
 @@ -234,11 +234,7 @@
  MM_FIND_USER_ID(MAILMAN_UID, $USERNAME)
  if test -z "$MAILMAN_UID"
@@ -90,4 +90,15 @@ diff -urN mailman-2.0.2.org/configure.in mailman-2.0.2/configure.in
 +CGI_GID=51
  fi
  
+ 
+diff -urN mailman-2.0.2.org/templates/Makefile.in mailman-2.0.2/templates/Makefile.in
+--- mailman-2.0.2.org/templates/Makefile.in	Sun Mar  4 10:34:36 2001
++++ mailman-2.0.2/templates/Makefile.in	Sun Mar  4 19:31:19 2001
+@@ -59,7 +59,6 @@
+ install:
+ 	for f in $(TEMPLATES); \
+ 	do \
+-	    mv -f $(TEMPLATEDIR)/$$f $(TEMPLATEDIR)/$$f.prev || $(TRUE); \
+ 	    $(INSTALL) -m $(FILEMODE) $$f $(TEMPLATEDIR); \
+ 	done
  
