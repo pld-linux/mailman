@@ -4,7 +4,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.0.13
-Release:	3.1
+Release:	4
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
@@ -177,30 +177,37 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc BUGS FAQ NEWS README README.LINUX README.EXIM README.SENDMAIL README.QMAIL TODO UPGRADING INSTALL
-
-%attr(2775,mailman,mailman) %dir %{_var}/lib/mailman
-
-%attr(2755,root,mailman) %{_var}/lib/mailman/bin/[^p]*
 %attr(2775,root,mailman) %dir %{_libdir}/mailman
 %attr(2775,root,mailman) %dir %{_libdir}/mailman/cgi-bin
 %attr(2775,root,mailman) %dir %{_libdir}/mailman/mail
 %attr(2755,mailman,mailman) %{_libdir}/mailman/*/*
-
-%attr(2775,mailman,mailman) %{_var}/lib/mailman/Mailman
-%attr(2775,mailman,mailman) %{_var}/lib/mailman/bin/p*
-%attr(2775,mailman,mailman) %{_var}/lib/mailman/cron
-%attr(2775,mailman,mailman) %{_var}/lib/mailman/icons
-%attr(2775,mailman,mailman) %{_var}/lib/mailman/scripts
-%attr(2775,mailman,mailman) %{_var}/lib/mailman/templates
-%attr(2775,mailman,mailman) %dir %{_var}/spool/mailman
-%dir %{_var}/spool/mailman/archives
-%attr(2770,mailman,mailman) %{_var}/spool/mailman/archives/private
-%attr(2775,mailman,mailman) %{_var}/spool/mailman/archives/public
-%attr(2775,mailman,mailman) %{_var}/spool/mailman/data
-%attr(2775,mailman,mailman) %{_var}/spool/mailman/filters
-%attr(2775,mailman,mailman) %{_var}/spool/mailman/lists
-%attr(2775,mailman,mailman) %{_var}/spool/mailman/locks
-%attr(2775,mailman,mailman) %{_var}/spool/mailman/logs
-%attr(2775,mailman,mailman) %{_var}/spool/mailman/qfiles
-%attr(2775,mailman,mailman) %{_var}/spool/mailman/spam
 %{_mandir}/man?/*
+
+%defattr(644,root,mailman,2775)
+%dir %{_var}/lib/mailman
+%dir %{_var}/lib/mailman/bin
+%dir %{_var}/lib/mailman/cron
+%dir %{_var}/lib/mailman/icons
+%dir %{_var}/lib/mailman/scripts
+%dir %{_var}/lib/mailman/templates
+%{_var}/lib/mailman/Mailman
+%{_var}/lib/mailman/bin/p*
+%attr(2755,root,mailman) %{_var}/lib/mailman/bin/[^p]*
+%{_var}/lib/mailman/cron/*
+%{_var}/lib/mailman/scripts/*
+%{_var}/lib/mailman/icons/*
+%{_var}/lib/mailman/templates/*
+
+%dir %{_var}/spool/mailman
+%dir %{_var}/spool/mailman/archives
+%attr(2771,root,mailman) %dir %{_var}/spool/mailman/archives/private
+%dir %{_var}/spool/mailman/archives/public
+%dir %{_var}/spool/mailman/data
+%dir %{_var}/spool/mailman/filters
+%dir %{_var}/spool/mailman/lists
+%dir %{_var}/spool/mailman/locks
+%dir %{_var}/spool/mailman/logs
+%dir %{_var}/spool/mailman/qfiles
+%dir %{_var}/spool/mailman/spam
+%attr(664,root,mailman) %{_var}/spool/mailman/data/*
+%attr(664,root,mailman) %{_var}/spool/mailman/filters/*
