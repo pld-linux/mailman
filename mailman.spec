@@ -4,7 +4,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.0.13
-Release:	5
+Release:	6
 Epoch:		3
 License:	GPL v2+
 Group:		Applications/System
@@ -15,17 +15,18 @@ Patch1:		%{name}-admin.patch
 Patch2:		%{name}-configure.patch
 Patch3:		%{name}-no_env.patch
 URL:		http://www.list.org/
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	python >= 2.1
 Requires(pre):	%{_sbindir}/useradd
 Requires(pre):	%{_sbindir}/groupadd
 Requires(post): /bin/hostname
 Requires(postun):	%{_sbindir}/userdel
 Requires(postun):	%{_sbindir}/groupdel
-BuildRequires:	autoconf
-BuildRequires:	automake
-BuildRequires:	python >= 2.1
-Requires:	smtpdaemon
+Requires:	crondaemon
 Requires:	logrotate
 Requires:	python-modules
+Requires:	smtpdaemon
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -167,15 +168,25 @@ else
 fi
 
 %post
-echo mailman >> /etc/cron/cron.allow
-crontab -u mailman /var/lib/mailman/cron/crontab.in
-echo "DEFAULT_HOST_NAME	= '`/bin/hostname -f`'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
-echo "DEFAULT_URL		= 'http://`/bin/hostname -f`/mailman/'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
+if [ "$1" = "0" ]; then
+	echo mailman >> /etc/cron/cron.allow
+	crontab -u mailman /var/lib/mailman/cron/crontab.in
+	echo "DEFAULT_HOST_NAME	= '`/bin/hostname -f`'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
+	echo "DEFAULT_URL		= 'http://`/bin/hostname -f`/mailman/'" >> %{_var}/lib/mailman/Mailman/mm_cfg.py
+	if [ -f /var/lock/subsys/crond ]; then
+		/etc/rc.d/init.d/cron rstart
+	fi
+fi
 
 %postun
 if [ "$1" = "0" ]; then
         /usr/sbin/userdel       %{name}
         /usr/sbin/groupdel      %{name}
+	grep -v mailman /etc/cron/cron.allow > /etc/cron/cron.allow.tmp
+	mv -f /etc/cron/cron.allow.tmp /etc/cron/cron.allow
+	if [ -f /var/lock/subsys/crond ]; then
+		/etc/rc.d/init.d/cron rstart
+	fi
 fi
 
 %files
