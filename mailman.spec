@@ -177,13 +177,14 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc BUGS FAQ NEWS README README.LINUX README.EXIM README.SENDMAIL README.QMAIL TODO UPGRADING INSTALL
-%attr(2775,root,mailman) %dir %{_libdir}/mailman
-%attr(2775,root,mailman) %dir %{_libdir}/mailman/cgi-bin
-%attr(2775,root,mailman) %dir %{_libdir}/mailman/mail
-%attr(2755,mailman,mailman) %{_libdir}/mailman/*/*
 %{_mandir}/man?/*
 
 %defattr(644,root,mailman,2775)
+%dir %{_libdir}/mailman
+%dir %{_libdir}/mailman/cgi-bin
+%dir %{_libdir}/mailman/mail
+%attr(2755,root,mailman) %{_libdir}/mailman/*/*
+
 %dir %{_var}/lib/mailman
 %dir %{_var}/lib/mailman/bin
 %dir %{_var}/lib/mailman/cron
