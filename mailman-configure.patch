@@ -102,3 +102,85 @@ diff -urN mailman-2.0.2.org/templates/Makefile.in mailman-2.0.2/templates/Makefi
  	    $(INSTALL) -m $(FILEMODE) $$f $(TEMPLATEDIR); \
  	done
  
+diff -uNr mailman-2.0.12/configure.in mailman-2.0.12..new/configure.in
+--- mailman-2.0.12/configure.in	Tue Aug  6 18:29:52 2002
++++ mailman-2.0.12..new/configure.in	Tue Aug  6 18:29:10 2002
+@@ -332,78 +332,6 @@
+ fi
+ AC_MSG_RESULT($with_cgi_ext)
+ 
+-
+-# figure out the DEFAULT_HOST_NAME and DEFAULT_URL
+-AC_SUBST(FQDN)
+-AC_SUBST(URL)
+-changequote(,)
+-cat > conftest.py <<EOF
+-# attempt to figure out the default hostname and URL
+-from socket import *
+-import string
+-import sys
+-import os
+-def barf(fqdn, www):
+-    sys.stdout = sys.stderr
+-    print 'host info not found, set \$MAILHOST and/or \$WWWHOST environ vars'
+-    print '\$MAILHOST=%s, \$WWWHOST=%s' % (fqdn, www)
+-    sys.exit(1)
+-fqdn = os.environ.get('MAILHOST')
+-www = os.environ.get('WWWHOST')
+-aliases = []
+-if fqdn:
+-    aliases.append(fqdn)
+-if www:
+-    aliases.append(www)
+-if not fqdn:
+-    try:
+-        host, aliases, ipaddrs = gethostbyaddr(gethostbyname(gethostname()))
+-    except herror:
+-        barf(fqdn, www)
+-    aliases.insert(0, host)
+-for h in aliases:
+-    parts = string.split(h, '.')
+-    if len(parts) > 1:
+-        if parts[0] == 'www':
+-            www = h
+-        elif not fqdn:
+-            fqdn = h
+-    if www and fqdn:
+-        break
+-if fqdn is None:
+-    barf(fqdn, www)
+-if www is None:
+-    www = fqdn
+-fp = open('conftest.out', 'w')
+-if not www and fqdn:
+-    fp.write('%s\n%s\n' % (fqdn, fqdn))
+-elif www:
+-    dhn = string.join(string.split(www, '.')[1:], '.')
+-    fp.write('%s\n%s\n' % (dhn, www))
+-else:
+-    fp.write('please.change.me\nwww.please.change.me\n')
+-fp.close()
+-EOF
+-$PYTHON conftest.py
+-if [ "$?" == "1" ]
+-then
+-    exit
+-fi
+-changequote([, ])
+-AC_MSG_CHECKING(for default fully qualified host name)
+-if test -z "$FQDN"
+-then
+-    FQDN=`head -1 conftest.out`
+-fi
+-AC_MSG_RESULT($FQDN)
+-AC_MSG_CHECKING(for default URL host component)
+-if test -z "$URL"
+-then
+-    URL=`tail -1 conftest.out`
+-fi
+-AC_MSG_RESULT($URL)
+-rm -f conftest.out conftest.py
+-
+ # Checks for libraries.
+ AC_CHECK_FUNCS(strerror setregid syslog)
+ if test $ac_cv_func_syslog = no; then
