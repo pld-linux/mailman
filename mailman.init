@@ -34,7 +34,7 @@ case "$1" in
         # Stop daemons.
 	if [ -f /var/lock/subsys/mailman ]; then
                 msg_stopping mailman
-		/var/lib/mailman/bin/mailmanctl stop
+		/var/lib/mailman/bin/mailmanctl -u stop
                 rm -f /var/lock/subsys/mailman /var/run/mailman.pid
         else
 		msg_not_running mailman
