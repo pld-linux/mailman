@@ -30,13 +30,14 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	python >= 2.1
 BuildRequires:	python-devel
+BuildRequires:	rpmbuild(macros) >= 1.159
 PreReq:		rc-scripts
-Requires(pre):	/usr/bin/getgid
 Requires(pre):	/bin/id
-Requires(pre):	/usr/sbin/useradd
+Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
-Requires(postun):	/usr/sbin/userdel
+Requires(pre):	/usr/sbin/useradd
 Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 Requires(post,preun):	/sbin/chkconfig
 Requires(post):	/bin/hostname
 Requires(post):	grep
@@ -46,6 +47,8 @@ Requires:	crondaemon
 Requires:	python-modules
 Requires:	smtpdaemon
 Requires:	webserver
+Provides:	group(mailman)
+Provides:	user(mailman)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -191,24 +194,25 @@ EOF
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if [ -n "`getgid %{name}`" ]; then
-	if [ "`getgid %{name}`" != "94" ]; then
-		echo "Error: group %{name} doesn't have gid=94. Correct this before installing %{name}." 1>&2
+if [ -n "`/usr/bin/getgid mailman`" ]; then
+	if [ "`/usr/bin/getgid mailman`" != "94" ]; then
+		echo "Error: group mailman doesn't have gid=94. Correct this before installing %{name}." 1>&2
 		exit 1
 	fi
 else
-	echo "Adding group %{name} GID=94"
-	/usr/sbin/groupadd -f -g 94 -r %{name}
+	echo "Adding group mailman GID=94"
+	/usr/sbin/groupadd -g 94 mailman
 fi
 
-if [ -n "`id -u %{name} 2>/dev/null`" ]; then
-	if [ "`id -u %{name}`" != "94" ]; then
-		echo "Error: user %{name} doesn't have uid=94. Correct this before installing %{name}." 1>&2
+if [ -n "`/bin/id -u mailman 2>/dev/null`" ]; then
+	if [ "`/bin/id -u mailman`" != "94" ]; then
+		echo "Error: user mailman doesn't have uid=94. Correct this before installing %{name}." 1>&2
 		exit 1
 	fi
 else
-	echo "Adding user %{name} UID=94"
-	/usr/sbin/useradd -u 94 -r -d %{_var}/spool/%{name} -s /bin/false -c "GNU Mailing List Manager" -g %{name} %{name} 1>&2
+	echo "Adding user mailman UID=94"
+	/usr/sbin/useradd -u 94 -d %{_var}/spool/%{name} -s /bin/false \
+		-c "GNU Mailing List Manager" -g mailman mailman 1>&2
 fi
 
 %post
@@ -234,8 +238,8 @@ fi
 
 %postun
 if [ "$1" = "0" ]; then
-	/usr/sbin/userdel %{name}
-	/usr/sbin/groupdel %{name}
+	%userremove mailman
+	%groupremove mailman
 	if [ -f /var/lock/subsys/crond ]; then
 		/etc/rc.d/init.d/crond restart
 	fi
