@@ -1,7 +1,7 @@
-diff -urN mailman-2.0.2.org/configure.in mailman-2.0.2/configure.in
---- mailman-2.0.2.org/configure.in	Sun Mar  4 10:34:36 2001
-+++ mailman-2.0.2/configure.in	Sun Mar  4 19:26:52 2001
-@@ -234,11 +234,7 @@
+diff -ur mailman-2.0.13.orig/configure.in mailman-2.0.13/configure.in
+--- mailman-2.0.13.orig/configure.in	Thu Aug 22 23:26:54 2002
++++ mailman-2.0.13/configure.in	Thu Aug 22 23:29:17 2002
+@@ -240,11 +240,7 @@
  MM_FIND_USER_ID(MAILMAN_UID, $USERNAME)
  if test -z "$MAILMAN_UID"
  then
@@ -14,7 +14,7 @@ diff -urN mailman-2.0.2.org/configure.in mailman-2.0.2/configure.in
  fi
  
  
-@@ -261,11 +257,7 @@
+@@ -267,11 +263,7 @@
  MM_FIND_GROUP_ID(MAILMAN_GID, $GROUPNAME)
  if test -z "$MAILMAN_GID"
  then
@@ -27,57 +27,7 @@ diff -urN mailman-2.0.2.org/configure.in mailman-2.0.2/configure.in
  fi
  
  
-@@ -280,49 +272,6 @@
-     prefixcheck=$VAR_PREFIX
- fi
- 
--AC_MSG_CHECKING(permissions on $prefixcheck)
--changequote(,)
--cat > conftest.py <<EOF
--import os, grp, string
--from stat import *
--prefix = "$prefixcheck"
--mailmangid = $MAILMAN_GID
--problems = []
--try: statdata = os.stat(prefix)
--except os.error:
--    problems.append("Directory doesn't exist: " + prefix)
--else:    
--    mode = statdata[ST_MODE]
--    gid = statdata[ST_GID]
--    if mailmangid <> gid:
--	problems.append("Directory must be owned by group mailman: " + prefix)
--    if (mode & S_ISGID) <> S_ISGID:
--	problems.append("Set-gid bit must be set for directory: " +prefix)
--    perms = S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH
--    if (mode & perms) <> perms:
--	problems.append("Permissions should be at least 02775: " + prefix)
--if not problems:
--    msg = "okay\n"
--else:
--    msg = '***** ' + string.join(problems, '\n***** ') + '\n'
--fp = open("conftest.out", "w")
--fp.write(msg)
--fp.close()
--EOF
--changequote([, ])
--$PYTHON conftest.py
--status=`cat conftest.out`
--rm -f conftest.out conftest.py
--if test "$status" != "okay"
--then
--    AC_MSG_ERROR([
--***** Installation directory $prefixcheck is not configured properly!
--$status])
--fi
--
--AC_MSG_RESULT(okay)
--
--
- # Now find the UIDs and GIDs
- # Support --with-mail-gid and --with-cgi-gid
- AC_MSG_CHECKING(for mail wrapper GID)
-@@ -362,12 +311,7 @@
+@@ -368,12 +360,7 @@
  MM_FIND_GROUP_ID(CGI_GID, $ac_cv_group_cgi)
  if test -z "$CGI_GID"
  then
@@ -91,21 +41,7 @@ diff -urN mailman-2.0.2.org/configure.in mailman-2.0.2/configure.in
  fi
  
  
-diff -urN mailman-2.0.2.org/templates/Makefile.in mailman-2.0.2/templates/Makefile.in
---- mailman-2.0.2.org/templates/Makefile.in	Sun Mar  4 10:34:36 2001
-+++ mailman-2.0.2/templates/Makefile.in	Sun Mar  4 19:31:19 2001
-@@ -59,7 +59,6 @@
- install:
- 	for f in $(TEMPLATES); \
- 	do \
--	    mv -f $(TEMPLATEDIR)/$$f $(TEMPLATEDIR)/$$f.prev || $(TRUE); \
- 	    $(INSTALL) -m $(FILEMODE) $$f $(TEMPLATEDIR); \
- 	done
- 
-diff -uNr mailman-2.0.12/configure.in mailman-2.0.12..new/configure.in
---- mailman-2.0.12/configure.in	Tue Aug  6 18:29:52 2002
-+++ mailman-2.0.12..new/configure.in	Tue Aug  6 18:29:10 2002
-@@ -332,78 +332,6 @@
+@@ -394,80 +381,6 @@
  fi
  AC_MSG_RESULT($with_cgi_ext)
  
@@ -135,7 +71,7 @@ diff -uNr mailman-2.0.12/configure.in mailman-2.0.12..new/configure.in
 -if not fqdn:
 -    try:
 -        host, aliases, ipaddrs = gethostbyaddr(gethostbyname(gethostname()))
--    except herror:
+-    except error:
 -        barf(fqdn, www)
 -    aliases.insert(0, host)
 -for h in aliases:
@@ -152,7 +88,9 @@ diff -uNr mailman-2.0.12/configure.in mailman-2.0.12..new/configure.in
 -if www is None:
 -    www = fqdn
 -fp = open('conftest.out', 'w')
--if not www and fqdn:
+-if www and fqdn:
+-    fp.write('%s\n%s\n' % (fqdn, www))
+-elif not www and fqdn:
 -    fp.write('%s\n%s\n' % (fqdn, fqdn))
 -elif www:
 -    dhn = string.join(string.split(www, '.')[1:], '.')
@@ -162,7 +100,7 @@ diff -uNr mailman-2.0.12/configure.in mailman-2.0.12..new/configure.in
 -fp.close()
 -EOF
 -$PYTHON conftest.py
--if [ "$?" == "1" ]
+-if [ $? -eq 1 ]
 -then
 -    exit
 -fi
@@ -184,3 +122,17 @@ diff -uNr mailman-2.0.12/configure.in mailman-2.0.12..new/configure.in
  # Checks for libraries.
  AC_CHECK_FUNCS(strerror setregid syslog)
  if test $ac_cv_func_syslog = no; then
+Only in mailman-2.0.13: configure.in.orig
+Only in mailman-2.0.13: configure.in.rej
+Only in mailman-2.0.13: configure.in~
+diff -ur mailman-2.0.13.orig/templates/Makefile.in mailman-2.0.13/templates/Makefile.in
+--- mailman-2.0.13.orig/templates/Makefile.in	Thu Aug 22 23:26:54 2002
++++ mailman-2.0.13/templates/Makefile.in	Thu Aug 22 23:27:35 2002
+@@ -59,7 +59,6 @@
+ install:
+ 	for f in $(TEMPLATES); \
+ 	do \
+-	    mv -f $(TEMPLATEDIR)/$$f $(TEMPLATEDIR)/$$f.prev || $(TRUE); \
+ 	    $(INSTALL) -m $(FILEMODE) $$f $(TEMPLATEDIR); \
+ 	done
+ 
