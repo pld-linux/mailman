@@ -12,7 +12,7 @@ Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/mailman/%{name}-%{version}%{_rc}.tgz
-# Source0-md5:	f5f56f04747cd4aff67427e7a45631af
+# Source0-md5:	3663a67606f43ff40a79a9ef092d58de
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 # Source1-md5:	6b55f9f8051c76961b84a12ed17fc14f
 Source2:	%{name}.conf
