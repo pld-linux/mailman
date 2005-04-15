@@ -1,13 +1,13 @@
 # TODO:
-# - make this mess FHS compliant
 # - are *.po files (beside *.mo) needed in binary package?
 Summary:	The GNU Mailing List Management System
 Summary(es):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
-Version:	2.1.5
-Release:	6
+Version:	2.1.6
+%define		_rc	rc1
+Release:	0.%{_rc}.0.3
 Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
@@ -21,11 +21,13 @@ Source4:	%{name}.sysconfig
 # Need to check if it's still useful
 #Patch0:		%{name}-xss.patch
 Patch1:		%{name}-MM_FIND_GROUP_NAME.patch
-Patch2:		%{name}-pl_fix.patch
-Patch3:		%{name}-minus-one-jobs.patch
-Patch4:		%{name}-encoding.patch
-Patch5:		%{name}-dont-send-broken-reminder-ugly-hack.patch
-Patch6:		http://www.list.org/CAN-2005-0202.txt
+Patch2:		%{name}-encoding.patch
+Patch3:		%{name}-dont-send-broken-reminder-ugly-hack.patch
+Patch4:		%{name}-mailmanctl-status.patch
+Patch5:		%{name}-cron.patch
+Patch6:		%{name}-python-compile.patch
+Patch7:		%{name}-build.patch
+Patch8:		%{name}-FHS.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -52,6 +54,15 @@ Provides:	group(mailman)
 Provides:	user(mailman)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+%define		_configdir	/etc/%{name}
+%define		_quedirdir	/var/spool/%{name}
+%define		_varmmdir	/var/lib/%{name}
+%define		_lockdir	/var/lock/%{name}
+%define		_logdir		/var/log/%{name}
+%define		_logarchdir	/var/log/archiv/%{name}
+%define		_piddir		/var/run/%{name}
+
+
 %description
 Mailman -- The GNU Mailing List Management System -- is a mailing list
 management system written mostly in Python. Features:
@@ -74,9 +85,6 @@ management system written mostly in Python. Features:
 - optional MIME-compliant digests,
 - nice about which machine you subscribed from if you're from the
   right domain,
-
-See the Mailman home site for current status, including new releases
-and known problems: http://mailman.sourceforge.net/ .
 
 %description -l es
 Mailman -- El sistema de manutención de listas de discusión de la
@@ -127,49 +135,59 @@ maior parte em Python. Características:
 - Informa a partir de qual máquina você se inscreveu, caso esteja no
   domínio correto.
 
-Veja o site do Mailman para saber o estado atual, incluindo novas
-versões e problemas conhecidos: http://mailman.sourceforge.net/ .
-
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}%{_rc}
 #patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p0
+%patch3 -p1
 %patch4 -p1
 %patch5 -p1
-cd Mailman/Cgi/
-%patch6 -p0
-cd ../../
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
 
 %build
 %{__aclocal}
 %{__autoconf}
 
 %configure \
-	--prefix=/var/lib/mailman \
-	--exec-prefix=/usr/lib/mailman \
-	--with-var-prefix=/var/spool/mailman \
-	--without-permcheck \
+	--prefix=%{_varmmdir} \
+	--exec-prefix=%{_varmmdir} \
+	--with-var-prefix=%{_quedirdir} \
+	--with-config-dir=%{_configdir} \
+	--with-lock-dir=%{_lockdir} \
+	--with-log-dir=%{_logdir} \
+	--with-pid-dir=%{_piddir} \
+	--with-queue-dir=%{_quedirdir}/qfiles \
 	--with-username=%{name} \
 	--with-groupname=%{name} \
 	--with-mail-gid='mailman' \
 	--with-cgi-gid='http' \
 	--with-mailhost=localhost.localdomain \
-	--with-urlhost=localhost.localdomain
+	--with-urlhost=localhost.localdomain \
+	--without-permcheck 
 %{__make}
+
+#%{__make} -C misc
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/etc/{cron.d,httpd/httpd.conf,mailman,rc.d/init.d,sysconfig},%{_mandir}}
+install -d $RPM_BUILD_ROOT{/etc/{cron.d,httpd/httpd.conf,rc.d/init.d,sysconfig,smrsh},%{_mandir}} \
+	$RPM_BUILD_ROOT{%{_varmmdir},%{_quedirdir},%{_configdir},%{_lockdir},%{_logdir},%{_logarchdir},%{_piddir}}
 
-PYTHONPATH=$RPM_BUILD_ROOT/var/lib/mailman/:$RPM_BUILD_ROOT/var/lib/mailman/pythonlib/
+PYTHONPATH=$RPM_BUILD_ROOT%{_varmmdir}:$RPM_BUILD_ROOT%{_varmmdir}/pythonlib/
 export PYTHONPATH
 
 %{__make} doinstall \
-	prefix=$RPM_BUILD_ROOT%{_var}/lib/mailman \
+	prefix=$RPM_BUILD_ROOT%{_varmmdir} \
 	exec_prefix=$RPM_BUILD_ROOT%{_libdir}/mailman \
-	var_prefix=$RPM_BUILD_ROOT%{_var}/spool/mailman
+	var_prefix=$RPM_BUILD_ROOT%{_quedirdir}
+
+%{__make} install-packages -C misc \
+	prefix=$RPM_BUILD_ROOT%{_varmmdir} \
+	exec_prefix=$RPM_BUILD_ROOT%{_libdir}/mailman \
+	var_prefix=$RPM_BUILD_ROOT%{_quedirdir}
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
@@ -178,10 +196,10 @@ install %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/httpd.conf/90_%{name}.conf
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 
-mv $RPM_BUILD_ROOT/var/lib/%{name}/Mailman/mm_cfg.py $RPM_BUILD_ROOT/etc/%{name}
-ln -s /etc/%{name}/mm_cfg.py $RPM_BUILD_ROOT/var/lib/%{name}/Mailman/mm_cfg.py
+mv $RPM_BUILD_ROOT%{_varmmdir}/Mailman/mm_cfg.py $RPM_BUILD_ROOT%{_configdir}
+ln -s %{_configdir}/mm_cfg.py $RPM_BUILD_ROOT%{_varmmdir}/Mailman/mm_cfg.py
 
-cat >> $RPM_BUILD_ROOT/etc/%{name}/mm_cfg.py << EOF
+cat >> $RPM_BUILD_ROOT%{_configdir}/mm_cfg.py << EOF
 DEFAULT_EMAIL_HOST		= 'YOUR.HOST.NAME.HERE'
 DEFAULT_URL_HOST		= 'YOUR.HOST.NAME.HERE'
 IMAGE_LOGOS			= '/mailman/icons/'
@@ -193,6 +211,9 @@ MAILMAN_USER			= '%{name}'
 # For available options and their descriptions see:
 # /var/lib/mailman/Mailman/Defaults.py
 EOF
+
+# Create a link to the wrapper in /etc/smrsh to allow sendmail to run it.
+ln -s %{_datadir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -259,50 +280,54 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc BUGS FAQ NEWS README README.LINUX README.EXIM README.POSTFIX README.SENDMAIL README.QMAIL README.USERAGENT TODO UPGRADING INSTALL
+%doc BUGS FAQ NEWS README README.CONTRIB README.NETSCAPE README.USERAGENT TODO UPGRADING INSTALL
 %{_mandir}/man?/*
 %attr(640,root,http) %config(noreplace) %verify(not size mtime md5) /etc/httpd/httpd.conf/*%{name}.conf
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/%{name}
+/etc/smrsh/%{name}
 %config(noreplace) %verify(not size mtime md5) /etc/cron.d/%{name}
-%dir /etc/%{name}
-%attr(644,root,mailman) %config(noreplace) %verify(not size mtime md5) /etc/%{name}/mm_cfg.py
+%attr(2775,root,mailman) %dir %{_configdir}
+%attr(644,root,mailman) %config(noreplace) %verify(not size mtime md5) %{_configdir}/mm_cfg.py
 
-%attr(754,root,root) /etc/rc.d/init.d/mailman
+%attr(754,root,root) /etc/rc.d/init.d/%{name}
 
 %defattr(644,root,mailman,2775)
-%dir %{_libdir}/mailman
-%dir %{_libdir}/mailman/cgi-bin
-%dir %{_libdir}/mailman/mail
-%attr(2755,root,mailman) %{_libdir}/mailman/*/*
+%dir %{_libdir}/%{name}
+%dir %{_libdir}/%{name}/cgi-bin
+%dir %{_libdir}/%{name}/mail
+%attr(2755,root,mailman) %{_libdir}/%{name}/*/*
 
-%dir %{_var}/lib/mailman
-%dir %{_var}/lib/mailman/bin
-%dir %{_var}/lib/mailman/cron
-%dir %{_var}/lib/mailman/icons
-%dir %{_var}/lib/mailman/scripts
-%dir %{_var}/lib/mailman/templates
-%dir %{_var}/lib/mailman/pythonlib
-%dir %{_var}/lib/mailman/messages
-%dir %{_var}/lib/mailman/tests
+%dir %{_varmmdir}
+%dir %{_varmmdir}/bin
+%dir %{_varmmdir}/cron
+%dir %{_varmmdir}/icons
+%dir %{_varmmdir}/scripts
+%dir %{_varmmdir}/templates
+%dir %{_varmmdir}/pythonlib
+%dir %{_varmmdir}/messages
+%dir %{_varmmdir}/tests
 
-%{_var}/lib/mailman/Mailman
-%{_var}/lib/mailman/bin/p*
-%attr(2755,root,mailman) %{_var}/lib/mailman/bin/[!p]*
-%{_var}/lib/mailman/cron/*
-%{_var}/lib/mailman/scripts/*
-%{_var}/lib/mailman/icons/*
-%{_var}/lib/mailman/templates/*
-%{_var}/lib/mailman/pythonlib/*
-%{_var}/lib/mailman/messages/*
-%{_var}/lib/mailman/tests/*
+%{_varmmdir}/Mailman
+%{_varmmdir}/bin/p*
+%attr(2755,root,mailman) %{_varmmdir}/bin/[!p]*
+%attr(755,root,root) %{_varmmdir}/cron/*
+%{_varmmdir}/scripts/*
+%{_varmmdir}/icons/*
+%{_varmmdir}/templates/*
+%{_varmmdir}/pythonlib/*
+%{_varmmdir}/messages/*
+%{_varmmdir}/tests/*
 
-%dir %{_var}/spool/mailman
-%dir %{_var}/spool/mailman/archives
-%attr(2771,root,mailman) %dir %{_var}/spool/mailman/archives/private
-%dir %{_var}/spool/mailman/archives/public
-%{_var}/spool/mailman/data
-%dir %{_var}/spool/mailman/lists
-%dir %{_var}/spool/mailman/locks
-%dir %{_var}/spool/mailman/logs
-%dir %{_var}/spool/mailman/qfiles
-%dir %{_var}/spool/mailman/spam
+%dir %{_quedirdir}
+%dir %{_quedirdir}/archives
+%attr(2771,root,mailman) %dir %{_quedirdir}/archives/private
+%dir %{_quedirdir}/archives/public
+%{_quedirdir}/data
+%dir %{_quedirdir}/lists
+#%dir %{_quedirdir}/logs
+#%dir %{_quedirdir}/qfiles
+%dir %{_quedirdir}/spam
+%dir %{_lockdir}
+%dir %{_logdir}
+%dir %{_logarchdir}
+%dir %{_piddir}
