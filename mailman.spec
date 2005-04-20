@@ -34,6 +34,7 @@ BuildRequires:	automake
 BuildRequires:	python >= 2.1
 BuildRequires:	python-devel
 BuildRequires:	rpmbuild(macros) >= 1.159
+BuildRequires:	zziplib-devel
 PreReq:		rc-scripts
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
