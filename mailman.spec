@@ -33,7 +33,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	python >= 2.1
 BuildRequires:	python-devel
-BuildRequires:	rpmbuild(macros) >= 1.159
+BuildRequires:	rpmbuild(macros) >= 1.202
 PreReq:		rc-scripts
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
@@ -219,26 +219,8 @@ ln -s %{_datadir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if [ -n "`/usr/bin/getgid mailman`" ]; then
-	if [ "`/usr/bin/getgid mailman`" != "94" ]; then
-		echo "Error: group mailman doesn't have gid=94. Correct this before installing %{name}." 1>&2
-		exit 1
-	fi
-else
-	echo "Adding group mailman GID=94"
-	/usr/sbin/groupadd -g 94 mailman
-fi
-
-if [ -n "`/bin/id -u mailman 2>/dev/null`" ]; then
-	if [ "`/bin/id -u mailman`" != "94" ]; then
-		echo "Error: user mailman doesn't have uid=94. Correct this before installing %{name}." 1>&2
-		exit 1
-	fi
-else
-	echo "Adding user mailman UID=94"
-	/usr/sbin/useradd -u 94 -d %{_var}/spool/%{name} -s /bin/false \
-		-c "GNU Mailing List Manager" -g mailman mailman 1>&2
-fi
+%groupadd -g 94 mailman
+%useradd -u 94 -d %{_var}/spool/%{name} -s /bin/false -c "GNU Mailing List Manager" -g mailman mailman
 
 %post
 if [ "$1" = "1" ]; then
