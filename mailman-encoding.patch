@@ -5,7 +5,7 @@ diff -urN mailman-2.1.5.org/cron/mailpasswds mailman-2.1.5/cron/mailpasswds
                   'owner'   : siteowner,
                   }, lang=poplang)
              # Coerce everything to Unicode
-+	    header = tounicode(text, enc)
++            header = tounicode(header, enc)
              text = tounicode(text, enc)
              table = [tounicode(_t, enc) for _t in table]
              # Add the table to the end so it doesn't get wrapped/filled
