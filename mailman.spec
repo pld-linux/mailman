@@ -7,7 +7,7 @@ Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.6
 %define		_rc	rc1
-Release:	0.%{_rc}.0.3
+Release:	0.%{_rc}.1
 Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
@@ -267,7 +267,7 @@ fi
 %attr(640,root,http) %config(noreplace) %verify(not size mtime md5) /etc/httpd/httpd.conf/*%{name}.conf
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/%{name}
 /etc/smrsh/%{name}
-%config(noreplace) %verify(not size mtime md5) /etc/cron.d/%{name}
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/cron.d/%{name}
 %attr(2775,root,mailman) %dir %{_configdir}
 %attr(644,root,mailman) %config(noreplace) %verify(not size mtime md5) %{_configdir}/mm_cfg.py
 
