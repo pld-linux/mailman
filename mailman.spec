@@ -264,12 +264,12 @@ fi
 %defattr(644,root,root,755)
 %doc BUGS FAQ NEWS README README.CONTRIB README.NETSCAPE README.USERAGENT TODO UPGRADING INSTALL
 %{_mandir}/man?/*
-%attr(640,root,http) %config(noreplace) %verify(not size mtime md5) /etc/httpd/httpd.conf/*%{name}.conf
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/%{name}
+%attr(640,root,http) %config(noreplace) %verify(not md5 mtime size) /etc/httpd/httpd.conf/*%{name}.conf
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
 /etc/smrsh/%{name}
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/cron.d/%{name}
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/cron.d/%{name}
 %attr(2775,root,mailman) %dir %{_configdir}
-%attr(644,root,mailman) %config(noreplace) %verify(not size mtime md5) %{_configdir}/mm_cfg.py
+%attr(644,root,mailman) %config(noreplace) %verify(not md5 mtime size) %{_configdir}/mm_cfg.py
 
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
 
