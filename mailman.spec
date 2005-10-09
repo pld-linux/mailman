@@ -27,12 +27,17 @@ Patch3:		%{name}-minus-one-jobs.patch
 Patch4:		%{name}-encoding.patch
 Patch5:		%{name}-dont-send-broken-reminder-ugly-hack.patch
 Patch6:		http://www.list.org/CAN-2005-0202.txt
+Patch7:		%{name}-mailmanctl-status.patch
+Patch8:		%{name}-cron.patch
+Patch9:		%{name}-python-compile.patch
+Patch10:	%{name}-build.patch
+Patch11:	%{name}-FHS.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	python >= 2.1
 BuildRequires:	python-devel
-BuildRequires:	rpmbuild(macros) >= 1.159
+BuildRequires:	rpmbuild(macros) >= 1.202
 PreReq:		rc-scripts
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
@@ -52,6 +57,12 @@ Requires:	webserver
 Provides:	group(mailman)
 Provides:	user(mailman)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define		_configdir	/etc/%{name}
+%define		_lockdir	/var/lock/%{name}
+%define		_logdir		/var/log/%{name}
+%define		_logarchdir	/var/log/archiv/%{name}
+%define		_piddir		/var/run/%{name}
 
 %description
 Mailman -- The GNU Mailing List Management System -- is a mailing list
@@ -142,6 +153,11 @@ versões e problemas conhecidos: http://mailman.sourceforge.net/ .
 cd Mailman/Cgi/
 %patch6 -p0
 cd ../../
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
 
 %build
 %{__aclocal}
@@ -151,6 +167,11 @@ cd ../../
 	--prefix=%{_libdir}/mailman \
 	--exec-prefix=%{_libdir}/mailman \
 	--with-var-prefix=/var/lib/mailman \
+	--with-config-dir=%{_configdir} \
+	--with-lock-dir=%{_lockdir} \
+	--with-log-dir=%{_logdir} \
+	--with-pid-dir=%{_piddir} \
+	--with-queue-dir=/var/lib/mailman/qfiles \
 	--without-permcheck \
 	--with-username=%{name} \
 	--with-groupname=%{name} \
@@ -162,7 +183,9 @@ cd ../../
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/etc/{cron.d,httpd/httpd.conf,mailman,rc.d/init.d,sysconfig},%{_mandir}}
+install -d $RPM_BUILD_ROOT{/etc/{cron.d,httpd/httpd.conf,rc.d/init.d,sysconfig},%{_mandir}} \
+	$RPM_BUILD_ROOT{%{_varmmdir},%{_quedirdir},%{_configdir},%{_lockdir},%{_logdir},%{_logarchdir},%{_piddir}}
+
 
 PYTHONPATH=$RPM_BUILD_ROOT%{_libdir}/mailman/:$RPM_BUILD_ROOT%{_libdir}/mailman/pythonlib/
 export PYTHONPATH
@@ -179,10 +202,11 @@ install %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/httpd.conf/90_%{name}.conf
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 
-mv $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py $RPM_BUILD_ROOT/etc/%{name}
-ln -s /etc/%{name}/mm_cfg.py $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py
 
-cat >> $RPM_BUILD_ROOT/etc/%{name}/mm_cfg.py << EOF
+mv $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py $RPM_BUILD_ROOT%{_configdir}
+ln -s %{_configdir}/mm_cfg.py $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py
+
+cat >> $RPM_BUILD_ROOT%{_configdir}/mm_cfg.py << EOF
 DEFAULT_EMAIL_HOST		= 'YOUR.HOST.NAME.HERE'
 DEFAULT_URL_HOST		= 'YOUR.HOST.NAME.HERE'
 IMAGE_LOGOS			= '/mailman/icons/'
@@ -195,30 +219,15 @@ MAILMAN_USER			= '%{name}'
 # %{_libdir}/mailman/Mailman/Defaults.py
 EOF
 
+# Create a link to the wrapper in /etc/smrsh to allow sendmail to run it.
+ln -s %{_datadir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if [ -n "`/usr/bin/getgid mailman`" ]; then
-	if [ "`/usr/bin/getgid mailman`" != "94" ]; then
-		echo "Error: group mailman doesn't have gid=94. Correct this before installing %{name}." 1>&2
-		exit 1
-	fi
-else
-	echo "Adding group mailman GID=94"
-	/usr/sbin/groupadd -g 94 mailman
-fi
-
-if [ -n "`/bin/id -u mailman 2>/dev/null`" ]; then
-	if [ "`/bin/id -u mailman`" != "94" ]; then
-		echo "Error: user mailman doesn't have uid=94. Correct this before installing %{name}." 1>&2
-		exit 1
-	fi
-else
-	echo "Adding user mailman UID=94"
-	/usr/sbin/useradd -u 94 -d %{_var}/lib/%{name} -s /bin/false \
-		-c "GNU Mailing List Manager" -g mailman mailman 1>&2
-fi
+%groupadd -g 94 mailman
+%useradd -u 94 -d %{_var}/lib/%{name} -s /bin/false -c "GNU Mailing List Manager" -g mailman mailman
 
 %post
 if [ "$1" = "1" ]; then
@@ -265,6 +274,7 @@ fi
 %attr(640,root,http) %config(noreplace) %verify(not size mtime md5) /etc/httpd/httpd.conf/*%{name}.conf
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/%{name}
 %config(noreplace) %verify(not size mtime md5) /etc/cron.d/%{name}
+/etc/smrsh/%{name}
 %dir /etc/%{name}
 %attr(644,root,mailman) %config(noreplace) %verify(not size mtime md5) /etc/%{name}/mm_cfg.py
 
@@ -307,3 +317,7 @@ fi
 %dir %{_var}/lib/mailman/logs
 %dir %{_var}/lib/mailman/qfiles
 %dir %{_var}/lib/mailman/spam
+%dir %{_lockdir}
+%dir %{_logdir}
+%dir %{_logarchdir}
+%dir %{_piddir}
