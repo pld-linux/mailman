@@ -1,5 +1,4 @@
 # TODO:
-# - make this mess FHS compliant (Work in Progress)
 # - add triggers /var/spool -> /var/lib?
 # - are *.po files (beside *.mo) needed in binary package?
 Summary:	The GNU Mailing List Management System
@@ -183,17 +182,14 @@ cd ../../
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/etc/{cron.d,httpd/httpd.conf,rc.d/init.d,sysconfig},%{_mandir}} \
-	$RPM_BUILD_ROOT{%{_varmmdir},%{_quedirdir},%{_configdir},%{_lockdir},%{_logdir},%{_logarchdir},%{_piddir}}
-
+install -d $RPM_BUILD_ROOT{/etc/{cron.d,httpd/httpd.conf,rc.d/init.d,sysconfig,smrsh},%{_mandir}} \
+	$RPM_BUILD_ROOT%{_logarchdir}
 
 PYTHONPATH=$RPM_BUILD_ROOT%{_libdir}/mailman/:$RPM_BUILD_ROOT%{_libdir}/mailman/pythonlib/
 export PYTHONPATH
 
 %{__make} doinstall \
-	prefix=$RPM_BUILD_ROOT%{_libdir}/mailman \
-	exec_prefix=$RPM_BUILD_ROOT%{_libdir}/mailman \
-	var_prefix=$RPM_BUILD_ROOT%{_var}/lib/mailman
+	DESTDIR=$RPM_BUILD_ROOT
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
@@ -201,7 +197,6 @@ sed 's#/usr#mailman /usr#' cron/crontab.in > $RPM_BUILD_ROOT/etc/cron.d/%{name}
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/httpd.conf/90_%{name}.conf
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
-
 
 mv $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py $RPM_BUILD_ROOT%{_configdir}
 ln -s %{_configdir}/mm_cfg.py $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py
@@ -220,7 +215,7 @@ MAILMAN_USER			= '%{name}'
 EOF
 
 # Create a link to the wrapper in /etc/smrsh to allow sendmail to run it.
-ln -s %{_datadir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
+ln -s %{_libdir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -267,6 +262,22 @@ fi
 %triggerpostun -- mailman < mailman %{epoch}:%{version}-%{release}
 %{_libdir}/mailman/bin/update
 
+#%triggerin -- mailman < mailman %{epoch}:%{version}-%{release}
+#if [ -f /var/lock/subsys/mailman ]; then
+#	/etc/rc.d/init.d/mailman stop 1>&2
+#	stopped=true
+#fi
+#echo "Moving data from /var/spool/mailman to /var/lib/mailman"
+#mv -f /var/spool/mailman/archives/* %{_var}/lib/mailman/archives/
+#mv -f /var/spool/mailman/data/* %{_var}/lib/mailman/data/
+#mv -f /var/spool/mailman/lists/* %{_var}/lib/mailman/lists/
+#mv -f /var/spool/mailman/qfiles/* %{_var}/lib/mailman/qfiles/
+#mv -f /var/spool/mailman/spam/* %{_var}/lib/mailman/spam/
+#mv -f /var/spool/mailman/logs/* %{_logdir}/
+#if [ "x$stopped" = "xtrue" ]; then
+#	/etc/rc.d/init.d/mailman start 1>&2
+#fi
+
 %files
 %defattr(644,root,root,755)
 %doc BUGS FAQ NEWS README README.LINUX README.EXIM README.POSTFIX README.SENDMAIL README.QMAIL README.USERAGENT TODO UPGRADING INSTALL
@@ -275,21 +286,19 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/%{name}
 %config(noreplace) %verify(not size mtime md5) /etc/cron.d/%{name}
 /etc/smrsh/%{name}
-%dir /etc/%{name}
-%attr(644,root,mailman) %config(noreplace) %verify(not size mtime md5) /etc/%{name}/mm_cfg.py
+%attr(2775,root,mailman) %dir %{_configdir}
+%attr(644,root,mailman) %config(noreplace) %verify(not size mtime md5) %{_configdir}/mm_cfg.py
+%attr(644,root,mailman) %config(noreplace) %verify(not size mtime md5) %{_configdir}/sitelist.cfg
 
 %attr(754,root,root) /etc/rc.d/init.d/mailman
 
 %defattr(644,root,mailman,2775)
 %dir %{_libdir}/mailman
-%dir %{_libdir}/mailman/cgi-bin
-%dir %{_libdir}/mailman/mail
-%attr(2755,root,mailman) %{_libdir}/mailman/*/*
-
-%dir %{_libdir}/mailman
 %dir %{_libdir}/mailman/bin
+%dir %{_libdir}/mailman/cgi-bin
 %dir %{_libdir}/mailman/cron
 %dir %{_libdir}/mailman/icons
+%dir %{_libdir}/mailman/mail
 %dir %{_libdir}/mailman/scripts
 %dir %{_libdir}/mailman/templates
 %dir %{_libdir}/mailman/pythonlib
@@ -299,9 +308,11 @@ fi
 %{_libdir}/mailman/Mailman
 %{_libdir}/mailman/bin/p*
 %attr(2755,root,mailman) %{_libdir}/mailman/bin/[!p]*
+%attr(2755,root,mailman) %{_libdir}/mailman/cgi-bin/*
 %{_libdir}/mailman/cron/*
 %{_libdir}/mailman/scripts/*
 %{_libdir}/mailman/icons/*
+%attr(2755,root,mailman) %{_libdir}/mailman/mail/*
 %{_libdir}/mailman/templates/*
 %{_libdir}/mailman/pythonlib/*
 %{_libdir}/mailman/messages/*
@@ -313,8 +324,6 @@ fi
 %dir %{_var}/lib/mailman/archives/public
 %{_var}/lib/mailman/data
 %dir %{_var}/lib/mailman/lists
-%dir %{_var}/lib/mailman/locks
-%dir %{_var}/lib/mailman/logs
 %dir %{_var}/lib/mailman/qfiles
 %dir %{_var}/lib/mailman/spam
 %dir %{_lockdir}
