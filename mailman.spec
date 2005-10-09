@@ -7,7 +7,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.5
-Release:	7
+Release:	7.1
 Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
@@ -147,9 +147,9 @@ cd ../../
 %{__autoconf}
 
 %configure \
-	--prefix=/var/lib/mailman \
-	--exec-prefix=/usr/lib/mailman \
-	--with-var-prefix=/var/spool/mailman \
+	--prefix=%{_libdir}/mailman \
+	--exec-prefix=%{_libdir}/mailman \
+	--with-var-prefix=/var/lib/mailman \
 	--without-permcheck \
 	--with-username=%{name} \
 	--with-groupname=%{name} \
@@ -163,13 +163,13 @@ cd ../../
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{/etc/{cron.d,httpd/httpd.conf,mailman,rc.d/init.d,sysconfig},%{_mandir}}
 
-PYTHONPATH=$RPM_BUILD_ROOT/var/lib/mailman/:$RPM_BUILD_ROOT/var/lib/mailman/pythonlib/
+PYTHONPATH=$RPM_BUILD_ROOT%{_libdir}/mailman/:$RPM_BUILD_ROOT%{_libdir}/mailman/pythonlib/
 export PYTHONPATH
 
 %{__make} doinstall \
-	prefix=$RPM_BUILD_ROOT%{_var}/lib/mailman \
+	prefix=$RPM_BUILD_ROOT%{_libdir}/mailman \
 	exec_prefix=$RPM_BUILD_ROOT%{_libdir}/mailman \
-	var_prefix=$RPM_BUILD_ROOT%{_var}/spool/mailman
+	var_prefix=$RPM_BUILD_ROOT%{_var}/lib/mailman
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
@@ -178,8 +178,8 @@ install %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/httpd.conf/90_%{name}.conf
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 
-mv $RPM_BUILD_ROOT/var/lib/%{name}/Mailman/mm_cfg.py $RPM_BUILD_ROOT/etc/%{name}
-ln -s /etc/%{name}/mm_cfg.py $RPM_BUILD_ROOT/var/lib/%{name}/Mailman/mm_cfg.py
+mv $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py $RPM_BUILD_ROOT/etc/%{name}
+ln -s /etc/%{name}/mm_cfg.py $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py
 
 cat >> $RPM_BUILD_ROOT/etc/%{name}/mm_cfg.py << EOF
 DEFAULT_EMAIL_HOST		= 'YOUR.HOST.NAME.HERE'
@@ -191,7 +191,7 @@ MAILMAN_USER			= '%{name}'
 #DEFAULT_SERVER_LANGUAGE		= 'pl'
 
 # For available options and their descriptions see:
-# /var/lib/mailman/Mailman/Defaults.py
+# %{_libdir}/mailman/Mailman/Defaults.py
 EOF
 
 %clean
@@ -215,7 +215,7 @@ if [ -n "`/bin/id -u mailman 2>/dev/null`" ]; then
 	fi
 else
 	echo "Adding user mailman UID=94"
-	/usr/sbin/useradd -u 94 -d %{_var}/spool/%{name} -s /bin/false \
+	/usr/sbin/useradd -u 94 -d %{_var}/lib/%{name} -s /bin/false \
 		-c "GNU Mailing List Manager" -g mailman mailman 1>&2
 fi
 
@@ -255,7 +255,7 @@ if [ -f /var/spool/cron/%{name} ]; then
 fi
 
 %triggerpostun -- mailman < mailman %{epoch}:%{version}-%{release}
-%{_var}/lib/mailman/bin/update
+%{_libdir}/mailman/bin/update
 
 %files
 %defattr(644,root,root,755)
@@ -275,34 +275,34 @@ fi
 %dir %{_libdir}/mailman/mail
 %attr(2755,root,mailman) %{_libdir}/mailman/*/*
 
+%dir %{_libdir}/mailman
+%dir %{_libdir}/mailman/bin
+%dir %{_libdir}/mailman/cron
+%dir %{_libdir}/mailman/icons
+%dir %{_libdir}/mailman/scripts
+%dir %{_libdir}/mailman/templates
+%dir %{_libdir}/mailman/pythonlib
+%dir %{_libdir}/mailman/messages
+%dir %{_libdir}/mailman/tests
+
+%{_libdir}/mailman/Mailman
+%{_libdir}/mailman/bin/p*
+%attr(2755,root,mailman) %{_libdir}/mailman/bin/[!p]*
+%{_libdir}/mailman/cron/*
+%{_libdir}/mailman/scripts/*
+%{_libdir}/mailman/icons/*
+%{_libdir}/mailman/templates/*
+%{_libdir}/mailman/pythonlib/*
+%{_libdir}/mailman/messages/*
+%{_libdir}/mailman/tests/*
+
 %dir %{_var}/lib/mailman
-%dir %{_var}/lib/mailman/bin
-%dir %{_var}/lib/mailman/cron
-%dir %{_var}/lib/mailman/icons
-%dir %{_var}/lib/mailman/scripts
-%dir %{_var}/lib/mailman/templates
-%dir %{_var}/lib/mailman/pythonlib
-%dir %{_var}/lib/mailman/messages
-%dir %{_var}/lib/mailman/tests
-
-%{_var}/lib/mailman/Mailman
-%{_var}/lib/mailman/bin/p*
-%attr(2755,root,mailman) %{_var}/lib/mailman/bin/[!p]*
-%{_var}/lib/mailman/cron/*
-%{_var}/lib/mailman/scripts/*
-%{_var}/lib/mailman/icons/*
-%{_var}/lib/mailman/templates/*
-%{_var}/lib/mailman/pythonlib/*
-%{_var}/lib/mailman/messages/*
-%{_var}/lib/mailman/tests/*
-
-%dir %{_var}/spool/mailman
-%dir %{_var}/spool/mailman/archives
-%attr(2771,root,mailman) %dir %{_var}/spool/mailman/archives/private
-%dir %{_var}/spool/mailman/archives/public
-%{_var}/spool/mailman/data
-%dir %{_var}/spool/mailman/lists
-%dir %{_var}/spool/mailman/locks
-%dir %{_var}/spool/mailman/logs
-%dir %{_var}/spool/mailman/qfiles
-%dir %{_var}/spool/mailman/spam
+%dir %{_var}/lib/mailman/archives
+%attr(2771,root,mailman) %dir %{_var}/lib/mailman/archives/private
+%dir %{_var}/lib/mailman/archives/public
+%{_var}/lib/mailman/data
+%dir %{_var}/lib/mailman/lists
+%dir %{_var}/lib/mailman/locks
+%dir %{_var}/lib/mailman/logs
+%dir %{_var}/lib/mailman/qfiles
+%dir %{_var}/lib/mailman/spam
