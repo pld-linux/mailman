@@ -1,5 +1,6 @@
 # TODO:
-# - make this mess FHS compliant
+# - make this mess FHS compliant (Work in Progress)
+# - add triggers /var/spool -> /var/lib?
 # - are *.po files (beside *.mo) needed in binary package?
 Summary:	The GNU Mailing List Management System
 Summary(es):	El Sistema de Mantenimiento de listas de GNU
