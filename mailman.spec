@@ -254,18 +254,27 @@ if [ "$1" = "0" ]; then
 	fi
 fi
 
-%triggerpostun -- mailman <= mailman 3:2.0.13-6
+%triggerpostun -- mailman <= 3:2.0.13-6
 if [ -f /var/spool/cron/%{name} ]; then
 	crontab -u %{name} -r
 fi
 
-%triggerpostun -- mailman < mailman %{epoch}:%{version}-%{release}
+%triggerpostun -- mailman < %{epoch}:%{version}-%{release}
+# TODO, move this to pre or post as it will kill any other trigger as
+# it's the "best match", besides "triggerpostun < %{epoch}:%{version}-%{release}"
+# and "post" are called with same criteria
 %{_libdir}/mailman/bin/update
 
-#%triggerin -- mailman < mailman %{epoch}:%{version}-%{release}
+#%triggerpostun -- mailman < 5:2.1.5-7.1
+# NB, the trigger with bin/update will kill running of any other
+# trigger as only one trigger is ran per upgrade!!!
 #if [ -f /var/lock/subsys/mailman ]; then
 #	/etc/rc.d/init.d/mailman stop 1>&2
 #	stopped=true
+#fi
+#if [ "`getent passwd mailman | cut -d: -f6`" != "%{_var}/lib/%{name}" ]; then
+#	echo "Fixing passwd entry"
+#	/usr/sbin/usermod -d %{_var}/lib/%{name} mailman
 #fi
 #echo "Moving data from /var/spool/mailman to /var/lib/mailman"
 #mv -f /var/spool/mailman/archives/* %{_var}/lib/mailman/archives/
