@@ -235,6 +235,9 @@ if [ "$1" = "1" ]; then
 fi
 /sbin/chkconfig --add mailman
 if [ -f /var/lock/subsys/mailman ]; then
+	if [ -d /var/spool/mailman/data ]; then
+		ln -sf %{_configdir}/sitelist.cfg /var/spool/mailman/data/sitelist.cfg
+	fi
 	/etc/rc.d/init.d/mailman restart 1>&2
 else
 	echo "Run \"/etc/rc.d/init.d/mailman start\" to start mailman qrunner daemon."
@@ -276,6 +279,7 @@ fi
 
 %triggerpostun -- mailman <= 5:2.1.5-7
 if [ -f /var/lock/subsys/mailman ]; then
+	ln -sf %{_configdir}/sitelist.cfg /var/spool/mailman/data/sitelist.cfg
 	/etc/rc.d/init.d/mailman stop 1>&2
 	stopped=true
 fi
@@ -296,12 +300,13 @@ mv -f /var/spool/mailman/qfiles/* %{_queuedir}/
 rmdir --ignore-fail-on-non-empty /var/spool/mailman/{archives/{private,public},archives,data,lists,spam,logs,locks,qfiles}
 %{_libdir}/mailman/bin/update
 if [ "x$stopped" = "xtrue" ]; then
+	rm -f /var/spool/mailman/data/sitelist.cfg
 	/etc/rc.d/init.d/mailman start 1>&2
 fi
 # Restore apache config
-if [ -f /etc/httpd/httpd.conf/99_%{name}.conf.rpmsave ] ; then
+if [ -f /etc/httpd/httpd.conf/90_%{name}.conf.rpmsave ] ; then
 	mv -f %{_configdir}/apache.conf{,.rpmnew}
-	mv -f /etc/httpd/httpd.conf/99_%{name}.conf.rpmsave %{_configdir}/apache.conf
+	mv -f /etc/httpd/httpd.conf/90_%{name}.conf.rpmsave %{_configdir}/apache.conf
 	echo "%{_configdir}/apache.conf created as %{_configdir}/apache.conf.rpmnew"
 fi
 
