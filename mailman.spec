@@ -192,7 +192,7 @@ export PYTHONPATH
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
-sed 's#/usr#mailman /usr#' cron/crontab.in > $RPM_BUILD_ROOT/etc/cron.d/%{name}
+install cron/crontab.in $RPM_BUILD_ROOT/etc/cron.d/%{name}
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/httpd.conf/90_%{name}.conf
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
@@ -269,12 +269,14 @@ if [ "`getent passwd mailman | cut -d: -f6`" != "%{_var}/lib/%{name}" ]; then
 	/usr/sbin/usermod -d %{_var}/lib/%{name} mailman
 fi
 echo "Moving data from /var/spool/mailman to /var/lib/mailman"
-mv -f /var/spool/mailman/archives/* %{_var}/lib/mailman/archives/
+mv -f /var/spool/mailman/archives/private/* %{_var}/lib/mailman/archives/private/
+mv -f /var/spool/mailman/archives/public/* %{_var}/lib/mailman/archives/public/
 mv -f /var/spool/mailman/data/* %{_var}/lib/mailman/data/
 mv -f /var/spool/mailman/lists/* %{_var}/lib/mailman/lists/
 mv -f /var/spool/mailman/qfiles/* %{_var}/lib/mailman/qfiles/
 mv -f /var/spool/mailman/spam/* %{_var}/lib/mailman/spam/
 mv -f /var/spool/mailman/logs/* %{_logdir}/
+mv -f /var/spool/mailman/locks/* %{_lockdir}/
 if [ "x$stopped" = "xtrue" ]; then
 	/etc/rc.d/init.d/mailman start 1>&2
 fi
