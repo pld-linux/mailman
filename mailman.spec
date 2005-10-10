@@ -194,7 +194,7 @@ export PYTHONPATH
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
 install cron/crontab.in $RPM_BUILD_ROOT/etc/cron.d/%{name}
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/httpd.conf/90_%{name}.conf
+install %{SOURCE2} $RPM_BUILD_ROOT%{_configdir}/apache.conf
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 
@@ -257,6 +257,18 @@ if [ "$1" = "0" ]; then
 	fi
 fi
 
+%triggerin -- apache1 >= 1.3.33-2
+%apache_config_install -v 1 -c %{_sysconfdir}/apache.conf
+
+%triggerun -- apache1 >= 1.3.33-2
+%apache_config_uninstall -v 1
+
+%triggerin -- apache >= 2.0.0
+%apache_config_install -v 2 -c %{_sysconfdir}/apache.conf
+
+%triggerun -- apache >= 2.0.0
+%apache_config_uninstall -v 2
+
 %triggerpostun -- mailman <= 3:2.0.13-6
 if [ -f /var/spool/cron/%{name} ]; then
 	crontab -u %{name} -r
@@ -280,19 +292,28 @@ mv -f /var/spool/mailman/spam/* %{_var}/lib/mailman/spam/
 mv -f /var/spool/mailman/logs/* %{_logdir}/
 mv -f /var/spool/mailman/locks/* %{_lockdir}/
 mv -f /var/spool/mailman/qfiles/* %{_queuedir}/
+# Remove empty dirs (DON'T rm -rf here!)
+rmdir --ignore-fail-on-non-empty /var/spool/mailman/{archives/{private,public},archives,data,lists,spam,logs,locks,qfiles}
+%{_libdir}/mailman/bin/update
 if [ "x$stopped" = "xtrue" ]; then
 	/etc/rc.d/init.d/mailman start 1>&2
+fi
+# Restore apache config
+if [ -f /etc/httpd/httpd.conf/99_%{name}.conf.rpmsave ] ; then
+	mv -f %{_configdir}/apache.conf{,.rpmnew}
+	mv -f /etc/httpd/httpd.conf/99_%{name}.conf.rpmsave %{_configdir}/apache.conf
+	echo "%{_configdir}/apache.conf created as %{_configdir}/apache.conf.rpmnew"
 fi
 
 %files
 %defattr(644,root,root,755)
 %doc BUGS FAQ NEWS README README.LINUX README.EXIM README.POSTFIX README.SENDMAIL README.QMAIL README.USERAGENT TODO UPGRADING INSTALL
 %{_mandir}/man?/*
-%attr(640,root,http) %config(noreplace) %verify(not size mtime md5) /etc/httpd/httpd.conf/*%{name}.conf
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/%{name}
 %config(noreplace) %verify(not size mtime md5) /etc/cron.d/%{name}
 /etc/smrsh/%{name}
 %attr(2775,root,mailman) %dir %{_configdir}
+%attr(640,root,http) %config(noreplace) %verify(not size mtime md5) %{_configdir}/apache.conf
 %attr(644,root,mailman) %config(noreplace) %verify(not size mtime md5) %{_configdir}/mm_cfg.py
 %attr(644,root,mailman) %config(noreplace) %verify(not size mtime md5) %{_configdir}/sitelist.cfg
 
