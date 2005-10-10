@@ -57,6 +57,7 @@ Provides:	user(mailman)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_configdir	/etc/%{name}
+%define		_queuedir	/var/spool/mailman
 %define		_lockdir	/var/lock/%{name}
 %define		_logdir		/var/log/%{name}
 %define		_logarchdir	/var/log/archiv/%{name}
@@ -169,7 +170,7 @@ cd ../../
 	--with-lock-dir=%{_lockdir} \
 	--with-log-dir=%{_logdir} \
 	--with-pid-dir=%{_piddir} \
-	--with-queue-dir=/var/lib/mailman/qfiles \
+	--with-queue-dir=%{_queuedir} \
 	--without-permcheck \
 	--with-username=%{name} \
 	--with-groupname=%{name} \
@@ -199,6 +200,8 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 
 mv $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py $RPM_BUILD_ROOT%{_configdir}
 ln -s %{_configdir}/mm_cfg.py $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py
+
+ln -s %{_configdir}/sitelist.cfg $RPM_BUILD_ROOT%{_var}/lib/mailman/data/sitelist.cfg
 
 cat >> $RPM_BUILD_ROOT%{_configdir}/mm_cfg.py << EOF
 DEFAULT_EMAIL_HOST		= 'YOUR.HOST.NAME.HERE'
@@ -273,10 +276,10 @@ mv -f /var/spool/mailman/archives/private/* %{_var}/lib/mailman/archives/private
 mv -f /var/spool/mailman/archives/public/* %{_var}/lib/mailman/archives/public/
 mv -f /var/spool/mailman/data/* %{_var}/lib/mailman/data/
 mv -f /var/spool/mailman/lists/* %{_var}/lib/mailman/lists/
-mv -f /var/spool/mailman/qfiles/* %{_var}/lib/mailman/qfiles/
 mv -f /var/spool/mailman/spam/* %{_var}/lib/mailman/spam/
 mv -f /var/spool/mailman/logs/* %{_logdir}/
 mv -f /var/spool/mailman/locks/* %{_lockdir}/
+mv -f /var/spool/mailman/qfiles/* %{_queuedir}/
 if [ "x$stopped" = "xtrue" ]; then
 	/etc/rc.d/init.d/mailman start 1>&2
 fi
@@ -327,8 +330,8 @@ fi
 %dir %{_var}/lib/mailman/archives/public
 %{_var}/lib/mailman/data
 %dir %{_var}/lib/mailman/lists
-%dir %{_var}/lib/mailman/qfiles
 %dir %{_var}/lib/mailman/spam
+%dir %{_queuedir}
 %dir %{_lockdir}
 %dir %{_logdir}
 %dir %{_logarchdir}
