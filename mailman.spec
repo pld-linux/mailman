@@ -1,5 +1,4 @@
 # TODO:
-# - add triggers /var/spool -> /var/lib?
 # - are *.po files (beside *.mo) needed in binary package?
 Summary:	The GNU Mailing List Management System
 Summary(es):	El Sistema de Mantenimiento de listas de GNU
@@ -225,6 +224,7 @@ rm -rf $RPM_BUILD_ROOT
 %useradd -u 94 -d %{_var}/lib/%{name} -s /bin/false -c "GNU Mailing List Manager" -g mailman mailman
 
 %post
+%{_libdir}/mailman/bin/update
 if [ "$1" = "1" ]; then
 	if [ -f /var/lock/subsys/crond ]; then
 		/etc/rc.d/init.d/crond restart
@@ -259,33 +259,25 @@ if [ -f /var/spool/cron/%{name} ]; then
 	crontab -u %{name} -r
 fi
 
-%triggerpostun -- mailman < %{epoch}:%{version}-%{release}
-# TODO, move this to pre or post as it will kill any other trigger as
-# it's the "best match", besides "triggerpostun < %{epoch}:%{version}-%{release}"
-# and "post" are called with same criteria
-%{_libdir}/mailman/bin/update
-
-#%triggerpostun -- mailman < 5:2.1.5-7.1
-# NB, the trigger with bin/update will kill running of any other
-# trigger as only one trigger is ran per upgrade!!!
-#if [ -f /var/lock/subsys/mailman ]; then
-#	/etc/rc.d/init.d/mailman stop 1>&2
-#	stopped=true
-#fi
-#if [ "`getent passwd mailman | cut -d: -f6`" != "%{_var}/lib/%{name}" ]; then
-#	echo "Fixing passwd entry"
-#	/usr/sbin/usermod -d %{_var}/lib/%{name} mailman
-#fi
-#echo "Moving data from /var/spool/mailman to /var/lib/mailman"
-#mv -f /var/spool/mailman/archives/* %{_var}/lib/mailman/archives/
-#mv -f /var/spool/mailman/data/* %{_var}/lib/mailman/data/
-#mv -f /var/spool/mailman/lists/* %{_var}/lib/mailman/lists/
-#mv -f /var/spool/mailman/qfiles/* %{_var}/lib/mailman/qfiles/
-#mv -f /var/spool/mailman/spam/* %{_var}/lib/mailman/spam/
-#mv -f /var/spool/mailman/logs/* %{_logdir}/
-#if [ "x$stopped" = "xtrue" ]; then
-#	/etc/rc.d/init.d/mailman start 1>&2
-#fi
+%triggerpostun -- mailman <= 5:2.1.5-7
+if [ -f /var/lock/subsys/mailman ]; then
+	/etc/rc.d/init.d/mailman stop 1>&2
+	stopped=true
+fi
+if [ "`getent passwd mailman | cut -d: -f6`" != "%{_var}/lib/%{name}" ]; then
+	echo "Fixing passwd entry"
+	/usr/sbin/usermod -d %{_var}/lib/%{name} mailman
+fi
+echo "Moving data from /var/spool/mailman to /var/lib/mailman"
+mv -f /var/spool/mailman/archives/* %{_var}/lib/mailman/archives/
+mv -f /var/spool/mailman/data/* %{_var}/lib/mailman/data/
+mv -f /var/spool/mailman/lists/* %{_var}/lib/mailman/lists/
+mv -f /var/spool/mailman/qfiles/* %{_var}/lib/mailman/qfiles/
+mv -f /var/spool/mailman/spam/* %{_var}/lib/mailman/spam/
+mv -f /var/spool/mailman/logs/* %{_logdir}/
+if [ "x$stopped" = "xtrue" ]; then
+	/etc/rc.d/init.d/mailman start 1>&2
+fi
 
 %files
 %defattr(644,root,root,755)
