@@ -353,7 +353,15 @@ fi
 %{_libdir}/mailman/bin/p*
 %attr(2755,root,mailman) %{_libdir}/mailman/bin/[!p]*
 %attr(2755,root,mailman) %{_libdir}/mailman/cgi-bin/*
-%{_libdir}/mailman/cron/*
+%attr(755,root,mailman) %{_libdir}/mailman/cron/bumpdigests
+%attr(755,root,mailman) %{_libdir}/mailman/cron/checkdbs
+%attr(755,root,mailman) %{_libdir}/mailman/cron/disabled
+%attr(755,root,mailman) %{_libdir}/mailman/cron/gate_news
+%attr(755,root,mailman) %{_libdir}/mailman/cron/mailpasswds
+%attr(755,root,mailman) %{_libdir}/mailman/cron/nightly_gzip
+%attr(755,root,mailman) %{_libdir}/mailman/cron/senddigests
+%{_libdir}/mailman/cron/crontab.in
+%{_libdir}/mailman/cron/paths.py*
 %{_libdir}/mailman/scripts/*
 %{_libdir}/mailman/icons/*
 %attr(2755,root,mailman) %{_libdir}/mailman/mail/*
