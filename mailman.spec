@@ -298,6 +298,16 @@ mv -f /var/spool/mailman/spam/* %{_var}/lib/mailman/spam/
 mv -f /var/spool/mailman/logs/* %{_logdir}/
 mv -f /var/spool/mailman/locks/* %{_lockdir}/
 mv -f /var/spool/mailman/qfiles/* %{_queuedir}/
+# Fix symlinks for public archives
+cd %{_var}/lib/mailman/archives/public/
+for i in * ; do
+	link=$(readlink "$i")
+	dn=$(dirname "$link")
+	if [ "$dn" = "/var/spool/mailman/archives/private" ]; then
+		ln -sf "%{_var}/lib/mailman/archives/private/$i" "$i"
+	fi
+done
+cd -
 # Remove empty dirs (DON'T rm -rf here!)
 rmdir --ignore-fail-on-non-empty /var/spool/mailman/{archives/{private,public},archives,data,lists,spam,logs,locks,qfiles}
 %{_libdir}/mailman/bin/update
