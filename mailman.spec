@@ -258,13 +258,13 @@ if [ "$1" = "0" ]; then
 fi
 
 %triggerin -- apache1 >= 1.3.33-2
-%apache_config_install -v 1 -c %{_sysconfdir}/apache.conf
+%apache_config_install -v 1 -c %{_configdir}/apache.conf
 
 %triggerun -- apache1 >= 1.3.33-2
 %apache_config_uninstall -v 1
 
 %triggerin -- apache >= 2.0.0
-%apache_config_install -v 2 -c %{_sysconfdir}/apache.conf
+%apache_config_install -v 2 -c %{_configdir}/apache.conf
 
 %triggerun -- apache >= 2.0.0
 %apache_config_uninstall -v 2
