@@ -6,13 +6,12 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.6
-%define		_rc	rc1
-Release:	0.%{_rc}.1
-Epoch:		5
+Release:	0.4
+Epoch:		1
 License:	GPL v2+
 Group:		Applications/System
-Source0:	http://dl.sourceforge.net/mailman/%{name}-%{version}%{_rc}.tgz
-# Source0-md5:	3663a67606f43ff40a79a9ef092d58de
+Source0:	http://dl.sourceforge.net/mailman/%{name}-%{version}.tgz
+# Source0-md5:	4e0f9d09c1553bd1a0a5327052179ca2
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 # Source1-md5:	6b55f9f8051c76961b84a12ed17fc14f
 Source2:	%{name}.conf
@@ -136,7 +135,7 @@ maior parte em Python. Características:
   domínio correto.
 
 %prep
-%setup -q -n %{name}-%{version}%{_rc}
+%setup -q -n %{name}-%{version}
 #patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -153,7 +152,7 @@ maior parte em Python. Características:
 
 %configure \
 	--prefix=%{_varmmdir} \
-	--exec-prefix=%{_varmmdir} \
+	--exec-prefix=%{_libdir}/%{name} \
 	--with-var-prefix=%{_quedirdir} \
 	--with-config-dir=%{_configdir} \
 	--with-lock-dir=%{_lockdir} \
@@ -174,7 +173,7 @@ maior parte em Python. Características:
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{/etc/{cron.d,httpd/httpd.conf,rc.d/init.d,sysconfig,smrsh},%{_mandir}} \
-	$RPM_BUILD_ROOT{%{_varmmdir},%{_quedirdir},%{_configdir},%{_lockdir},%{_logdir},%{_logarchdir},%{_piddir}}
+	$RPM_BUILD_ROOT{%{_varmmdir},%{_quedirdir},%{_quedirdir}/qfiles,%{_configdir},%{_lockdir},%{_logdir},%{_logarchdir},%{_piddir}}
 
 PYTHONPATH=$RPM_BUILD_ROOT%{_varmmdir}:$RPM_BUILD_ROOT%{_varmmdir}/pythonlib/
 export PYTHONPATH
@@ -182,12 +181,13 @@ export PYTHONPATH
 %{__make} doinstall \
 	prefix=$RPM_BUILD_ROOT%{_varmmdir} \
 	exec_prefix=$RPM_BUILD_ROOT%{_libdir}/mailman \
-	var_prefix=$RPM_BUILD_ROOT%{_quedirdir}
+	var_prefix=$RPM_BUILD_ROOT%{_quedirdir} \
+	FHS_DIRS=$RPM_BUILD_ROOT
 
 %{__make} install-packages -C misc \
 	prefix=$RPM_BUILD_ROOT%{_varmmdir} \
 	exec_prefix=$RPM_BUILD_ROOT%{_libdir}/mailman \
-	var_prefix=$RPM_BUILD_ROOT%{_quedirdir}
+	var_prefix=$RPM_BUILD_ROOT%{_quedirdir} \
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
@@ -213,7 +213,8 @@ MAILMAN_USER			= '%{name}'
 EOF
 
 # Create a link to the wrapper in /etc/smrsh to allow sendmail to run it.
-ln -s %{_datadir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
+ln -s %{_libdir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
+#ln -s %{_datadir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -307,7 +308,7 @@ fi
 %{_quedirdir}/data
 %dir %{_quedirdir}/lists
 #%dir %{_quedirdir}/logs
-#%dir %{_quedirdir}/qfiles
+%dir %{_quedirdir}/qfiles
 %dir %{_quedirdir}/spam
 %dir %{_lockdir}
 %dir %{_logdir}
