@@ -6,7 +6,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.6
-Release:	0.4
+Release:	1
 Epoch:		1
 License:	GPL v2+
 Group:		Applications/System
@@ -17,6 +17,7 @@ Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.
 Source2:	%{name}.conf
 Source3:	%{name}.init
 Source4:	%{name}.sysconfig
+Source5:	%{name}.logrotate
 # Need to check if it's still useful
 #Patch0:		%{name}-xss.patch
 Patch1:		%{name}-MM_FIND_GROUP_NAME.patch
@@ -172,7 +173,7 @@ maior parte em Python. Características:
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/etc/{cron.d,httpd/httpd.conf,rc.d/init.d,sysconfig,smrsh},%{_mandir}} \
+install -d $RPM_BUILD_ROOT{/etc/{cron.d,logrotate.d,httpd/httpd.conf,rc.d/init.d,sysconfig,smrsh},%{_mandir}} \
 	$RPM_BUILD_ROOT{%{_varmmdir},%{_quedirdir},%{_quedirdir}/qfiles,%{_configdir},%{_lockdir},%{_logdir},%{_logarchdir},%{_piddir}}
 
 PYTHONPATH=$RPM_BUILD_ROOT%{_varmmdir}:$RPM_BUILD_ROOT%{_varmmdir}/pythonlib/
@@ -195,6 +196,7 @@ sed 's#/usr#mailman /usr#' cron/crontab.in > $RPM_BUILD_ROOT/etc/cron.d/%{name}
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/httpd.conf/90_%{name}.conf
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
+install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}
 
 mv $RPM_BUILD_ROOT%{_varmmdir}/Mailman/mm_cfg.py $RPM_BUILD_ROOT%{_configdir}
 ln -s %{_configdir}/mm_cfg.py $RPM_BUILD_ROOT%{_varmmdir}/Mailman/mm_cfg.py
@@ -269,6 +271,7 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
 /etc/smrsh/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/cron.d/%{name}
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/%{name}
 %attr(2775,root,mailman) %dir %{_configdir}
 %attr(644,root,mailman) %config(noreplace) %verify(not md5 mtime size) %{_configdir}/mm_cfg.py
 
