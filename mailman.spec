@@ -218,6 +218,10 @@ EOF
 ln -s %{_libdir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
 #ln -s %{_datadir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
 
+# regenerate pyc files with proper paths
+find $RPM_BUILD_ROOT -name '*.pyc' -exec rm "{}" ";"
+%py_comp $RPM_BUILD_ROOT
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
