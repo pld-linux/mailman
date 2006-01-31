@@ -216,7 +216,6 @@ EOF
 
 # Create a link to the wrapper in /etc/smrsh to allow sendmail to run it.
 ln -s %{_libdir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
-#ln -s %{_datadir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
 
 # regenerate pyc files with proper paths
 find $RPM_BUILD_ROOT -name '*.pyc' -exec rm "{}" ";"
