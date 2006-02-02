@@ -55,7 +55,7 @@ Provides:	group(mailman)
 Provides:	user(mailman)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_quedirdir	/var/spool/%{name}
+%define		_queuedir	/var/spool/%{name}
 %define		_lockdir	/var/lock/%{name}
 %define		_logdir		/var/log/%{name}
 %define		_logarchdir	/var/log/archiv/%{name}
@@ -161,7 +161,7 @@ maior parte em Python. Características:
 	--with-lock-dir=%{_lockdir} \
 	--with-log-dir=%{_logdir} \
 	--with-pid-dir=%{_piddir} \
-	--with-queue-dir=%{_quedirdir} \
+	--with-queue-dir=%{_queuedir} \
 	--with-username=%{name} \
 	--with-groupname=%{name} \
 	--with-mail-gid='mailman' \
@@ -358,39 +358,45 @@ fi
 
 %defattr(644,root,mailman,2775)
 %dir %{_libdir}/%{name}
-%dir %{_libdir}/%{name}/cgi-bin
-%dir %{_libdir}/%{name}/mail
-%attr(2755,root,mailman) %{_libdir}/%{name}/*/*
-
-%dir %{_libdir}/%{name}
 %dir %{_libdir}/%{name}/bin
+%dir %{_libdir}/%{name}/cgi-bin
 %dir %{_libdir}/%{name}/cron
 %dir %{_libdir}/%{name}/icons
+%dir %{_libdir}/%{name}/mail
 %dir %{_libdir}/%{name}/scripts
 %dir %{_libdir}/%{name}/templates
 %dir %{_libdir}/%{name}/pythonlib
 %dir %{_libdir}/%{name}/messages
 %dir %{_libdir}/%{name}/tests
-
 %{_libdir}/%{name}/Mailman
 %{_libdir}/%{name}/bin/p*
 %attr(2755,root,mailman) %{_libdir}/%{name}/bin/[!p]*
-%attr(755,root,root) %{_libdir}/%{name}/cron/*
+%attr(2755,root,mailman) %{_libdir}/%{name}/cgi-bin/*
+%attr(755,root,mailman) %{_libdir}/%{name}/cron/bumpdigests
+%attr(755,root,mailman) %{_libdir}/%{name}/cron/checkdbs
+%attr(755,root,mailman) %{_libdir}/%{name}/cron/disabled
+%attr(755,root,mailman) %{_libdir}/%{name}/cron/gate_news
+%attr(755,root,mailman) %{_libdir}/%{name}/cron/mailpasswds
+%attr(755,root,mailman) %{_libdir}/%{name}/cron/nightly_gzip
+%attr(755,root,mailman) %{_libdir}/%{name}/cron/senddigests
+%{_libdir}/%{name}/cron/crontab.in
+%{_libdir}/%{name}/cron/paths.py*
 %{_libdir}/%{name}/scripts/*
 %{_libdir}/%{name}/icons/*
+%attr(2755,root,mailman) %{_libdir}/%{name}/mail/*
 %{_libdir}/%{name}/templates/*
 %{_libdir}/%{name}/pythonlib/*
 %{_libdir}/%{name}/messages/*
 %{_libdir}/%{name}/tests/*
 
-%dir %{_var}/lib/mailman
-%dir %{_quedirdir}
-%dir %{_var}/lib/mailman/archives
-%attr(2771,root,mailman) %dir %{_var}/lib/mailman/archives/private
-%dir %{_var}/lib/mailman/archives/public
-%{_var}/lib/mailman/data
-%dir %{_var}/lib/mailman/lists
-%dir %{_var}/lib/mailman/spam
+%dir %{_var}/lib/%{name}
+%dir %{_var}/lib/%{name}/archives
+%attr(2771,root,mailman) %dir %{_var}/lib/%{name}/archives/private
+%dir %{_var}/lib/%{name}/archives/public
+%{_var}/lib/%{name}/data
+%dir %{_var}/lib/%{name}/lists
+%dir %{_var}/lib/%{name}/spam
+%dir %{_queuedir}
 %dir %{_lockdir}
 %dir %{_logdir}
 %dir %{_logarchdir}
