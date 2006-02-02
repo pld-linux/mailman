@@ -311,6 +311,9 @@ done
 cd -
 # Remove empty dirs (DON'T rm -rf here!)
 rmdir --ignore-fail-on-non-empty /var/spool/mailman/{archives/{private,public},archives,data,lists,spam,logs,locks,qfiles}
+if [ -f %{_var}/lib/mailman/Mailman/mm_cfg.pyc ]; then
+	rm -f %{_var}/lib/mailman/Mailman/mm_cfg.pyc
+fi
 %{_libdir}/mailman/bin/update
 if [ "x$stopped" = "xtrue" ]; then
 	rm -f /var/spool/mailman/data/sitelist.cfg
