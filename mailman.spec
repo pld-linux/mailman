@@ -237,13 +237,13 @@ if [ "$1" = "1" ]; then
 		/etc/rc.d/init.d/crond restart
 	fi
 fi
+%{_var}/lib/mailman/bin/update
 /sbin/chkconfig --add mailman
 if [ -f /var/lock/subsys/mailman ]; then
 	/etc/rc.d/init.d/mailman restart 1>&2
 else
 	echo "Run \"/etc/rc.d/init.d/mailman start\" to start mailman qrunner daemon."
 fi
-%{_var}/lib/mailman/bin/update
 
 %preun
 if [ "$1" = "0" ]; then
