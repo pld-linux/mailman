@@ -295,6 +295,12 @@ if [ -f /etc/httpd/%{name}.conf.rpmsave ]; then
 	mv -f /etc/httpd/%{name}.conf.rpmsave %{_sysconfdir}/httpd.conf
 fi
 
+# migrate from httpd (apache2) config dir
+if [ -f /etc/httpd/httpd.conf/90_%{name}.conf.rpmsave ]; then
+	cp -f %{_sysconfdir}/httpd.conf{,.rpmnew}
+	mv -f /etc/httpd/httpd.conf/90_%{name}.conf.rpmsave %{_sysconfdir}/httpd.conf
+fi
+
 rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 /usr/sbin/webapp register httpd %{_webapp}
 
