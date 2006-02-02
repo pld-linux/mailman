@@ -6,7 +6,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.7
-Release:	2
+Release:	2.1
 Epoch:		1
 License:	GPL v2+
 Group:		Applications/System
@@ -49,12 +49,12 @@ Requires(postun):	grep
 Requires:	crondaemon
 %pyrequires_eq	python-modules
 Requires:	smtpdaemon
+Requires:	webapps
 Requires:	webserver
 Provides:	group(mailman)
 Provides:	user(mailman)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_configdir	/etc/%{name}
 %define		_quedirdir	/var/spool/%{name}
 %define		_varmmdir	/var/lib/%{name}
 %define		_lockdir	/var/lock/%{name}
@@ -62,6 +62,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_logarchdir	/var/log/archiv/%{name}
 %define		_piddir		/var/run/%{name}
 
+%define		_webapps	/etc/webapps
+%define		_webapp		%{name}
+%define		_sysconfdir	%{_webapps}/%{_webapp}
 
 %description
 Mailman -- The GNU Mailing List Management System -- is a mailing list
@@ -155,7 +158,7 @@ maior parte em Python. Características:
 	--prefix=%{_varmmdir} \
 	--exec-prefix=%{_libdir}/%{name} \
 	--with-var-prefix=%{_quedirdir} \
-	--with-config-dir=%{_configdir} \
+	--with-config-dir=%{_sysconfdir} \
 	--with-lock-dir=%{_lockdir} \
 	--with-log-dir=%{_logdir} \
 	--with-pid-dir=%{_piddir} \
@@ -174,7 +177,7 @@ maior parte em Python. Características:
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{/etc/{cron.d,logrotate.d,httpd/httpd.conf,rc.d/init.d,sysconfig,smrsh},%{_mandir}} \
-	$RPM_BUILD_ROOT{%{_varmmdir},%{_quedirdir},%{_quedirdir}/qfiles,%{_configdir},%{_lockdir},%{_logdir},%{_logarchdir},%{_piddir}}
+	$RPM_BUILD_ROOT{%{_varmmdir},%{_quedirdir},%{_quedirdir}/qfiles,%{_sysconfdir},%{_lockdir},%{_logdir},%{_logarchdir},%{_piddir}}
 
 PYTHONPATH=$RPM_BUILD_ROOT%{_varmmdir}:$RPM_BUILD_ROOT%{_varmmdir}/pythonlib/
 export PYTHONPATH
@@ -193,15 +196,15 @@ export PYTHONPATH
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
 sed 's#/usr#mailman /usr#' cron/crontab.in > $RPM_BUILD_ROOT/etc/cron.d/%{name}
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/httpd/httpd.conf/90_%{name}.conf
+install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/httpd.conf
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}
 
-mv $RPM_BUILD_ROOT%{_varmmdir}/Mailman/mm_cfg.py $RPM_BUILD_ROOT%{_configdir}
-ln -s %{_configdir}/mm_cfg.py $RPM_BUILD_ROOT%{_varmmdir}/Mailman/mm_cfg.py
+mv $RPM_BUILD_ROOT%{_varmmdir}/Mailman/mm_cfg.py $RPM_BUILD_ROOT%{_sysconfdir}
+ln -s %{_sysconfdir}/mm_cfg.py $RPM_BUILD_ROOT%{_varmmdir}/Mailman/mm_cfg.py
 
-cat >> $RPM_BUILD_ROOT%{_configdir}/mm_cfg.py << EOF
+cat >> $RPM_BUILD_ROOT%{_sysconfdir}/mm_cfg.py << EOF
 DEFAULT_EMAIL_HOST		= 'YOUR.HOST.NAME.HERE'
 DEFAULT_URL_HOST		= 'YOUR.HOST.NAME.HERE'
 IMAGE_LOGOS			= '/mailman/icons/'
@@ -258,6 +261,12 @@ if [ "$1" = "0" ]; then
 	fi
 fi
 
+%triggerin -- apache >= 2.0.0
+%webapp_register httpd %{_webapp}
+
+%triggerun -- apache >= 2.0.0
+%webapp_unregister httpd %{_webapp}
+
 %triggerpostun -- mailman <= mailman 3:2.0.13-6
 if [ -f /var/spool/cron/%{name} ]; then
 	crontab -u %{name} -r
@@ -266,17 +275,44 @@ fi
 %triggerpostun -- mailman < mailman %{epoch}:%{version}-%{release}
 %{_var}/lib/mailman/bin/update
 
+%triggerpostun -- %{name} < 2.1.7-2.1
+# rescue app configs.
+for i in mm_cfg.py sitelist.cfg; do
+	if [ -f /etc/%{name}/$i.rpmsave ]; then
+		mv -f %{_sysconfdir}/$i{,.rpmnew}
+		mv -f /etc/%{name}/$i.rpmsave %{_sysconfdir}/$i
+	fi
+done
+
+# nuke very-old config location (this mostly for Ra)
+if [ -f /etc/httpd/httpd.conf ]; then
+	sed -i -e "/^Include.*%{name}.conf/d" /etc/httpd/httpd.conf
+fi
+
+# migrate from httpd (apache2) config dir
+if [ -f /etc/httpd/%{name}.conf.rpmsave ]; then
+	cp -f %{_sysconfdir}/httpd.conf{,.rpmnew}
+	mv -f /etc/httpd/%{name}.conf.rpmsave %{_sysconfdir}/httpd.conf
+fi
+
+rm -f /etc/httpd/httpd.conf/90_%{name}.conf
+/usr/sbin/webapp register httpd %{_webapp}
+
+if [ -f /var/lock/subsys/httpd ]; then
+	/etc/rc.d/init.d/httpd reload 1>&2
+fi
+
 %files
 %defattr(644,root,root,755)
 %doc BUGS FAQ NEWS README README.CONTRIB README.NETSCAPE README.USERAGENT TODO UPGRADING INSTALL
 %{_mandir}/man?/*
-%attr(640,root,http) %config(noreplace) %verify(not md5 mtime size) /etc/httpd/httpd.conf/*%{name}.conf
+%attr(640,root,http) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/httpd.conf
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
 /etc/smrsh/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/cron.d/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/%{name}
-%attr(2775,root,mailman) %dir %{_configdir}
-%attr(644,root,mailman) %config(noreplace) %verify(not md5 mtime size) %{_configdir}/mm_cfg.py
+%attr(2775,root,mailman) %dir %{_sysconfdir}
+%attr(644,root,mailman) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/mm_cfg.py
 
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
 
