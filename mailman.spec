@@ -233,7 +233,7 @@ if [ "$1" = "1" ]; then
 		/etc/rc.d/init.d/crond restart
 	fi
 fi
-%{_var}/lib/mailman/bin/update
+%{_libdir}/mailman/bin/update
 /sbin/chkconfig --add mailman
 if [ -f /var/lock/subsys/mailman ]; then
 	if [ -d /var/spool/mailman/data ]; then
