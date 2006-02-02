@@ -243,6 +243,7 @@ if [ -f /var/lock/subsys/mailman ]; then
 else
 	echo "Run \"/etc/rc.d/init.d/mailman start\" to start mailman qrunner daemon."
 fi
+%{_var}/lib/mailman/bin/update
 
 %preun
 if [ "$1" = "0" ]; then
@@ -271,9 +272,6 @@ fi
 if [ -f /var/spool/cron/%{name} ]; then
 	crontab -u %{name} -r
 fi
-
-%triggerpostun -- mailman < mailman %{epoch}:%{version}-%{release}
-%{_var}/lib/mailman/bin/update
 
 %triggerpostun -- %{name} < 2.1.7-2.1
 # rescue app configs.
