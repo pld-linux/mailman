@@ -268,12 +268,11 @@ fi
 %triggerun -- apache >= 2.0.0
 %webapp_unregister httpd %{_webapp}
 
-%triggerpostun -- mailman <= mailman 3:2.0.13-6
+%triggerpostun -- %{name} < 2.1.7-2.1
 if [ -f /var/spool/cron/%{name} ]; then
 	crontab -u %{name} -r
 fi
 
-%triggerpostun -- %{name} < 2.1.7-2.1
 # rescue app configs.
 for i in mm_cfg.py sitelist.cfg; do
 	if [ -f /etc/%{name}/$i.rpmsave ]; then
