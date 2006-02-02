@@ -267,7 +267,7 @@ fi
 %triggerun -- apache < 2.2.0, apache-base
 %webapp_unregister httpd %{_webapp}
 
-%triggerpostun -- mailman < 1:2.1.7-3
+%triggerpostun -- mailman < 1:2.1.7-2.1
 if [ -f /var/spool/cron/%{name} ]; then
 	crontab -u %{name} -r
 fi
