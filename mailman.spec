@@ -6,7 +6,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.7
-Release:	3
+Release:	2.1
 Epoch:		1
 License:	GPL v2+
 Group:		Applications/System
@@ -56,7 +56,6 @@ Provides:	user(mailman)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_quedirdir	/var/spool/%{name}
-%define		_varmmdir	/var/lib/%{name}
 %define		_lockdir	/var/lock/%{name}
 %define		_logdir		/var/log/%{name}
 %define		_logarchdir	/var/log/archiv/%{name}
@@ -155,14 +154,14 @@ maior parte em Python. Características:
 %{__autoconf}
 
 %configure \
-	--prefix=%{_varmmdir} \
+	--prefix=%{_libdir}/%{name} \
 	--exec-prefix=%{_libdir}/%{name} \
-	--with-var-prefix=%{_quedirdir} \
+	--with-var-prefix=/var/lib/%{name} \
 	--with-config-dir=%{_sysconfdir} \
 	--with-lock-dir=%{_lockdir} \
 	--with-log-dir=%{_logdir} \
 	--with-pid-dir=%{_piddir} \
-	--with-queue-dir=%{_quedirdir}/qfiles \
+	--with-queue-dir=%{_quedirdir} \
 	--with-username=%{name} \
 	--with-groupname=%{name} \
 	--with-mail-gid='mailman' \
@@ -176,22 +175,17 @@ maior parte em Python. Características:
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/etc/{cron.d,logrotate.d,httpd/httpd.conf,rc.d/init.d,sysconfig,smrsh},%{_mandir}} \
-	$RPM_BUILD_ROOT{%{_varmmdir},%{_quedirdir},%{_quedirdir}/qfiles,%{_sysconfdir},%{_lockdir},%{_logdir},%{_logarchdir},%{_piddir}}
+install -d $RPM_BUILD_ROOT{/etc/{cron.d,logrotate.d,rc.d/init.d,sysconfig,smrsh},%{_mandir}} \
+	$RPM_BUILD_ROOT{%{_sysconfdir},%{_logarchdir}}
 
-PYTHONPATH=$RPM_BUILD_ROOT%{_varmmdir}:$RPM_BUILD_ROOT%{_varmmdir}/pythonlib/
+PYTHONPATH=$RPM_BUILD_ROOT%{_libdir}/%{name}:$RPM_BUILD_ROOT%{_libdir}/%{name}/pythonlib/
 export PYTHONPATH
 
 %{__make} doinstall \
-	prefix=$RPM_BUILD_ROOT%{_varmmdir} \
-	exec_prefix=$RPM_BUILD_ROOT%{_libdir}/mailman \
-	var_prefix=$RPM_BUILD_ROOT%{_quedirdir} \
-	FHS_DIRS=$RPM_BUILD_ROOT
+	DESTDIR=$RPM_BUILD_ROOT
 
 %{__make} install-packages -C misc \
-	prefix=$RPM_BUILD_ROOT%{_varmmdir} \
-	exec_prefix=$RPM_BUILD_ROOT%{_libdir}/mailman \
-	var_prefix=$RPM_BUILD_ROOT%{_quedirdir} \
+	DESTDIR=$RPM_BUILD_ROOT
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
@@ -201,8 +195,10 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}
 
-mv $RPM_BUILD_ROOT%{_varmmdir}/Mailman/mm_cfg.py $RPM_BUILD_ROOT%{_sysconfdir}
-ln -s %{_sysconfdir}/mm_cfg.py $RPM_BUILD_ROOT%{_varmmdir}/Mailman/mm_cfg.py
+mv $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py $RPM_BUILD_ROOT%{_sysconfdir}
+ln -s %{_sysconfdir}/mm_cfg.py $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py
+
+ln -s %{_configdir}/sitelist.cfg $RPM_BUILD_ROOT%{_var}/lib/mailman/data/sitelist.cfg
 
 cat >> $RPM_BUILD_ROOT%{_sysconfdir}/mm_cfg.py << EOF
 DEFAULT_EMAIL_HOST		= 'YOUR.HOST.NAME.HERE'
@@ -214,7 +210,7 @@ MAILMAN_USER			= '%{name}'
 #DEFAULT_SERVER_LANGUAGE		= 'pl'
 
 # For available options and their descriptions see:
-# /var/lib/mailman/Mailman/Defaults.py
+# %{_libdir}/%{name}/Mailman/Defaults.py
 EOF
 
 # Create a link to the wrapper in /etc/smrsh to allow sendmail to run it.
@@ -229,7 +225,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %pre
 %groupadd -g 94 mailman
-%useradd -u 94 -d %{_var}/spool/%{name} -s /bin/false -c "GNU Mailing List Manager" -g mailman mailman
+%useradd -u 94 -d %{_var}/lib/%{name} -s /bin/false -c "GNU Mailing List Manager" -g mailman mailman
 
 %post
 if [ "$1" = "1" ]; then
@@ -240,6 +236,9 @@ fi
 %{_var}/lib/mailman/bin/update
 /sbin/chkconfig --add mailman
 if [ -f /var/lock/subsys/mailman ]; then
+	if [ -d /var/spool/mailman/data ]; then
+		ln -sf %{_sysconfdir}/sitelist.cfg /var/spool/mailman/data/sitelist.cfg
+	fi
 	/etc/rc.d/init.d/mailman restart 1>&2
 else
 	echo "Run \"/etc/rc.d/init.d/mailman start\" to start mailman qrunner daemon."
@@ -273,6 +272,12 @@ if [ -f /var/spool/cron/%{name} ]; then
 	crontab -u %{name} -r
 fi
 
+if [ -f /var/lock/subsys/mailman ]; then
+	ln -sf %{_sysconfdir}/sitelist.cfg /var/spool/mailman/data/sitelist.cfg
+	/etc/rc.d/init.d/mailman stop 1>&2
+	stopped=true
+fi
+
 # rescue app configs.
 for i in mm_cfg.py sitelist.cfg; do
 	if [ -f /etc/%{name}/$i.rpmsave ]; then
@@ -280,6 +285,37 @@ for i in mm_cfg.py sitelist.cfg; do
 		mv -f /etc/%{name}/$i.rpmsave %{_sysconfdir}/$i
 	fi
 done
+
+if [ "`getent passwd mailman | cut -d: -f6`" != "%{_var}/lib/%{name}" ]; then
+	echo "Fixing passwd entry"
+	/usr/sbin/usermod -d %{_var}/lib/%{name} mailman
+fi
+echo "Moving data from /var/spool/mailman to /var/lib/mailman"
+mv -f /var/spool/mailman/archives/private/* %{_var}/lib/mailman/archives/privat
+mv -f /var/spool/mailman/archives/public/* %{_var}/lib/mailman/archives/public/
+mv -f /var/spool/mailman/data/* %{_var}/lib/mailman/data/
+mv -f /var/spool/mailman/lists/* %{_var}/lib/mailman/lists/
+mv -f /var/spool/mailman/spam/* %{_var}/lib/mailman/spam/
+mv -f /var/spool/mailman/logs/* %{_logdir}/
+mv -f /var/spool/mailman/locks/* %{_lockdir}/
+mv -f /var/spool/mailman/qfiles/* %{_queuedir}/
+# Fix symlinks for public archives
+cd %{_var}/lib/mailman/archives/public/
+for i in * ; do
+	link=$(readlink "$i")
+	dn=$(dirname "$link")
+	if [ "$dn" = "/var/spool/mailman/archives/private" ]; then
+		ln -sf "%{_var}/lib/mailman/archives/private/$i" "$i"
+	fi
+done
+cd -
+# Remove empty dirs (DON'T rm -rf here!)
+rmdir --ignore-fail-on-non-empty /var/spool/mailman/{archives/{private,public},
+%{_libdir}/mailman/bin/update
+if [ "x$stopped" = "xtrue" ]; then
+	rm -f /var/spool/mailman/data/sitelist.cfg
+	/etc/rc.d/init.d/mailman start 1>&2
+fi
 
 # nuke very-old config location (this mostly for Ra)
 if [ -f /etc/httpd/httpd.conf ]; then
@@ -325,36 +361,35 @@ fi
 %dir %{_libdir}/%{name}/mail
 %attr(2755,root,mailman) %{_libdir}/%{name}/*/*
 
-%dir %{_varmmdir}
-%dir %{_varmmdir}/bin
-%dir %{_varmmdir}/cron
-%dir %{_varmmdir}/icons
-%dir %{_varmmdir}/scripts
-%dir %{_varmmdir}/templates
-%dir %{_varmmdir}/pythonlib
-%dir %{_varmmdir}/messages
-%dir %{_varmmdir}/tests
+%dir %{_libdir}/%{name}
+%dir %{_libdir}/%{name}/bin
+%dir %{_libdir}/%{name}/cron
+%dir %{_libdir}/%{name}/icons
+%dir %{_libdir}/%{name}/scripts
+%dir %{_libdir}/%{name}/templates
+%dir %{_libdir}/%{name}/pythonlib
+%dir %{_libdir}/%{name}/messages
+%dir %{_libdir}/%{name}/tests
 
-%{_varmmdir}/Mailman
-%{_varmmdir}/bin/p*
-%attr(2755,root,mailman) %{_varmmdir}/bin/[!p]*
-%attr(755,root,root) %{_varmmdir}/cron/*
-%{_varmmdir}/scripts/*
-%{_varmmdir}/icons/*
-%{_varmmdir}/templates/*
-%{_varmmdir}/pythonlib/*
-%{_varmmdir}/messages/*
-%{_varmmdir}/tests/*
+%{_libdir}/%{name}/Mailman
+%{_libdir}/%{name}/bin/p*
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/[!p]*
+%attr(755,root,root) %{_libdir}/%{name}/cron/*
+%{_libdir}/%{name}/scripts/*
+%{_libdir}/%{name}/icons/*
+%{_libdir}/%{name}/templates/*
+%{_libdir}/%{name}/pythonlib/*
+%{_libdir}/%{name}/messages/*
+%{_libdir}/%{name}/tests/*
 
+%dir %{_var}/lib/mailman
 %dir %{_quedirdir}
-%dir %{_quedirdir}/archives
-%attr(2771,root,mailman) %dir %{_quedirdir}/archives/private
-%dir %{_quedirdir}/archives/public
-%{_quedirdir}/data
-%dir %{_quedirdir}/lists
-#%dir %{_quedirdir}/logs
-%dir %{_quedirdir}/qfiles
-%dir %{_quedirdir}/spam
+%dir %{_var}/lib/mailman/archives
+%attr(2771,root,mailman) %dir %{_var}/lib/mailman/archives/private
+%dir %{_var}/lib/mailman/archives/public
+%{_var}/lib/mailman/data
+%dir %{_var}/lib/mailman/lists
+%dir %{_var}/lib/mailman/spam
 %dir %{_lockdir}
 %dir %{_logdir}
 %dir %{_logarchdir}
