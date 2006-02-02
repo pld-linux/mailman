@@ -291,7 +291,7 @@ if [ "`getent passwd mailman | cut -d: -f6`" != "%{_var}/lib/%{name}" ]; then
 	/usr/sbin/usermod -d %{_var}/lib/%{name} mailman
 fi
 echo "Moving data from /var/spool/mailman to /var/lib/mailman"
-mv -f /var/spool/mailman/archives/private/* %{_var}/lib/mailman/archives/privat
+mv -f /var/spool/mailman/archives/private/* %{_var}/lib/mailman/archives/private/
 mv -f /var/spool/mailman/archives/public/* %{_var}/lib/mailman/archives/public/
 mv -f /var/spool/mailman/data/* %{_var}/lib/mailman/data/
 mv -f /var/spool/mailman/lists/* %{_var}/lib/mailman/lists/
@@ -310,7 +310,7 @@ for i in * ; do
 done
 cd -
 # Remove empty dirs (DON'T rm -rf here!)
-rmdir --ignore-fail-on-non-empty /var/spool/mailman/{archives/{private,public},
+rmdir --ignore-fail-on-non-empty /var/spool/mailman/{archives/{private,public},archives,data,lists,spam,logs,locks,qfiles}
 %{_libdir}/mailman/bin/update
 if [ "x$stopped" = "xtrue" ]; then
 	rm -f /var/spool/mailman/data/sitelist.cfg
