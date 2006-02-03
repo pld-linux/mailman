@@ -190,8 +190,10 @@ export PYTHONPATH
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
 sed 's#/usr#mailman /usr#' cron/crontab.in > $RPM_BUILD_ROOT/etc/cron.d/%{name}
-install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/httpd.conf
-install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+sed -e 's#/usr/lib/mailman#%{_libdir}/mailman#g' %{SOURCE2} \
+	> $RPM_BUILD_ROOT%{_sysconfdir}/httpd.conf
+sed -e 's#/usr/lib/mailman#%{_libdir}/mailman#g' %{SOURCE3} \
+	> $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}
 
