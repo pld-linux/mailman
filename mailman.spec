@@ -34,7 +34,7 @@ BuildRequires:	automake
 BuildRequires:	python >= 2.1
 BuildRequires:	python-devel
 BuildRequires:	rpmbuild(macros) >= 1.202
-PreReq:		rc-scripts
+Requires:	rc-scripts
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -46,6 +46,7 @@ Requires(post):	/bin/hostname
 Requires(post):	grep
 Requires(postun):	fileutils
 Requires(postun):	grep
+Requires:	/sbin/chkconfig
 Requires:	crondaemon
 %pyrequires_eq	python-modules
 Requires:	smtpdaemon
