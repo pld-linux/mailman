@@ -193,6 +193,8 @@ bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 sed 's#/usr#mailman /usr#' cron/crontab.in > $RPM_BUILD_ROOT/etc/cron.d/%{name}
 sed -e 's#/usr/lib/mailman#%{_libdir}/mailman#g' %{SOURCE2} \
 	> $RPM_BUILD_ROOT%{_sysconfdir}/httpd.conf
+sed -e 's#/usr/lib/mailman#%{_libdir}/mailman#g' %{SOURCE2} \
+	> $RPM_BUILD_ROOT%{_sysconfdir}/apache.conf
 sed -e 's#/usr/lib/mailman#%{_libdir}/mailman#g' %{SOURCE3} \
 	> $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
@@ -263,6 +265,12 @@ if [ "$1" = "0" ]; then
 		/etc/rc.d/init.d/crond restart
 	fi
 fi
+
+%triggerin -- apache1
+%webapp_register apache %{_webapp}
+
+%triggerun -- apache1
+%webapp_unregister apache %{_webapp}
 
 %triggerin -- apache < 2.2.0, apache-base
 %webapp_register httpd %{_webapp}
@@ -351,14 +359,15 @@ fi
 %defattr(644,root,root,755)
 %doc BUGS FAQ NEWS README README.CONTRIB README.NETSCAPE README.USERAGENT TODO UPGRADING INSTALL
 %{_mandir}/man?/*
+%attr(2775,root,mailman) %dir %{_sysconfdir}
+%attr(640,root,http) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apache.conf
 %attr(640,root,http) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/httpd.conf
+%attr(644,root,mailman) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/mm_cfg.py
+%attr(644,root,mailman) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sitelist.cfg
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
 /etc/smrsh/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/cron.d/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/%{name}
-%attr(2775,root,mailman) %dir %{_sysconfdir}
-%attr(644,root,mailman) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/mm_cfg.py
-%attr(644,root,mailman) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sitelist.cfg
 
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
 
