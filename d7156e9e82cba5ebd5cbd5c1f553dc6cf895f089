@@ -1,0 +1,3 @@
+- applied patch by mkochano and changed to work with apache2 by
+  default (works with apache1, too if you are smart enough to know
+  what to do)
