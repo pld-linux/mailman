@@ -33,25 +33,25 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	python >= 2.1
 BuildRequires:	python-devel
-BuildRequires:	rpmbuild(macros) >= 1.202
-Requires:	rc-scripts
+BuildRequires:	rpmbuild(macros) >= 1.268
+Requires(post):	/bin/hostname
+Requires(post):	grep
+Requires(post,preun):	/sbin/chkconfig
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
+Requires(postun):	fileutils
+Requires(postun):	grep
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(postun):	/usr/sbin/groupdel
-Requires(postun):	/usr/sbin/userdel
-Requires(post,preun):	/sbin/chkconfig
-Requires(post):	/bin/hostname
-Requires(post):	grep
-Requires(postun):	fileutils
-Requires(postun):	grep
 Requires:	/sbin/chkconfig
 Requires:	crondaemon
-%pyrequires_eq	python-modules
+Requires:	rc-scripts
 Requires:	smtpdaemon
 Requires:	webapps
 Requires:	webserver
+%pyrequires_eq	python-modules
 Provides:	group(mailman)
 Provides:	user(mailman)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -169,7 +169,7 @@ maior parte em Python. Características:
 	--with-cgi-gid='http' \
 	--with-mailhost=localhost.localdomain \
 	--with-urlhost=localhost.localdomain \
-	--without-permcheck 
+	--without-permcheck
 %{__make}
 
 #%{__make} -C misc
@@ -234,26 +234,18 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 if [ "$1" = "1" ]; then
-	if [ -f /var/lock/subsys/crond ]; then
-		/etc/rc.d/init.d/crond restart
-	fi
+	%service -q crond restart
 fi
 %{_libdir}/mailman/bin/update
 /sbin/chkconfig --add mailman
-if [ -f /var/lock/subsys/mailman ]; then
-	if [ -d /var/spool/mailman/data ]; then
-		ln -sf %{_sysconfdir}/sitelist.cfg /var/spool/mailman/data/sitelist.cfg
-	fi
-	/etc/rc.d/init.d/mailman restart 1>&2
-else
-	echo "Run \"/etc/rc.d/init.d/mailman start\" to start mailman qrunner daemon."
+if [ -f /var/lock/subsys/mailman ] && [ -d /var/spool/mailman/data ]; then
+	ln -sf %{_sysconfdir}/sitelist.cfg /var/spool/mailman/data/sitelist.cfg
 fi
+%service mailman restart "mailman qrunner daemon"
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/mailman ]; then
-		/etc/rc.d/init.d/mailman stop 1>&2
-	fi
+	%service mailman stop
 	/sbin/chkconfig --del mailman
 fi
 
@@ -261,9 +253,7 @@ fi
 if [ "$1" = "0" ]; then
 	%userremove mailman
 	%groupremove mailman
-	if [ -f /var/lock/subsys/crond ]; then
-		/etc/rc.d/init.d/crond restart
-	fi
+	%service -q crond restart
 fi
 
 %triggerin -- apache1
@@ -285,7 +275,7 @@ fi
 
 if [ -f /var/lock/subsys/mailman ]; then
 	ln -sf %{_sysconfdir}/sitelist.cfg /var/spool/mailman/data/sitelist.cfg
-	/etc/rc.d/init.d/mailman stop 1>&2
+	/sbin/service mailman stop 1>&2
 	stopped=true
 fi
 
@@ -326,9 +316,9 @@ if [ -f %{_var}/lib/mailman/Mailman/mm_cfg.pyc ]; then
 	rm -f %{_var}/lib/mailman/Mailman/mm_cfg.pyc
 fi
 %{_libdir}/mailman/bin/update
-if [ "x$stopped" = "xtrue" ]; then
+if [ "$stopped" = "true" ]; then
 	rm -f /var/spool/mailman/data/sitelist.cfg
-	/etc/rc.d/init.d/mailman start 1>&2
+	/sbin/service mailman start 1>&2
 fi
 
 # nuke very-old config location (this mostly for Ra)
@@ -350,10 +340,7 @@ fi
 
 rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 /usr/sbin/webapp register httpd %{_webapp}
-
-if [ -f /var/lock/subsys/httpd ]; then
-	/etc/rc.d/init.d/httpd reload 1>&2
-fi
+%service -q httpd reload
 
 %files
 %defattr(644,root,root,755)
