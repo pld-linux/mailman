@@ -1,4 +1,0 @@
-# Customized setings for mailman qrunner
-
-# Nice level for mailman qrunner
-#SERVICE_RUN_NICE_LEVEL="+5"

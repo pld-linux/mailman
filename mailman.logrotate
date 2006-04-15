@@ -1,8 +1,0 @@
-/var/log/mailman/* {
-	olddir /var/log/archiv/mailman
-	create 660 mailman mailman
-	monthly
-	postrotate
-		/etc/rc.d/init.d/mailman restart >/dev/null 2>&1
-	endscript
-}
