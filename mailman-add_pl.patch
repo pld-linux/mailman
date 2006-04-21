@@ -1,9 +1,0 @@
---- mailman-2.1/Mailman/Defaults.py.in.orig	Thu Mar 20 10:32:19 2003
-+++ mailman-2.1/Mailman/Defaults.py.in	Thu Mar 20 10:32:42 2003
-@@ -1220,5 +1220,6 @@
- add_language('pt_BR', _('Portuguese (Brazil)'), 'iso-8859-1')
- add_language('ru',   _('Russian'),             'koi8-r')
- add_language('sv',   _('Swedish'),             'iso-8859-1')
-+add_language('pl',   _('Polish'),              'iso-8859-2')
- 
- del _
