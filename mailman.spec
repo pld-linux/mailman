@@ -7,7 +7,7 @@ Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.8
 Release:	1
-Epoch:		1
+Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/mailman/%{name}-%{version}.tgz
