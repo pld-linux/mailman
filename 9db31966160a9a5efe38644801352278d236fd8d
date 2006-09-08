@@ -1,0 +1,11 @@
+- up from 2.1.6rc to 2.1.6
+- change options in configure for mail/mailman
+- added missing qfiles
+- tested on local machine, it is time for lists.pld-linux.org 8-)
+- web panel for admin works
+  TODO:
+- script for logrotate
+- cosmetics for build and install
+- need more test
+- there is 2.1.7 beta, but first close 2.1.6 in pld ;-)
+  DO NOT SEND TO BUILD REQUEST !
