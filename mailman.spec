@@ -6,7 +6,7 @@ Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
 Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.9
-Release:	2
+Release:	3
 Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
@@ -21,13 +21,12 @@ Source5:	%{name}.logrotate
 # Need to check if it's still useful
 #Patch0:		%{name}-xss.patch
 Patch1:		%{name}-MM_FIND_GROUP_NAME.patch
-Patch2:		%{name}-encoding.patch
-Patch3:		%{name}-dont-send-broken-reminder-ugly-hack.patch
-Patch4:		%{name}-mailmanctl-status.patch
-Patch5:		%{name}-cron.patch
-Patch6:		%{name}-python-compile.patch
-Patch7:		%{name}-build.patch
-Patch8:		%{name}-FHS.patch
+Patch2:		%{name}-dont-send-broken-reminder-ugly-hack.patch
+Patch3:		%{name}-mailmanctl-status.patch
+Patch4:		%{name}-cron.patch
+Patch5:		%{name}-python-compile.patch
+Patch6:		%{name}-build.patch
+Patch7:		%{name}-FHS.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -148,7 +147,6 @@ maior parte em Python. Características:
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
 
 %build
 %{__aclocal}
