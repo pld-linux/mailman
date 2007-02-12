@@ -1,9 +1,9 @@
 # TODO:
 # - are *.po files (beside *.mo) needed in binary package?
 Summary:	The GNU Mailing List Management System
-Summary(es):	El Sistema de Mantenimiento de listas de GNU
-Summary(pl):	System Zarz±dzania Listami Pocztowymi GNU
-Summary(pt_BR):	O Sistema de Manutenção de listas da GNU
+Summary(es.UTF-8):   El Sistema de Mantenimiento de listas de GNU
+Summary(pl.UTF-8):   System ZarzÄ…dzania Listami Pocztowymi GNU
+Summary(pt_BR.UTF-8):   O Sistema de ManutenÃ§Ã£o de listas da GNU
 Name:		mailman
 Version:	2.1.9
 Release:	3
@@ -88,54 +88,54 @@ management system written mostly in Python. Features:
 - nice about which machine you subscribed from if you're from the
   right domain,
 
-%description -l es
-Mailman -- El sistema de manutención de listas de discusión de la
+%description -l es.UTF-8
+Mailman -- El sistema de manutenciÃ³n de listas de discusiÃ³n de la
 licencia GNU.
 
-%description -l pl
-Mailman -- System Zarz±dzania Listami Pocztowymi GNU -- zosta³
-napisany g³ównie w Pythonie. Jego mo¿liwo¶ci to:
-- standardowe mo¿liwo¶ci: moderowanie, komendy przesy³ane poczt±,
+%description -l pl.UTF-8
+Mailman -- System ZarzÄ…dzania Listami Pocztowymi GNU -- zostaÅ‚
+napisany gÅ‚Ã³wnie w Pythonie. Jego moÅ¼liwoÅ›ci to:
+- standardowe moÅ¼liwoÅ›ci: moderowanie, komendy przesyÅ‚ane pocztÄ…,
   digesty itp,
-- interfejs WWW konfigurowalny dla ka¿dej listy,
-- automatyczny system archiwizowania (z u¿yciem pipermaila lub innego
-  zewnêtrznego archiwizera) w³±czaj±c w to odpowiednie zarz±dzanie
+- interfejs WWW konfigurowalny dla kaÅ¼dej listy,
+- automatyczny system archiwizowania (z uÅ¼yciem pipermaila lub innego
+  zewnÄ™trznego archiwizera) wÅ‚Ä…czajÄ…c w to odpowiednie zarzÄ…dzanie
   prywatnymi archiwami,
 - bramki mail <-> news,
-- doskona³y system wykrywania odbiæ i korekcji odbitej poczty,
+- doskonaÅ‚y system wykrywania odbiÄ‡ i korekcji odbitej poczty,
 - system ochrony przed spamem,
 - rozszerzone logowanie,
-- listy mog± byæ w³asno¶ci± wielu osób oraz moderatorów mo¿e byæ
+- listy mogÄ… byÄ‡ wÅ‚asnoÅ›ciÄ… wielu osÃ³b oraz moderatorÃ³w moÅ¼e byÄ‡
   kilku.
 
-%description -l pt_BR
-O Mailman -- O sistema de gerenciamento de listas de discussão do GNU
--- é um sistema de gerenciamento de listas de discussão escrito em sua
-maior parte em Python. Características:
+%description -l pt_BR.UTF-8
+O Mailman -- O sistema de gerenciamento de listas de discussÃ£o do GNU
+-- Ã© um sistema de gerenciamento de listas de discussÃ£o escrito em sua
+maior parte em Python. CaracterÃ­sticas:
 
-- Maioria das características de lista de discussão padrão, incluindo:
-  moderação, comandos baseados em e-mail, compiladores (digests),
+- Maioria das caracterÃ­sticas de lista de discussÃ£o padrÃ£o, incluindo:
+  moderaÃ§Ã£o, comandos baseados em e-mail, compiladores (digests),
   etc...
-- Uma interface extensiva da Web, personalizável lista a lista.
-- Interface de administração de lista baseada na Web para *todas* as
+- Uma interface extensiva da Web, personalizÃ¡vel lista a lista.
+- Interface de administraÃ§Ã£o de lista baseada na Web para *todas* as
   tarefas de tipo de admin.
-- Arquivos automáticos de estilo hypermail baseado na Web (usando
-  pipermail ou outros arquivadores externos), incluindo provisões para
+- Arquivos automÃ¡ticos de estilo hypermail baseado na Web (usando
+  pipermail ou outros arquivadores externos), incluindo provisÃµes para
   arquivos privados.
-- Lista de e-mails integrada ao gateway de grupo de notícias.
-- Grupo de notícias integrado ao gateway de lista de e-mail (baseado
-  em consulta... se você tiver acesso ao servidor nntp, deve ser fácil
-  conseguir efetuar notícias baseadas em não-consulta->gateway de
+- Lista de e-mails integrada ao gateway de grupo de notÃ­cias.
+- Grupo de notÃ­cias integrado ao gateway de lista de e-mail (baseado
+  em consulta... se vocÃª tiver acesso ao servidor nntp, deve ser fÃ¡cil
+  conseguir efetuar notÃ­cias baseadas em nÃ£o-consulta->gateway de
   lista de e-mails; envie um e-mail a viega@list.org, eu gostaria de
-  ajudar a manter isto e aparecer com instruções).
-- Detecção e correção inteligente de mensagens retornadas.
-- Envio de e-mail em massa rápido e integrado.
-- Proteção inteligente contra spam.
-- Registro ampliável.
-- São possíveis múltiplos donos e moderadores de lista.
-- Compiladores (digests) opcionais compatíveis com MIME.
-- Informa a partir de qual máquina você se inscreveu, caso esteja no
-  domínio correto.
+  ajudar a manter isto e aparecer com instruÃ§Ãµes).
+- DetecÃ§Ã£o e correÃ§Ã£o inteligente de mensagens retornadas.
+- Envio de e-mail em massa rÃ¡pido e integrado.
+- ProteÃ§Ã£o inteligente contra spam.
+- Registro ampliÃ¡vel.
+- SÃ£o possÃ­veis mÃºltiplos donos e moderadores de lista.
+- Compiladores (digests) opcionais compatÃ­veis com MIME.
+- Informa a partir de qual mÃ¡quina vocÃª se inscreveu, caso esteja no
+  domÃ­nio correto.
 
 %prep
 %setup -q
