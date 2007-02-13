@@ -1,9 +1,9 @@
 # TODO:
 # - are *.po files (beside *.mo) needed in binary package?
 Summary:	The GNU Mailing List Management System
-Summary(es.UTF-8):   El Sistema de Mantenimiento de listas de GNU
-Summary(pl.UTF-8):   System Zarządzania Listami Pocztowymi GNU
-Summary(pt_BR.UTF-8):   O Sistema de Manutenção de listas da GNU
+Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
+Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
+Summary(pt_BR.UTF-8):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.9
 Release:	3
