@@ -1,5 +1,5 @@
 /var/log/mailman/* {
-	olddir /var/log/archiv/mailman
+	olddir /var/log/archive/mailman
 	create 660 mailman mailman
 	monthly
 	postrotate
