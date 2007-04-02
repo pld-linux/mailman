@@ -58,7 +58,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_queuedir	/var/spool/%{name}
 %define		_lockdir	/var/lock/%{name}
 %define		_logdir		/var/log/%{name}
-%define		_logarchdir	/var/log/archiv/%{name}
+%define		_logarchdir	/var/log/archive/%{name}
 %define		_piddir		/var/run/%{name}
 
 %define		_webapps	/etc/webapps
