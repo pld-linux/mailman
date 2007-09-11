@@ -53,6 +53,7 @@ Requires:	webserver
 %pyrequires_eq	python-modules
 Provides:	group(mailman)
 Provides:	user(mailman)
+Conflicts:	logrotate < 3.7.4
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_queuedir	/var/spool/%{name}
