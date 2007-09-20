@@ -265,7 +265,8 @@ if [ -f /var/lock/subsys/mailman ] && [ -d /var/spool/mailman/data ]; then
 fi
 if [ ! -f %{_sysconfdir}/aliases ]; then
 	touch %{_sysconfdir}/aliases{,.db}
-	chown root:mailman %{_sysconfdir}/aliases{,.db}
+	chown root:mailman %{_sysconfdir}/aliases
+	chown mailman:mailman %{_sysconfdir}/aliases.db
 	chmod 660 %{_sysconfdir}/aliases{,.db}
 fi
 %service mailman restart "mailman qrunner daemon"
