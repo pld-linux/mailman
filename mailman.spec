@@ -6,7 +6,7 @@ Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
 Summary(pt_BR.UTF-8):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.9
-Release:	3
+Release:	4
 Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
@@ -204,18 +204,25 @@ ln -s %{_sysconfdir}/mm_cfg.py $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.
 
 ln -s %{_sysconfdir}/sitelist.cfg $RPM_BUILD_ROOT%{_var}/lib/mailman/data/sitelist.cfg
 
-cat >> $RPM_BUILD_ROOT%{_sysconfdir}/mm_cfg.py << EOF
+cat >> $RPM_BUILD_ROOT%{_sysconfdir}/mm_cfg.py << 'EOF'
+#MTA = 'Postfix'
 DEFAULT_EMAIL_HOST		= 'YOUR.HOST.NAME.HERE'
 DEFAULT_URL_HOST		= 'YOUR.HOST.NAME.HERE'
+DEFAULT_HOST_NAME       = 'YOUR.HOST.NAME.HERE'
 IMAGE_LOGOS			= '/mailman/icons/'
 PUBLIC_ARCHIVE_URL		= '/mailman/pipermail/%%(listname)s'
 MAILMAN_GROUP			= '%{name}'
 MAILMAN_USER			= '%{name}'
+VIRTUAL_HOST_OVERVIEW       = Off
 #DEFAULT_SERVER_LANGUAGE		= 'pl'
 
 # For available options and their descriptions see:
 # %{_libdir}/%{name}/Mailman/Defaults.py
 EOF
+
+touch $RPM_BUILD_ROOT%{_sysconfdir}/aliases{,.db}
+touch $RPM_BUILD_ROOT%{_sysconfdir}/adm.pw
+touch $RPM_BUILD_ROOT%{_var}/lib/mailman/data/last_mailman_version
 
 # Create a link to the wrapper in /etc/smrsh to allow sendmail to run it.
 ln -s %{_libdir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
@@ -223,6 +230,10 @@ ln -s %{_libdir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
 # regenerate pyc files with proper paths
 find $RPM_BUILD_ROOT -name '*.pyc' -exec rm "{}" ";"
 %py_comp $RPM_BUILD_ROOT
+
+rm -f $RPM_BUILD_ROOT%{_sysconfdir}/mm_cfg.pyc
+rm -f $RPM_BUILD_ROOT%{_mandir}/README-mailman-man-pages
+rm -f $RPM_BUILD_ROOT%{_mandir}/diff.arch.8
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -233,12 +244,29 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 if [ "$1" = "1" ]; then
+	if hostname=$(hostname -f 2>/dev/null); then
+		%{__sed} -i -e "s,YOUR.HOST.NAME.HERE,$hostname," %{_sysconfdir}/mm_cfg.py
+	fi
+
 	%service -q crond restart
 fi
-%{_libdir}/mailman/bin/update
+if [ ! -f %{_sysconfdir}/adm.pw ]; then
+	echo 'Run "%{_libdir}/%{name}/bin/mmsitepass" to set site pass.'
+fi
+if [ ! -d /var/lib/mailman/lists/mailman ]; then
+	echo 'Run "%{_libdir}/%{name}/bin/newlist mailman" to setup site-wide mailinglist.'
+fi
+if [ -f %{_var}/lib/mailman/data/last_mailman_version ]; then
+	%{_libdir}/mailman/bin/update
+fi
 /sbin/chkconfig --add mailman
 if [ -f /var/lock/subsys/mailman ] && [ -d /var/spool/mailman/data ]; then
 	ln -sf %{_sysconfdir}/sitelist.cfg /var/spool/mailman/data/sitelist.cfg
+fi
+if [ ! -f %{_sysconfdir}/aliases ]; then
+	touch %{_sysconfdir}/aliases{,.db}
+	chown root:mailman %{_sysconfdir}/aliases{,.db}
+	chmod 660 %{_sysconfdir}/aliases{,.db}
 fi
 %service mailman restart "mailman qrunner daemon"
 
@@ -350,6 +378,9 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %attr(640,root,http) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/httpd.conf
 %attr(644,root,mailman) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/mm_cfg.py
 %attr(644,root,mailman) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sitelist.cfg
+%ghost %attr(660,root,mailman) %{_sysconfdir}/aliases
+%ghost %attr(660,root,mailman) %{_sysconfdir}/aliases.db
+%ghost %attr(640,root,mailman) %{_sysconfdir}/adm.pw
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
 /etc/smrsh/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/cron.d/%{name}
@@ -394,7 +425,9 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %dir %{_var}/lib/%{name}/archives
 %attr(2771,root,mailman) %dir %{_var}/lib/%{name}/archives/private
 %dir %{_var}/lib/%{name}/archives/public
-%{_var}/lib/%{name}/data
+%dir %{_var}/lib/%{name}/data
+%ghost %{_var}/lib/%{name}/data/last_mailman_version
+%{_var}/lib/%{name}/data/sitelist.cfg
 %dir %{_var}/lib/%{name}/lists
 %dir %{_var}/lib/%{name}/spam
 %dir %{_queuedir}
