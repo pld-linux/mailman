@@ -1,4 +1,3 @@
-diff -r -u mailman-2.1.5.orig/bin/Makefile.in mailman-2.1.5.build/bin/Makefile.in
 --- mailman-2.1.5.orig/bin/Makefile.in	2003-12-24 12:03:15.000000000 -0500
 +++ mailman-2.1.5.build/bin/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -27,9 +26,6 @@ diff -r -u mailman-2.1.5.orig/bin/Makefile.in mailman-2.1.5.build/bin/Makefile.i
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/bin: Makefile.in~
-Only in mailman-2.1.5.build: configure
-diff -r -u mailman-2.1.5.orig/cron/Makefile.in mailman-2.1.5.build/cron/Makefile.in
 --- mailman-2.1.5.orig/cron/Makefile.in	2003-03-31 14:27:07.000000000 -0500
 +++ mailman-2.1.5.build/cron/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -49,8 +45,6 @@ diff -r -u mailman-2.1.5.orig/cron/Makefile.in mailman-2.1.5.build/cron/Makefile
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/cron: Makefile.in~
-diff -r -u mailman-2.1.5.orig/Mailman/Archiver/Makefile.in mailman-2.1.5.build/Mailman/Archiver/Makefile.in
 --- mailman-2.1.5.orig/Mailman/Archiver/Makefile.in	2003-03-31 14:26:58.000000000 -0500
 +++ mailman-2.1.5.build/Mailman/Archiver/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -79,8 +73,6 @@ diff -r -u mailman-2.1.5.orig/Mailman/Archiver/Makefile.in mailman-2.1.5.build/M
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/Mailman/Archiver: Makefile.in~
-diff -r -u mailman-2.1.5.orig/Mailman/Bouncers/Makefile.in mailman-2.1.5.build/Mailman/Bouncers/Makefile.in
 --- mailman-2.1.5.orig/Mailman/Bouncers/Makefile.in	2003-03-31 14:26:58.000000000 -0500
 +++ mailman-2.1.5.build/Mailman/Bouncers/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -109,8 +101,6 @@ diff -r -u mailman-2.1.5.orig/Mailman/Bouncers/Makefile.in mailman-2.1.5.build/M
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/Mailman/Bouncers: Makefile.in~
-diff -r -u mailman-2.1.5.orig/Mailman/Cgi/Makefile.in mailman-2.1.5.build/Mailman/Cgi/Makefile.in
 --- mailman-2.1.5.orig/Mailman/Cgi/Makefile.in	2003-03-31 14:26:59.000000000 -0500
 +++ mailman-2.1.5.build/Mailman/Cgi/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -139,8 +129,6 @@ diff -r -u mailman-2.1.5.orig/Mailman/Cgi/Makefile.in mailman-2.1.5.build/Mailma
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/Mailman/Cgi: Makefile.in~
-diff -r -u mailman-2.1.5.orig/Mailman/Commands/Makefile.in mailman-2.1.5.build/Mailman/Commands/Makefile.in
 --- mailman-2.1.5.orig/Mailman/Commands/Makefile.in	2003-03-31 14:27:00.000000000 -0500
 +++ mailman-2.1.5.build/Mailman/Commands/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -169,8 +157,6 @@ diff -r -u mailman-2.1.5.orig/Mailman/Commands/Makefile.in mailman-2.1.5.build/M
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/Mailman/Commands: Makefile.in~
-diff -r -u mailman-2.1.5.orig/Mailman/Gui/Makefile.in mailman-2.1.5.build/Mailman/Gui/Makefile.in
 --- mailman-2.1.5.orig/Mailman/Gui/Makefile.in	2003-03-31 14:27:01.000000000 -0500
 +++ mailman-2.1.5.build/Mailman/Gui/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -199,8 +185,6 @@ diff -r -u mailman-2.1.5.orig/Mailman/Gui/Makefile.in mailman-2.1.5.build/Mailma
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/Mailman/Gui: Makefile.in~
-diff -r -u mailman-2.1.5.orig/Mailman/Handlers/Makefile.in mailman-2.1.5.build/Mailman/Handlers/Makefile.in
 --- mailman-2.1.5.orig/Mailman/Handlers/Makefile.in	2003-03-31 14:27:01.000000000 -0500
 +++ mailman-2.1.5.build/Mailman/Handlers/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -229,8 +213,6 @@ diff -r -u mailman-2.1.5.orig/Mailman/Handlers/Makefile.in mailman-2.1.5.build/M
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/Mailman/Handlers: Makefile.in~
-diff -r -u mailman-2.1.5.orig/Mailman/Logging/Makefile.in mailman-2.1.5.build/Mailman/Logging/Makefile.in
 --- mailman-2.1.5.orig/Mailman/Logging/Makefile.in	2003-03-31 14:27:02.000000000 -0500
 +++ mailman-2.1.5.build/Mailman/Logging/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -259,8 +241,6 @@ diff -r -u mailman-2.1.5.orig/Mailman/Logging/Makefile.in mailman-2.1.5.build/Ma
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/Mailman/Logging: Makefile.in~
-diff -r -u mailman-2.1.5.orig/Mailman/Makefile.in mailman-2.1.5.build/Mailman/Makefile.in
 --- mailman-2.1.5.orig/Mailman/Makefile.in	2003-03-31 14:26:58.000000000 -0500
 +++ mailman-2.1.5.build/Mailman/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -20,8 +20,6 @@
@@ -302,8 +282,6 @@ diff -r -u mailman-2.1.5.orig/Mailman/Makefile.in mailman-2.1.5.build/Mailman/Ma
  clean:
  	for d in $(SUBDIRS); \
  	do \
-Only in mailman-2.1.5.build/Mailman: Makefile.in~
-diff -r -u mailman-2.1.5.orig/Mailman/MTA/Makefile.in mailman-2.1.5.build/Mailman/MTA/Makefile.in
 --- mailman-2.1.5.orig/Mailman/MTA/Makefile.in	2003-03-31 14:27:02.000000000 -0500
 +++ mailman-2.1.5.build/Mailman/MTA/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -332,8 +310,6 @@ diff -r -u mailman-2.1.5.orig/Mailman/MTA/Makefile.in mailman-2.1.5.build/Mailma
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/Mailman/MTA: Makefile.in~
-diff -r -u mailman-2.1.5.orig/Mailman/Queue/Makefile.in mailman-2.1.5.build/Mailman/Queue/Makefile.in
 --- mailman-2.1.5.orig/Mailman/Queue/Makefile.in	2003-03-31 14:27:03.000000000 -0500
 +++ mailman-2.1.5.build/Mailman/Queue/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -362,9 +338,6 @@ diff -r -u mailman-2.1.5.orig/Mailman/Queue/Makefile.in mailman-2.1.5.build/Mail
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/Mailman/Queue: Makefile.in~
-Only in mailman-2.1.5.orig: mailman-FHS.patch
-diff -r -u mailman-2.1.5.orig/Makefile.in mailman-2.1.5.build/Makefile.in
 --- mailman-2.1.5.orig/Makefile.in	2003-03-31 14:26:57.000000000 -0500
 +++ mailman-2.1.5.build/Makefile.in	2004-10-15 16:26:03.000000000 -0400
 @@ -61,11 +61,10 @@
@@ -430,8 +403,6 @@ diff -r -u mailman-2.1.5.orig/Makefile.in mailman-2.1.5.build/Makefile.in
  	    else true; \
  	    fi; \
  	done
-Only in mailman-2.1.5.build: Makefile.in~
-diff -r -u mailman-2.1.5.orig/messages/Makefile.in mailman-2.1.5.build/messages/Makefile.in
 --- mailman-2.1.5.orig/messages/Makefile.in	2004-04-24 22:30:04.000000000 -0400
 +++ mailman-2.1.5.build/messages/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -32,7 +32,6 @@
@@ -480,8 +451,6 @@ diff -r -u mailman-2.1.5.orig/messages/Makefile.in mailman-2.1.5.build/messages/
  clean:
  	-rm -f */LC_MESSAGES/mailman.mo
  
-Only in mailman-2.1.5.build/messages: Makefile.in~
-diff -r -u mailman-2.1.5.orig/misc/Makefile.in mailman-2.1.5.build/misc/Makefile.in
 --- mailman-2.1.5.orig/misc/Makefile.in	2004-05-13 23:34:34.000000000 -0400
 +++ mailman-2.1.5.build/misc/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -29,7 +29,6 @@
@@ -510,8 +479,6 @@ diff -r -u mailman-2.1.5.orig/misc/Makefile.in mailman-2.1.5.build/misc/Makefile
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/misc: Makefile.in~
-diff -r -u mailman-2.1.5.orig/scripts/Makefile.in mailman-2.1.5.build/scripts/Makefile.in
 --- mailman-2.1.5.orig/scripts/Makefile.in	2003-03-31 14:27:12.000000000 -0500
 +++ mailman-2.1.5.build/scripts/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -540,8 +507,6 @@ diff -r -u mailman-2.1.5.orig/scripts/Makefile.in mailman-2.1.5.build/scripts/Ma
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/scripts: Makefile.in~
-diff -r -u mailman-2.1.5.orig/src/Makefile.in mailman-2.1.5.build/src/Makefile.in
 --- mailman-2.1.5.orig/src/Makefile.in	2003-03-31 14:27:14.000000000 -0500
 +++ mailman-2.1.5.build/src/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -586,8 +551,6 @@ diff -r -u mailman-2.1.5.orig/src/Makefile.in mailman-2.1.5.build/src/Makefile.i
  	done
  
  clean:
-Only in mailman-2.1.5.build/src: Makefile.in~
-diff -r -u mailman-2.1.5.orig/templates/Makefile.in mailman-2.1.5.build/templates/Makefile.in
 --- mailman-2.1.5.orig/templates/Makefile.in	2004-04-24 22:30:04.000000000 -0400
 +++ mailman-2.1.5.build/templates/Makefile.in	2004-10-18 12:49:01.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -624,8 +587,6 @@ diff -r -u mailman-2.1.5.orig/templates/Makefile.in mailman-2.1.5.build/template
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/templates: Makefile.in~
-diff -r -u mailman-2.1.5.orig/tests/bounces/Makefile.in mailman-2.1.5.build/tests/bounces/Makefile.in
 --- mailman-2.1.5.orig/tests/bounces/Makefile.in	2003-03-31 14:27:16.000000000 -0500
 +++ mailman-2.1.5.build/tests/bounces/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -654,8 +615,6 @@ diff -r -u mailman-2.1.5.orig/tests/bounces/Makefile.in mailman-2.1.5.build/test
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/tests/bounces: Makefile.in~
-diff -r -u mailman-2.1.5.orig/tests/Makefile.in mailman-2.1.5.build/tests/Makefile.in
 --- mailman-2.1.5.orig/tests/Makefile.in	2003-03-31 14:27:15.000000000 -0500
 +++ mailman-2.1.5.build/tests/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -684,8 +643,6 @@ diff -r -u mailman-2.1.5.orig/tests/Makefile.in mailman-2.1.5.build/tests/Makefi
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/tests: Makefile.in~
-diff -r -u mailman-2.1.5.orig/tests/msgs/Makefile.in mailman-2.1.5.build/tests/msgs/Makefile.in
 --- mailman-2.1.5.orig/tests/msgs/Makefile.in	2003-03-31 14:27:17.000000000 -0500
 +++ mailman-2.1.5.build/tests/msgs/Makefile.in	2004-10-15 15:36:46.000000000 -0400
 @@ -28,7 +28,6 @@
@@ -714,4 +671,3 @@ diff -r -u mailman-2.1.5.orig/tests/msgs/Makefile.in mailman-2.1.5.build/tests/m
  clean:
  
  distclean:
-Only in mailman-2.1.5.build/tests/msgs: Makefile.in~
