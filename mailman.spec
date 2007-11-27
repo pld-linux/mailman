@@ -6,7 +6,7 @@ Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
 Summary(pt_BR.UTF-8):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.9
-Release:	5
+Release:	6
 Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
@@ -138,6 +138,15 @@ maior parte em Python. Características:
 - Compiladores (digests) opcionais compatíveis com MIME.
 - Informa a partir de qual máquina você se inscreveu, caso esteja no
   domínio correto.
+
+%package sendmail
+Summary:	Sendmail support for mailman
+Group:		Applications/System
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description sendmail
+This package provides wrapper in /etc/smrsh that allows sendmail
+to run mailman.
 
 %prep
 %setup -q
@@ -385,7 +394,6 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %ghost %attr(660,root,mailman) %{_sysconfdir}/aliases.db
 %ghost %attr(640,root,mailman) %{_sysconfdir}/adm.pw
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
-/etc/smrsh/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/cron.d/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/%{name}
 
@@ -438,3 +446,7 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %dir %{_logdir}
 %dir %{_logarchdir}
 %dir %{_piddir}
+
+%files sendmail
+%defattr(644,root,root,755)
+/etc/smrsh/%{name}
