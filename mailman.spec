@@ -141,12 +141,17 @@ maior parte em Python. Características:
 
 %package sendmail
 Summary:	Sendmail support for mailman
+Summary(pl.UTF-8):	Obsługa mailmana dla sendmaila
 Group:		Applications/System
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description sendmail
-This package provides wrapper in /etc/smrsh that allows sendmail
-to run mailman.
+This package provides wrapper symlink in /etc/smrsh that allows
+sendmail to run mailman.
+
+%description sendmail -l pl.UTF-8
+Ten pakiet udostępnia dowiązanie w /etc/smrsh pozwalające sendmailowi
+uruchamiać mailmana.
 
 %prep
 %setup -q
