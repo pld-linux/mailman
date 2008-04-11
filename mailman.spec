@@ -6,7 +6,7 @@ Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
 Summary(pt_BR.UTF-8):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.9
-Release:	6
+Release:	7
 Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
@@ -28,12 +28,13 @@ Patch5:		%{name}-python-compile.patch
 Patch6:		%{name}-build.patch
 Patch7:		%{name}-FHS.patch
 Patch8:		%{name}-x-imap-folder.patch
+Patch9:		%{name}-lib64.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	python >= 2.1
 BuildRequires:	python-devel
-BuildRequires:	rpmbuild(macros) >= 1.268
+BuildRequires:	rpmbuild(macros) >= 1.234
 Requires(post):	/bin/hostname
 Requires(post):	grep
 Requires(post,preun):	/sbin/chkconfig
@@ -164,6 +165,7 @@ uruchamiać mailmana.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %build
 %{__aclocal}
@@ -244,7 +246,7 @@ touch $RPM_BUILD_ROOT%{_var}/lib/mailman/data/last_mailman_version
 ln -s %{_libdir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
 
 # regenerate pyc files with proper paths
-find $RPM_BUILD_ROOT -name '*.pyc' -exec rm "{}" ";"
+find $RPM_BUILD_ROOT -name '*.pyc' | xargs rm -f
 %py_comp $RPM_BUILD_ROOT
 
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/mm_cfg.pyc
