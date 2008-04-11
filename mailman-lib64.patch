@@ -1,5 +1,5 @@
---- mailman-2.1.9/misc/paths.py~	2008-04-11 16:57:17.000000000 +0300
-+++ mailman-2.1.9/misc/paths.py	2008-04-11 17:03:09.313098943 +0300
+--- mailman-2.1.9/misc/paths.py.in~	2008-04-11 16:57:17.000000000 +0300
++++ mailman-2.1.9/misc/paths.py.in	2008-04-11 17:03:09.313098943 +0300
 @@ -45,7 +45,7 @@
  sys.path.insert(0, os.path.join(prefix, 'pythonlib'))
  
