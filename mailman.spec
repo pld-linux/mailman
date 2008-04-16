@@ -1,12 +1,15 @@
 # TODO:
 # - are *.po files (beside *.mo) needed in binary package?
+
+%bcond_with	umbrella_hack	# break anonimization (for use with moderated umbrella list of moderated lists)
+
 Summary:	The GNU Mailing List Management System
 Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
 Summary(pt_BR.UTF-8):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.9
-Release:	7
+Release:	7%{?with_umbrella_hack:.umh}
 Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
@@ -29,6 +32,7 @@ Patch6:		%{name}-build.patch
 Patch7:		%{name}-FHS.patch
 Patch8:		%{name}-x-imap-folder.patch
 Patch9:		%{name}-lib64.patch
+Patch10:	%{name}-umbrella-anon-hack.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -166,6 +170,7 @@ uruchamiać mailmana.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%{?with_umbrella_hack:%patch10 -p1}
 
 %build
 %{__aclocal}
