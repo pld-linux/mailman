@@ -8,18 +8,19 @@ This patch makes possible to reply to original poster instead of umbrella list.
 
 --- mailman-2.1.9/Mailman/Handlers/Cleanse.py~	2006-01-15 22:01:35.000000000 +0100
 +++ mailman-2.1.9/Mailman/Handlers/Cleanse.py	2008-04-16 16:28:46.000000000 +0200
-@@ -34,8 +34,9 @@
+@@ -34,16 +34,17 @@
      del msg['urgent']
      # We remove other headers from anonymous lists
      if mlist.anonymous_list:
 -        syslog('post', 'post to %s from %s anonymized',
 +        syslog('post', 'post to %s from %s anonymizored',
                 mlist.internal_name(), msg.get('from'))
++        del msg['reply-to']
 +        msg['Reply-To'] = msg.get('from')
          del msg['from']
-         del msg['reply-to']
+-        del msg['reply-to']
          del msg['sender']
-@@ -43,7 +44,7 @@
+         # Hotmail sets this one
          del msg['x-originating-email']
          i18ndesc = str(uheader(mlist, mlist.description, 'From'))
          msg['From'] = formataddr((i18ndesc, mlist.GetListEmail()))
