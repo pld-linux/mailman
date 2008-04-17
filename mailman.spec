@@ -3,7 +3,7 @@
 
 %bcond_with	umbrella_hack	# break anonimization (for use with moderated umbrella list of moderated lists)
 
-%define		rel	7
+%define		rel	8
 Summary:	The GNU Mailing List Management System
 Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
@@ -213,7 +213,6 @@ export PYTHONPATH
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
-sed 's#/usr#mailman /usr#' cron/crontab.in > $RPM_BUILD_ROOT/etc/cron.d/%{name}
 sed -e 's#/usr/lib/mailman#%{_libdir}/mailman#g' %{SOURCE2} \
 	> $RPM_BUILD_ROOT%{_sysconfdir}/httpd.conf
 sed -e 's#/usr/lib/mailman#%{_libdir}/mailman#g' %{SOURCE2} \
@@ -232,12 +231,12 @@ cat >> $RPM_BUILD_ROOT%{_sysconfdir}/mm_cfg.py << 'EOF'
 #MTA = 'Postfix'
 DEFAULT_EMAIL_HOST		= 'YOUR.HOST.NAME.HERE'
 DEFAULT_URL_HOST		= 'YOUR.HOST.NAME.HERE'
-DEFAULT_HOST_NAME       = 'YOUR.HOST.NAME.HERE'
+DEFAULT_HOST_NAME		= 'YOUR.HOST.NAME.HERE'
 IMAGE_LOGOS			= '/mailman/icons/'
 PUBLIC_ARCHIVE_URL		= '/mailman/pipermail/%%(listname)s'
 MAILMAN_GROUP			= '%{name}'
 MAILMAN_USER			= '%{name}'
-VIRTUAL_HOST_OVERVIEW       = Off
+VIRTUAL_HOST_OVERVIEW		= Off
 #DEFAULT_SERVER_LANGUAGE		= 'pl'
 
 # For available options and their descriptions see:
