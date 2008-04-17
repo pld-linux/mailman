@@ -222,6 +222,8 @@ sed -e 's#/usr/lib/mailman#%{_libdir}/mailman#g' %{SOURCE3} \
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}
 
+install cron/crontab.in $RPM_BUILD_ROOT/etc/cron.d/%{name}
+
 mv $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py $RPM_BUILD_ROOT%{_sysconfdir}
 ln -s %{_sysconfdir}/mm_cfg.py $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py
 
