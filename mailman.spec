@@ -60,6 +60,8 @@ Requires:	webserver
 %pyrequires_eq	python-modules
 Provides:	group(mailman)
 Provides:	user(mailman)
+# for converting text/html into plain text in default configuration:
+Suggests:	lynx
 Conflicts:	logrotate < 3.7-4
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
