@@ -3,37 +3,35 @@
 
 %bcond_with	umbrella_hack	# break anonimization (for use with moderated umbrella list of moderated lists)
 
-%define		rel	9
+%define		rel	0.1
 Summary:	The GNU Mailing List Management System
 Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
 Summary(pt_BR.UTF-8):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
-Version:	2.1.9
+Version:	2.1.11
 Release:	%{rel}%{?with_umbrella_hack:.umh}
 Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/mailman/%{name}-%{version}.tgz
-# Source0-md5:	dd51472470f9eafb04f64da372444835
+# Source0-md5:	d9fd89f54c4743dbcb3b3eec8c6146d6
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 # Source1-md5:	6b55f9f8051c76961b84a12ed17fc14f
 Source2:	%{name}.conf
 Source3:	%{name}.init
 Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
-# Need to check if it's still useful
-#Patch0:	%{name}-xss.patch
-Patch1:		%{name}-MM_FIND_GROUP_NAME.patch
-Patch2:		%{name}-dont-send-broken-reminder-ugly-hack.patch
-Patch3:		%{name}-mailmanctl-status.patch
-Patch4:		%{name}-cron.patch
-Patch5:		%{name}-python-compile.patch
-Patch6:		%{name}-build.patch
-Patch7:		%{name}-FHS.patch
-Patch8:		%{name}-x-imap-folder.patch
-Patch9:		%{name}-lib64.patch
-Patch10:	%{name}-umbrella-anon-hack.patch
+Patch0:		%{name}-MM_FIND_GROUP_NAME.patch
+Patch1:		%{name}-dont-send-broken-reminder-ugly-hack.patch
+Patch2:		%{name}-mailmanctl-status.patch
+Patch3:		%{name}-cron.patch
+Patch4:		%{name}-python-compile.patch
+Patch5:		%{name}-build.patch
+Patch6:		%{name}-FHS.patch
+Patch7:		%{name}-x-imap-folder.patch
+Patch8:		%{name}-lib64.patch
+Patch9:		%{name}-umbrella-anon-hack.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -163,8 +161,8 @@ uruchamiać mailmana.
 
 %prep
 %setup -q
-#patch0 -p1
-%patch1 -p1
+%patch0 -p1
+#patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
@@ -172,8 +170,10 @@ uruchamiać mailmana.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1
-%{?with_umbrella_hack:%patch10 -p1}
+%{?with_umbrella_hack:%patch9 -p1}
+
+# Conflicts with python built-in email package
+sed -i -e 's,EMAILPKG=,#EMAILPKG=,g' misc/Makefile.in
 
 %build
 %{__aclocal}
@@ -195,9 +195,8 @@ uruchamiać mailmana.
 	--with-mailhost=localhost.localdomain \
 	--with-urlhost=localhost.localdomain \
 	--without-permcheck
-%{__make}
 
-#%{__make} -C misc
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -433,6 +432,7 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %attr(2755,root,mailman) %{_libdir}/%{name}/cgi-bin/*
 %attr(755,root,mailman) %{_libdir}/%{name}/cron/bumpdigests
 %attr(755,root,mailman) %{_libdir}/%{name}/cron/checkdbs
+%attr(755,root,mailman) %{_libdir}/%{name}/cron/cull_bad_shunt
 %attr(755,root,mailman) %{_libdir}/%{name}/cron/disabled
 %attr(755,root,mailman) %{_libdir}/%{name}/cron/gate_news
 %attr(755,root,mailman) %{_libdir}/%{name}/cron/mailpasswds
