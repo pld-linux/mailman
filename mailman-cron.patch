@@ -19,7 +19,7 @@ diff -r -u mailman-2.1.5.orig/cron/checkdbs mailman-2.1.5/cron/checkdbs
 diff -r -u mailman-2.1.5.orig/cron/crontab.in.in mailman-2.1.5/cron/crontab.in.in
 --- mailman-2.1.5.orig/cron/crontab.in.in	2002-01-06 01:28:12.000000000 -0500
 +++ mailman-2.1.5/cron/crontab.in.in	2004-09-02 17:43:27.000000000 -0400
-@@ -1,24 +1,24 @@
+@@ -1,27 +1,27 @@
  # At 8AM every day, mail reminders to admins as to pending requests.
  # They are less likely to ignore these reminders if they're mailed
  # early in the morning, but of course, this is local time... ;)
@@ -50,6 +50,10 @@ diff -r -u mailman-2.1.5.orig/cron/crontab.in.in mailman-2.1.5/cron/crontab.in.i
  # GZIP_ARCHIVE_TXT_FILES is false in mm_cfg.py
 -27 3 * * * @PYTHON@ -S @prefix@/cron/nightly_gzip
 +27 3 * * * @MAILMAN_USER@ @prefix@/cron/nightly_gzip
+ #
+ # At 4:30AM daily, cull old entries from the 'bad' and 'shunt' queues.
+-30 4 * * * @PYTHON@ -S @prefix@/cron/cull_bad_shunt
++30 4 * * * @MAILMAN_USER@ @prefix@/cron/cull_bad_shunt
 diff -r -u mailman-2.1.5.orig/cron/disabled mailman-2.1.5/cron/disabled
 --- mailman-2.1.5.orig/cron/disabled	2004-02-10 17:59:45.000000000 -0500
 +++ mailman-2.1.5/cron/disabled	2004-08-31 12:22:54.000000000 -0400

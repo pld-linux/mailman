@@ -52,8 +52,8 @@
                 (REL_LEVEL << 4)  | (REL_SERIAL << 0))
  
  # config.pck schema version number
--DATA_FILE_VERSION = 96
-+DATA_FILE_VERSION = 97
+-DATA_FILE_VERSION = 97
++DATA_FILE_VERSION = 98
  
  # qfile/*.db schema version number
  QFILE_SCHEMA_VERSION = 3
