@@ -1,0 +1,27 @@
+--- mailman-2.1.11/Mailman/Utils.py~	2008-06-30 18:29:46.000000000 +0200
++++ mailman-2.1.11/Mailman/Utils.py	2008-10-15 12:47:17.000000000 +0200
+@@ -28,6 +28,10 @@
+ 
+ import os
+ import re
++
++from warnings import filterwarnings
++filterwarnings('ignore', '.* sha module', DeprecationWarning)
++
+ import cgi
+ import sha
+ import time
+--- mailman-2.1.11/Mailman/SecurityManager.py~	2008-06-30 18:29:46.000000000 +0200
++++ mailman-2.1.11/Mailman/SecurityManager.py	2008-10-15 12:55:04.000000000 +0200
+@@ -49,6 +49,11 @@
+ 
+ import os
+ import re
++
++from warnings import filterwarnings
++filterwarnings('ignore', '.* sha module', DeprecationWarning)
++filterwarnings('ignore', '.* md5 module', DeprecationWarning)
++
+ import sha
+ import time
+ import Cookie
