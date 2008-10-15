@@ -1,18 +1,134 @@
---- mailman-2.1.11/Mailman/Utils.py~	2008-06-30 18:29:46.000000000 +0200
-+++ mailman-2.1.11/Mailman/Utils.py	2008-10-15 12:47:17.000000000 +0200
-@@ -28,6 +28,10 @@
+diff -ur mailman-2.1.11/Mailman/Bouncers/Caiwireless.py mailman-2.1.11-py26/Mailman/Bouncers/Caiwireless.py
+--- mailman-2.1.11/Mailman/Bouncers/Caiwireless.py	2008-06-30 18:29:46.000000000 +0200
++++ mailman-2.1.11-py26/Mailman/Bouncers/Caiwireless.py	2008-10-15 13:29:11.000000000 +0200
+@@ -27,7 +27,7 @@
  
- import os
- import re
-+
-+from warnings import filterwarnings
-+filterwarnings('ignore', '.* sha module', DeprecationWarning)
-+
- import cgi
- import sha
- import time
---- mailman-2.1.11/Mailman/SecurityManager.py~	2008-06-30 18:29:46.000000000 +0200
-+++ mailman-2.1.11/Mailman/SecurityManager.py	2008-10-15 12:55:04.000000000 +0200
+ 
+ def process(msg):
+-    if msg.get_type() <> 'multipart/mixed':
++    if msg.get_content_type() <> 'multipart/mixed':
+         return None
+     # simple state machine
+     #     0 == nothing seen
+diff -ur mailman-2.1.11/Mailman/Bouncers/GroupWise.py mailman-2.1.11-py26/Mailman/Bouncers/GroupWise.py
+--- mailman-2.1.11/Mailman/Bouncers/GroupWise.py	2008-06-30 18:29:46.000000000 +0200
++++ mailman-2.1.11-py26/Mailman/Bouncers/GroupWise.py	2008-10-15 13:29:26.000000000 +0200
+@@ -30,7 +30,7 @@
+ 
+ 
+ def find_textplain(msg):
+-    if msg.get_type(msg.get_default_type()) == 'text/plain':
++    if msg.get_content_type(msg.get_default_type()) == 'text/plain':
+         return msg
+     if msg.is_multipart:
+         for part in msg.get_payload():
+@@ -44,7 +44,7 @@
+ 
+ 
+ def process(msg):
+-    if msg.get_type() <> 'multipart/mixed' or not msg['x-mailer']:
++    if msg.get_content_type() <> 'multipart/mixed' or not msg['x-mailer']:
+         return None
+     if msg['x-mailer'][:3].lower() not in ('nov', 'ntm', 'int'):
+         return None
+diff -ur mailman-2.1.11/Mailman/Bouncers/Microsoft.py mailman-2.1.11-py26/Mailman/Bouncers/Microsoft.py
+--- mailman-2.1.11/Mailman/Bouncers/Microsoft.py	2008-06-30 18:29:46.000000000 +0200
++++ mailman-2.1.11-py26/Mailman/Bouncers/Microsoft.py	2008-10-15 13:29:52.000000000 +0200
+@@ -25,7 +25,7 @@
+ 
+ 
+ def process(msg):
+-    if msg.get_type() <> 'multipart/mixed':
++    if msg.get_content_type() <> 'multipart/mixed':
+         return None
+     # Find the first subpart, which has no MIME type
+     try:
+diff -ur mailman-2.1.11/Mailman/Bouncers/Netscape.py mailman-2.1.11-py26/Mailman/Bouncers/Netscape.py
+--- mailman-2.1.11/Mailman/Bouncers/Netscape.py	2008-06-30 18:29:46.000000000 +0200
++++ mailman-2.1.11-py26/Mailman/Bouncers/Netscape.py	2008-10-15 13:30:04.000000000 +0200
+@@ -61,7 +61,7 @@
+     leaves = []
+     flatten(msg, leaves)
+     for i, subpart in zip(range(len(leaves)-1), leaves):
+-        if subpart.get_type() == 'text/plain':
++        if subpart.get_content_type() == 'text/plain':
+             plainmsg = subpart
+             break
+     if not plainmsg:
+diff -ur mailman-2.1.11/Mailman/Bouncers/Postfix.py mailman-2.1.11-py26/Mailman/Bouncers/Postfix.py
+--- mailman-2.1.11/Mailman/Bouncers/Postfix.py	2008-06-30 18:29:46.000000000 +0200
++++ mailman-2.1.11-py26/Mailman/Bouncers/Postfix.py	2008-10-15 13:29:01.000000000 +0200
+@@ -71,14 +71,14 @@
+ 
+ 
+ def process(msg):
+-    if msg.get_type() not in ('multipart/mixed', 'multipart/report'):
++    if msg.get_content_type() not in ('multipart/mixed', 'multipart/report'):
+         return None
+     # We're looking for the plain/text subpart with a Content-Description: of
+     # `notification'.
+     leaves = []
+     flatten(msg, leaves)
+     for subpart in leaves:
+-        if subpart.get_type() == 'text/plain' and \
++        if subpart.get_content_type() == 'text/plain' and \
+            subpart.get('content-description', '').lower() == 'notification':
+             # then...
+             return findaddr(subpart)
+diff -ur mailman-2.1.11/Mailman/Handlers/Decorate.py mailman-2.1.11-py26/Mailman/Handlers/Decorate.py
+--- mailman-2.1.11/Mailman/Handlers/Decorate.py	2008-06-30 18:29:46.000000000 +0200
++++ mailman-2.1.11-py26/Mailman/Handlers/Decorate.py	2008-10-15 13:30:23.000000000 +0200
+@@ -130,7 +130,7 @@
+             wrap = False
+         except (LookupError, UnicodeError):
+             pass
+-    elif msg.get_type() == 'multipart/mixed':
++    elif msg.get_content_type() == 'multipart/mixed':
+         # The next easiest thing to do is just prepend the header and append
+         # the footer as additional subparts
+         payload = msg.get_payload()
+diff -ur mailman-2.1.11/Mailman/Handlers/Scrubber.py mailman-2.1.11-py26/Mailman/Handlers/Scrubber.py
+--- mailman-2.1.11/Mailman/Handlers/Scrubber.py	2008-06-30 18:29:46.000000000 +0200
++++ mailman-2.1.11-py26/Mailman/Handlers/Scrubber.py	2008-10-15 13:26:42.000000000 +0200
+@@ -189,7 +189,7 @@
+     # Now walk over all subparts of this message and scrub out various types
+     format = delsp = None
+     for part in msg.walk():
+-        ctype = part.get_type(part.get_default_type())
++        ctype = part.get_content_type()
+         # If the part is text/plain, we leave it alone
+         if ctype == 'text/plain':
+             # We need to choose a charset for the scrubbed message, so we'll
+@@ -300,7 +300,7 @@
+         # will transform the url into a hyperlink.
+         elif part.get_payload() and not part.is_multipart():
+             payload = part.get_payload(decode=True)
+-            ctype = part.get_type()
++            ctype = part.get_content_type()
+             # XXX Under email 2.5, it is possible that payload will be None.
+             # This can happen when you have a Content-Type: multipart/* with
+             # only one part and that part has two blank lines between the
+diff -ur mailman-2.1.11/Mailman/Handlers/Tagger.py mailman-2.1.11-py26/Mailman/Handlers/Tagger.py
+--- mailman-2.1.11/Mailman/Handlers/Tagger.py	2008-06-30 18:29:46.000000000 +0200
++++ mailman-2.1.11-py26/Mailman/Handlers/Tagger.py	2008-10-15 13:30:37.000000000 +0200
+@@ -69,11 +69,11 @@
+     # or if the outer type is multipart/alternative and there is a text/plain
+     # part.  Anything else, and the body is ignored for header-scan purposes.
+     found = None
+-    if msg.get_type('text/plain') == 'text/plain':
++    if msg.get_content_type('text/plain') == 'text/plain':
+         found = msg
+-    elif msg.is_multipart() and msg.get_type() == 'multipart/alternative':
++    elif msg.is_multipart() and msg.get_content_type() == 'multipart/alternative':
+         for found in msg.get_payload():
+-            if found.get_type('text/plain') == 'text/plain':
++            if found.get_content_type('text/plain') == 'text/plain':
+                 break
+         else:
+             found = None
+diff -ur mailman-2.1.11/Mailman/SecurityManager.py mailman-2.1.11-py26/Mailman/SecurityManager.py
+--- mailman-2.1.11/Mailman/SecurityManager.py	2008-06-30 18:29:46.000000000 +0200
++++ mailman-2.1.11-py26/Mailman/SecurityManager.py	2008-10-15 12:55:04.000000000 +0200
 @@ -49,6 +49,11 @@
  
  import os
@@ -25,3 +141,17 @@
  import sha
  import time
  import Cookie
+diff -ur mailman-2.1.11/Mailman/Utils.py mailman-2.1.11-py26/Mailman/Utils.py
+--- mailman-2.1.11/Mailman/Utils.py	2008-06-30 18:29:46.000000000 +0200
++++ mailman-2.1.11-py26/Mailman/Utils.py	2008-10-15 12:47:17.000000000 +0200
+@@ -28,6 +28,10 @@
+ 
+ import os
+ import re
++
++from warnings import filterwarnings
++filterwarnings('ignore', '.* sha module', DeprecationWarning)
++
+ import cgi
+ import sha
+ import time
