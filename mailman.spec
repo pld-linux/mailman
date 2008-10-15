@@ -32,6 +32,7 @@ Patch6:		%{name}-FHS.patch
 Patch7:		%{name}-x-imap-folder.patch
 Patch8:		%{name}-lib64.patch
 Patch9:		%{name}-umbrella-anon-hack.patch
+Patch10:	%{name}-python2.6.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -171,6 +172,7 @@ uruchamiać mailmana.
 %patch7 -p1
 %patch8 -p1
 %{?with_umbrella_hack:%patch9 -p1}
+%patch10 -p1
 
 # Conflicts with python built-in email package
 sed -i -e 's,EMAILPKG=,#EMAILPKG=,g' misc/Makefile.in
