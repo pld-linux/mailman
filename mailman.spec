@@ -3,7 +3,7 @@
 
 %bcond_with	umbrella_hack	# break anonimization (for use with moderated umbrella list of moderated lists)
 
-%define		rel	1
+%define		rel	2
 Summary:	The GNU Mailing List Management System
 Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
@@ -33,6 +33,7 @@ Patch7:		%{name}-x-imap-folder.patch
 Patch8:		%{name}-lib64.patch
 Patch9:		%{name}-umbrella-anon-hack.patch
 Patch10:	%{name}-python2.6.patch
+Patch11:	%{name}-python2.6-exceptions-quickfix.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -173,6 +174,7 @@ uruchamiać mailmana.
 %patch8 -p1
 %{?with_umbrella_hack:%patch9 -p1}
 %patch10 -p1
+%patch11 -p1
 
 # Conflicts with python built-in email package
 sed -i -e 's,EMAILPKG=,#EMAILPKG=,g' misc/Makefile.in
