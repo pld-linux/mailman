@@ -1,9 +1,8 @@
-# TODO:
-# - are *.po files (beside *.mo) needed in binary package?
-
+#
+# Conditional build:
 %bcond_with	umbrella_hack	# break anonimization (for use with moderated umbrella list of moderated lists)
 
-%define		rel	3
+%define		rel	4
 Summary:	The GNU Mailing List Management System
 Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
@@ -34,6 +33,7 @@ Patch8:		%{name}-lib64.patch
 Patch9:		%{name}-umbrella-anon-hack.patch
 Patch10:	%{name}-python2.6.patch
 Patch11:	%{name}-python2.6-exceptions-quickfix.patch
+Patch12:	%{name}-daemonize-fds.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -175,6 +175,7 @@ uruchamiać mailmana.
 %{?with_umbrella_hack:%patch9 -p1}
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 # Conflicts with python built-in email package
 sed -i -e 's,EMAILPKG=,#EMAILPKG=,g' misc/Makefile.in
@@ -260,10 +261,13 @@ ln -s %{_libdir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
 # regenerate pyc files with proper paths
 find $RPM_BUILD_ROOT -name '*.pyc' | xargs rm -f
 %py_comp $RPM_BUILD_ROOT
+%py_postclean %{_libdir}/mailman
 
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/mm_cfg.pyc
 rm -f $RPM_BUILD_ROOT%{_mandir}/README-mailman-man-pages
 rm -f $RPM_BUILD_ROOT%{_mandir}/diff.arch.8
+
+rm -f $RPM_BUILD_ROOT%{_libdir}/mailman/messages/*/LC_MESSAGES/*.po
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -299,7 +303,7 @@ if [ ! -f %{_sysconfdir}/aliases ]; then
 	chown mailman:mailman %{_sysconfdir}/aliases.db
 	chmod 660 %{_sysconfdir}/aliases{,.db}
 fi
-%service mailman restart "mailman qrunner daemon"
+%service mailman restart "Mailman Qrunner Daemon"
 
 %preun
 if [ "$1" = "0" ]; then
