@@ -6,9 +6,8 @@
 # description:	mailman is mailing lists server
 #
 # processname:	mailman
-# pidfile:	/var/run/mailman.pid
-# config:	/etc/mailman/mm_cfg.py
-
+# pidfile:	/var/run/mailman/master-qrunner.pid
+# config:	/etc/webapps/mailman/mm_cfg.py
 
 # Source function library
 . /etc/rc.d/init.d/functions
@@ -29,41 +28,67 @@ fi
 # Get service config
 [ -f /etc/sysconfig/mailman ] && . /etc/sysconfig/mailman
 
+start() {
+	# Check if the service is already running?
+	if [ -f /var/lock/subsys/mailman ]; then
+		msg_already_running mailman
+		return
+	fi
+
+	msg_starting mailman
+	daemon --user mailman /usr/lib/mailman/bin/mailmanctl -s -u start
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/mailman
+}
+
+stop() {
+	# Stop daemons.
+	if [ ! -f /var/lock/subsys/mailman ]; then
+		msg_not_running mailman
+		return
+	fi
+
+	msg_stopping mailman
+	daemon 'su mailman -s /bin/sh -c "/usr/lib/mailman/bin/mailmanctl -u stop"'
+	rm -f /var/lock/subsys/mailman /var/run/mailman.pid
+}
+
+condrestart() {
+	if [ -f /var/lock/subsys/mailman ]; then
+		stop
+		start
+	else
+		msg_not_running mailman
+		RETVAL=$1
+	fi
+}
+
 RETVAL=0
 # See how we were called.
 case "$1" in
   start)
-	# Check if the service is already running?
-	if [ ! -f /var/lock/subsys/mailman ]; then
-		msg_starting mailman
-		daemon --user mailman /usr/lib/mailman/bin/mailmanctl -s -u start
-		RETVAL=$?
-		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/mailman
-	else
-		msg_already_running mailman
-	fi
+  	start
 	;;
   stop)
-	# Stop daemons.
-	if [ -f /var/lock/subsys/mailman ]; then
-		msg_stopping mailman
-		daemon 'su mailman -s /bin/sh -c "/usr/lib/mailman/bin/mailmanctl -u stop"'
-		rm -f /var/lock/subsys/mailman /var/run/mailman.pid
-	else
-		msg_not_running mailman
-	fi
+  	stop
+	;;
+  restart)
+	stop
+	start
+	exit $?
+	;;
+  try-restart)
+	condrestart 0
+	;;
+  force-reload)
+	condrestart 7
 	;;
   status)
 	status mailman qrunner
 	exit $?
 	;;
-  restart|force-reload)
-	$0 stop
-	$0 start
-	exit $?
-	;;
   *)
-	msg_usage "$0 {start|stop|restart|force-reload|status}"
+	msg_usage "$0 {start|stop|restart|try-restart|force-reload|status}"
 	exit 3
 esac
 
