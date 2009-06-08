@@ -21,6 +21,8 @@ Source2:	%{name}.conf
 Source3:	%{name}.init
 Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
+Source6:	add_nonmembers
+Source7:	subscribe_list
 Patch0:		%{name}-MM_FIND_GROUP_NAME.patch
 Patch1:		%{name}-dont-send-broken-reminder-ugly-hack.patch
 Patch2:		%{name}-mailmanctl-status.patch
@@ -182,6 +184,8 @@ uruchamiać mailmana.
 # Conflicts with python built-in email package
 sed -i -e 's,EMAILPKG=,#EMAILPKG=,g' misc/Makefile.in
 
+install -p %{SOURCE6} %{SOURCE7} contrib
+
 %build
 %{__aclocal}
 %{__autoconf}
@@ -232,6 +236,8 @@ install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}
 
 install cron/crontab.in $RPM_BUILD_ROOT/etc/cron.d/%{name}
 
+install -p contrib/{subscribe_list,add_nonmembers} $RPM_BUILD_ROOT%{_libdir}/%{name}/bin
+
 ln -s %{_sysconfdir}/sitelist.cfg $RPM_BUILD_ROOT%{_var}/lib/mailman/data/sitelist.cfg
 
 cat >> $RPM_BUILD_ROOT%{_sysconfdir}/mm_cfg.py << 'EOF'
@@ -254,7 +260,7 @@ VIRTUAL_HOST_OVERVIEW		= Off
 USE_HTTP_AUTH   = False
 
 # For available options and their descriptions see:
-# %{_libdir}/%{name}/Mailman/Defaults.py
+# %{_docdir}/%{name}-%{version}/Defaults.py*
 EOF
 
 touch $RPM_BUILD_ROOT%{_sysconfdir}/aliases{,.db}
@@ -419,7 +425,7 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %files
 %defattr(644,root,root,755)
 %doc BUGS FAQ NEWS README README.CONTRIB README.NETSCAPE README.USERAGENT TODO UPGRADING INSTALL
-%doc Mailman/mm_cfg.py.dist
+%doc Mailman/mm_cfg.py.dist Mailman/Defaults.py
 %{_mandir}/man?/*
 %attr(2775,root,mailman) %dir %{_sysconfdir}
 %attr(640,root,http) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apache.conf
@@ -464,22 +470,67 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %{_libdir}/%{name}/Mailman/MTA
 %{_libdir}/%{name}/Mailman/Queue
 
-%{_libdir}/%{name}/bin/p*
-%attr(2755,root,mailman) %{_libdir}/%{name}/bin/[!p]*
-%attr(2755,root,mailman) %{_libdir}/%{name}/cgi-bin/*
-%attr(755,root,mailman) %{_libdir}/%{name}/cron/bumpdigests
-%attr(755,root,mailman) %{_libdir}/%{name}/cron/checkdbs
-%attr(755,root,mailman) %{_libdir}/%{name}/cron/cull_bad_shunt
-%attr(755,root,mailman) %{_libdir}/%{name}/cron/disabled
-%attr(755,root,mailman) %{_libdir}/%{name}/cron/gate_news
-%attr(755,root,mailman) %{_libdir}/%{name}/cron/mailpasswds
-%attr(755,root,mailman) %{_libdir}/%{name}/cron/nightly_gzip
-%attr(755,root,mailman) %{_libdir}/%{name}/cron/senddigests
+%{_libdir}/%{name}/bin/*.py[co]
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/add_members
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/add_nonmembers
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/arch
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/b4b5-archfix
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/change_pw
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/check_db
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/check_perms
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/cleanarch
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/clone_member
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/config_list
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/discard
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/dumpdb
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/find_member
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/genaliases
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/inject
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/list_admins
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/list_lists
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/list_members
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/list_owners
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/mailmanctl
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/mmsitepass
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/newlist
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/qrunner
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/rb-archfix
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/remove_members
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/rmlist
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/show_qfiles
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/subscribe_list
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/sync_members
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/transcheck
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/unshunt
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/update
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/version
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/withlist
+
+%attr(2755,root,mailman) %{_libdir}/%{name}/cgi-bin/admin
+%attr(2755,root,mailman) %{_libdir}/%{name}/cgi-bin/admindb
+%attr(2755,root,mailman) %{_libdir}/%{name}/cgi-bin/confirm
+%attr(2755,root,mailman) %{_libdir}/%{name}/cgi-bin/create
+%attr(2755,root,mailman) %{_libdir}/%{name}/cgi-bin/edithtml
+%attr(2755,root,mailman) %{_libdir}/%{name}/cgi-bin/listinfo
+%attr(2755,root,mailman) %{_libdir}/%{name}/cgi-bin/options
+%attr(2755,root,mailman) %{_libdir}/%{name}/cgi-bin/private
+%attr(2755,root,mailman) %{_libdir}/%{name}/cgi-bin/rmlist
+%attr(2755,root,mailman) %{_libdir}/%{name}/cgi-bin/roster
+%attr(2755,root,mailman) %{_libdir}/%{name}/cgi-bin/subscribe
+
+%attr(755,root,root) %{_libdir}/%{name}/cron/bumpdigests
+%attr(755,root,root) %{_libdir}/%{name}/cron/checkdbs
+%attr(755,root,root) %{_libdir}/%{name}/cron/cull_bad_shunt
+%attr(755,root,root) %{_libdir}/%{name}/cron/disabled
+%attr(755,root,root) %{_libdir}/%{name}/cron/gate_news
+%attr(755,root,root) %{_libdir}/%{name}/cron/mailpasswds
+%attr(755,root,root) %{_libdir}/%{name}/cron/nightly_gzip
+%attr(755,root,root) %{_libdir}/%{name}/cron/senddigests
 %{_libdir}/%{name}/cron/crontab.in
 %{_libdir}/%{name}/cron/paths.py*
 %{_libdir}/%{name}/scripts/*
 %{_libdir}/%{name}/icons/*
-%attr(2755,root,mailman) %{_libdir}/%{name}/mail/*
+%attr(2755,root,mailman) %{_libdir}/%{name}/mail/mailman
 %{_libdir}/%{name}/templates/*
 %{_libdir}/%{name}/pythonlib/*
 %{_libdir}/%{name}/messages/*
@@ -487,7 +538,7 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 
 %dir %{_var}/lib/%{name}
 %dir %{_var}/lib/%{name}/archives
-%attr(2771,root,mailman) %dir %{_var}/lib/%{name}/archives/private
+%dir %attr(2771,root,mailman) %{_var}/lib/%{name}/archives/private
 %dir %{_var}/lib/%{name}/archives/public
 %dir %{_var}/lib/%{name}/data
 %ghost %{_var}/lib/%{name}/data/last_mailman_version
