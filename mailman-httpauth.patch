@@ -1,0 +1,29 @@
+Maybe for security have USE_HTTP_AUTH = ['user1', 'user2']
+
+--- mailman-2.1.11/Mailman/Defaults.py.in~	2009-06-08 16:45:29.000000000 +0300
++++ mailman-2.1.11/Mailman/Defaults.py.in	2009-06-08 16:45:31.967055253 +0300
+@@ -1319,6 +1319,10 @@
+ AuthListModerator = 4 # List Moderator (can only handle held requests)
+ AuthSiteAdmin = 5     # Site Administrator (total control over everything)
+ 
++# If value is True, site administrator is trusted from REMOTE_USER CGI variable
++# Use this to if you want to use password authentication for site admin.
++USE_HTTP_AUTH   = False
++
+ # Useful directories
+ LIST_DATA_DIR   = os.path.join(VAR_PREFIX, 'lists')
+ LOG_DIR         = '@LOG_DIR@'
+--- mailman-2.1.11/Mailman/Utils.py~	2009-06-08 16:45:22.000000000 +0300
++++ mailman-2.1.11/Mailman/Utils.py	2009-06-08 16:45:25.094129761 +0300
+@@ -411,6 +411,11 @@
+ 
+ 
+ def check_global_password(response, siteadmin=True):
++    if mm_cfg.USE_HTTP_AUTH:
++        if os.getenv('AUTH_TYPE') != None and os.getenv('REMOTE_USER') != None:
++            return True
++        # Fallback to global password auth
++
+     challenge = get_global_password(siteadmin)
+     if challenge is None:
+         return None

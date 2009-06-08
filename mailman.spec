@@ -34,6 +34,7 @@ Patch9:		%{name}-umbrella-anon-hack.patch
 Patch10:	%{name}-python2.6.patch
 Patch11:	%{name}-python2.6-exceptions-quickfix.patch
 Patch12:	%{name}-daemonize-fds.patch
+Patch13:	%{name}-httpauth.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -176,6 +177,7 @@ uruchamiać mailmana.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
 
 # Conflicts with python built-in email package
 sed -i -e 's,EMAILPKG=,#EMAILPKG=,g' misc/Makefile.in
@@ -230,13 +232,9 @@ install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}
 
 install cron/crontab.in $RPM_BUILD_ROOT/etc/cron.d/%{name}
 
-mv $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py $RPM_BUILD_ROOT%{_sysconfdir}
-ln -s %{_sysconfdir}/mm_cfg.py $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py
-
 ln -s %{_sysconfdir}/sitelist.cfg $RPM_BUILD_ROOT%{_var}/lib/mailman/data/sitelist.cfg
 
 cat >> $RPM_BUILD_ROOT%{_sysconfdir}/mm_cfg.py << 'EOF'
-#MTA = 'Postfix'
 DEFAULT_EMAIL_HOST		= 'YOUR.HOST.NAME.HERE'
 DEFAULT_URL_HOST		= 'YOUR.HOST.NAME.HERE'
 DEFAULT_HOST_NAME		= 'YOUR.HOST.NAME.HERE'
@@ -245,7 +243,15 @@ PUBLIC_ARCHIVE_URL		= '/mailman/pipermail/%%(listname)s'
 MAILMAN_GROUP			= '%{name}'
 MAILMAN_USER			= '%{name}'
 VIRTUAL_HOST_OVERVIEW		= Off
-#DEFAULT_SERVER_LANGUAGE		= 'pl'
+
+#MTA = 'Postfix'
+#POSTFIX_STYLE_VIRTUAL_DOMAINS = []
+
+#DEFAULT_SERVER_LANGUAGE = 'pl'
+
+# If value is True, site administrator is trusted from REMOTE_USER CGI variable
+# Use this to if you want to use password authentication for site admin.
+USE_HTTP_AUTH   = False
 
 # For available options and their descriptions see:
 # %{_libdir}/%{name}/Mailman/Defaults.py
@@ -261,12 +267,18 @@ ln -s %{_libdir}/%{name}/mail/%{name} $RPM_BUILD_ROOT/etc/smrsh
 # regenerate pyc files with proper paths
 find $RPM_BUILD_ROOT -name '*.pyc' | xargs rm -f
 %py_comp $RPM_BUILD_ROOT
+# save mm_cfg.py from py_postclean
+mv $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.{py,pyX}
 %py_postclean %{_libdir}/mailman
 
-rm -f $RPM_BUILD_ROOT%{_sysconfdir}/mm_cfg.pyc
+# must do this after py_postclean
+# should we also symlink .pyc? in case commands are ran as root python would create .pyc file
+mv $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.pyX $RPM_BUILD_ROOT%{_sysconfdir}/mm_cfg.py
+ln -s %{_sysconfdir}/mm_cfg.py $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py
+rm $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py.dist
+
 rm -f $RPM_BUILD_ROOT%{_mandir}/README-mailman-man-pages
 rm -f $RPM_BUILD_ROOT%{_mandir}/diff.arch.8
-
 rm -f $RPM_BUILD_ROOT%{_libdir}/mailman/messages/*/LC_MESSAGES/*.po
 
 %clean
@@ -407,11 +419,13 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %files
 %defattr(644,root,root,755)
 %doc BUGS FAQ NEWS README README.CONTRIB README.NETSCAPE README.USERAGENT TODO UPGRADING INSTALL
+%doc Mailman/mm_cfg.py.dist
 %{_mandir}/man?/*
 %attr(2775,root,mailman) %dir %{_sysconfdir}
 %attr(640,root,http) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apache.conf
 %attr(640,root,http) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/httpd.conf
 %attr(644,root,mailman) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/mm_cfg.py
+%attr(664,root,mailman) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/mm_cfg.pyc
 %attr(644,root,mailman) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sitelist.cfg
 %ghost %attr(660,root,mailman) %{_sysconfdir}/aliases
 %ghost %attr(660,root,mailman) %{_sysconfdir}/aliases.db
@@ -434,7 +448,22 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %dir %{_libdir}/%{name}/pythonlib
 %dir %{_libdir}/%{name}/messages
 %dir %{_libdir}/%{name}/tests
-%{_libdir}/%{name}/Mailman
+%dir %{_libdir}/%{name}/Mailman
+
+# move to %{py_sitedir}?
+%{_libdir}/%{name}/Mailman/[A-Z_hiv]*.py[co]
+%{_libdir}/%{name}/Mailman/mm_cfg.py
+%ghost %{_libdir}/%{name}/Mailman/mm_cfg.pyc
+%{_libdir}/%{name}/Mailman/Archiver
+%{_libdir}/%{name}/Mailman/Bouncers
+%{_libdir}/%{name}/Mailman/Cgi
+%{_libdir}/%{name}/Mailman/Commands
+%{_libdir}/%{name}/Mailman/Gui
+%{_libdir}/%{name}/Mailman/Handlers
+%{_libdir}/%{name}/Mailman/Logging
+%{_libdir}/%{name}/Mailman/MTA
+%{_libdir}/%{name}/Mailman/Queue
+
 %{_libdir}/%{name}/bin/p*
 %attr(2755,root,mailman) %{_libdir}/%{name}/bin/[!p]*
 %attr(2755,root,mailman) %{_libdir}/%{name}/cgi-bin/*
