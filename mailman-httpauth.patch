@@ -1,5 +1,7 @@
 Maybe for security have USE_HTTP_AUTH = ['user1', 'user2']
 
+NOTE: you won't be able to authorize with list password anymore.
+
 --- mailman-2.1.11/Mailman/Defaults.py.in~	2009-06-08 16:45:29.000000000 +0300
 +++ mailman-2.1.11/Mailman/Defaults.py.in	2009-06-08 16:45:31.967055253 +0300
 @@ -1319,6 +1319,10 @@
