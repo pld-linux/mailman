@@ -1,0 +1,273 @@
+#! /usr/bin/python
+#
+# Copyright (C) 1998,1999,2000,2001,2002 by the Free Software Foundation, Inc.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software 
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#
+# argv[1] should be the name of the list.
+
+# Make sure that the list of email addresses doesn't contain any comments,
+# like majordomo may throw in.  For now, you just have to remove them manually.
+
+"""Add nonmembers to a list from the command line.
+
+Usage:
+    add_nonmembers [options] listname
+
+Options:
+
+    --accepted-file=file
+    -a file
+        A file containing addresses of the members to be added,
+        one address per line, to the list of postings which are
+        automatically accepted. If file is `-', read addresses
+        from stdin.
+
+    --moderated-file=file
+    -m file
+        A file containing addresses of the members to be added,
+        one address per line, to the list of postings which are
+        held for moderation. If file is `-', read addresses
+        from stdin.
+
+    --rejected-file=file
+    -r file
+        A file containing addresses of the members to be added,
+        one address per line, to the list of postings which are
+        automatically rejected. If file is `-', read addresses
+        from stdin.
+
+    --discarded-file=file
+    -d file
+        A file containing addresses of the members to be added,
+        one address per line, to the list of postings which are
+        automatically discarded. If file is `-', read addresses
+        from stdin.
+
+    --empty
+    -e
+        Empty all current addresses from the list before adding
+        new addresses.
+
+    --verbose
+    -v
+        Verbose output.  Display messages stating whether each
+        address was added or already in a list
+
+    --help
+    -h
+        Print this help message and exit.
+
+    listname
+        The name of the Mailman list you are adding members to.  It must
+        already exist.
+
+You must supply at least one of -n and -d options.  At most one of the
+files can be `-'.
+"""
+
+import sys
+import os
+import getopt
+from cStringIO import StringIO
+
+import paths
+# Import this /after/ paths so that the sys.path is properly hacked
+from email.Utils import parseaddr
+
+from Mailman import MailList
+from Mailman import Utils
+from Mailman import Message
+from Mailman import Errors
+from Mailman import mm_cfg
+from Mailman import i18n
+
+_ = i18n._
+
+
+
+def usage(status, msg=''):
+    print >> sys.stderr, _(__doc__)
+    if msg:
+        print >> sys.stderr, msg
+    sys.exit(status)
+
+
+
+def readfile(filename):
+    if filename == '-':
+        fp = sys.stdin
+        closep = 0
+    else:
+        fp = open(filename)
+        closep = 1
+    # strip all the lines of whitespace and discard blank lines
+    lines = filter(None, [line.strip() for line in fp.readlines()])
+    if closep:
+        fp.close()
+    return lines
+
+
+
+class Tee:
+    def __init__(self, outfp):
+        self.__outfp = outfp
+
+    def write(self, msg):
+        sys.stdout.write(msg)
+        self.__outfp.write(msg)
+
+
+class UserDesc: pass
+
+
+
+def addall(mlist, submlist, list, members, verbose, outfp):
+    tee = Tee(outfp)
+
+    for member in members:
+        if member in mlist.accept_these_nonmembers:
+            if verbose:
+                print >> tee, _('%(list)s: already in accept_these_nonmembers: %(member)s')
+        elif member in mlist.hold_these_nonmembers:
+            if verbose:
+                print >> tee, _('%(list)s: already in hold_these_nonmembers: %(member)s')
+        elif member in mlist.reject_these_nonmembers:
+            if verbose:
+                print >> tee, _('%(list)s: already in reject_these_nonmembers: %(member)s')
+        elif member in mlist.discard_these_nonmembers:
+            if verbose:
+                print >> tee, _('%(list)s: already in discard_these_nonmembers: %(member)s')
+        else:
+            submlist.append(member)
+            if verbose:
+                print >> tee, _('%(list)s: added: %(member)s')
+
+    return submlist
+
+
+def main():
+    try:
+        opts, args = getopt.getopt(sys.argv[1:],
+                                   'a:m:r:d:ehv',
+                                   ['accepted-file=',
+                                    'moderated-file=',
+                                    'rejected-file=',
+                                    'discarded-file=',
+                                    'empty-list',
+                                    'verbose',
+                                    'help'])
+    except getopt.error, msg:
+        usage(1, msg)
+
+    if len(args) <> 1:
+        usage(1)
+
+    listname = args[0].lower().strip()
+    afile = None
+    mfile = None
+    rfile = None
+    dfile = None
+    verbose = 0
+    empty = 0
+    stdin = 0
+    for opt, arg in opts:
+        if opt in ('-h', '--help'):
+            usage(0)
+        elif opt in ('-a', '--accepted-file'):
+            afile = arg
+            if afile == "-":
+                stdin += 1
+        elif opt in ('-m', '--moderated-file'):
+            mfile = arg
+            if mfile == "-":
+                stdin += 1
+        elif opt in ('-r', '--rejected-file'):
+            rfile = arg
+            if rfile == "-":
+                stdin += 1
+        elif opt in ('-d', '--discarded-file'):
+            dfile = arg
+            if dfile == "-":
+                stdin += 1
+        elif opt in ('-e', '--empty-list'):
+            empty = 1
+        elif opt in ('-v', '--verbose'):
+            verbose = 1
+
+    if afile is None and mfile is None and rfile is None and dfile is None:
+        usage(1)
+
+    if stdin > 1:
+        usage(1, _('Cannot read more than one list of members '
+                   'from standard input.'))
+
+    try:
+        mlist = MailList.MailList(listname)
+    except Errors.MMUnknownListError:
+        usage(1, _('No such list: %(listname)s'))
+
+    otrans = i18n.get_translation()
+
+    # Read the member files
+    try:
+        amembers = []
+        mmembers = []
+        rmembers = []
+        dmembers = []
+        if afile:
+            amembers = readfile(afile)
+            if empty:
+                mlist.accept_these_nonmembers = []
+        if mfile:
+            mmembers = readfile(mfile)
+            if empty:
+                mlist.hold_these_nonmembers = []
+        if rfile:
+            rmembers = readfile(rfile)
+            if empty:
+                mlist.reject_these_nonmembers = []
+        if dfile:
+            dmembers = readfile(dfile)
+            if empty:
+                mlist.discard_these_nonmembers = []
+
+        if not amembers and not mmembers and not rmembers and not dmembers \
+               and not empty:
+            usage(0, _('Nothing to do.'))
+
+        s = StringIO()
+        i18n.set_language(mlist.preferred_language)
+
+        if afile:
+            mlist.accept_these_nonmembers = addall(mlist, mlist.accept_these_nonmembers, 'accept_these_nonmembers', amembers, verbose, s)
+
+        if mfile:
+            mlist.hold_these_nonmembers = addall(mlist, mlist.hold_these_nonmembers, 'hold_these_nonmembers', mmembers, verbose, s)
+
+        if rfile:
+            mlist.reject_these_nonmembers = addall(mlist, mlist.reject_these_nonmembers, 'reject_these_nonmembers', rmembers, verbose, s)
+
+        if dfile:
+            mlist.discard_these_nonmembers = addall(mlist, mlist.discard_these_nonmembers, 'discard_these_nonmembers', dmembers, verbose, s)
+
+        mlist.Save()
+    finally:
+        mlist.Unlock()
+        i18n.set_translation(otrans)
+
+
+if __name__ == '__main__':
+    main()
