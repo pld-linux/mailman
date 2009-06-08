@@ -20,7 +20,7 @@ Maybe for security have USE_HTTP_AUTH = ['user1', 'user2']
  
  def check_global_password(response, siteadmin=True):
 +    if mm_cfg.USE_HTTP_AUTH:
-+        if os.environ.get('AUTH_TYPE') != None and os.getenv('REMOTE_USER') != None:
++        if os.environ.get('AUTH_TYPE') != None and os.environ.get('REMOTE_USER') != None:
 +            return True
 +        # Fallback to global password auth
 +
