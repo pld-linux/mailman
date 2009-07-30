@@ -60,6 +60,7 @@ Requires:	rc-scripts
 Requires:	smtpdaemon
 Requires:	webapps
 Requires:	webserver
+Requires:	webserver(indexfile)
 %pyrequires_eq	python-modules
 Provides:	group(mailman)
 Provides:	user(mailman)
