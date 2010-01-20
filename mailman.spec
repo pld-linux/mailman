@@ -10,7 +10,7 @@ Summary(pt_BR.UTF-8):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.12
 Release:	%{rel}%{?with_umbrella_hack:.umh}
-Epoch:		5
+Epoch:		6
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/mailman/%{name}-%{version}.tgz
@@ -35,6 +35,7 @@ Patch8:		%{name}-lib64.patch
 Patch9:		%{name}-umbrella-anon-hack.patch
 Patch10:	%{name}-daemonize-fds.patch
 Patch11:	%{name}-httpauth.patch
+Patch12:	%{name}-MM_FIND_USER_NAME.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -177,6 +178,7 @@ uruchamiać mailmana.
 %{?with_umbrella_hack:%patch9 -p1}
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 # Conflicts with python built-in email package
 sed -i -e 's,EMAILPKG=,#EMAILPKG=,g' misc/Makefile.in
