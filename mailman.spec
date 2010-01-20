@@ -41,6 +41,8 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	python >= 2.1
 BuildRequires:	python-devel
+BuildRequires:	python-modules
+BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.234
 Requires(post):	/bin/hostname
 Requires(post):	grep
