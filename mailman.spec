@@ -434,9 +434,9 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %attr(644,root,mailman) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/mm_cfg.py
 %attr(664,root,mailman) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/mm_cfg.pyc
 %attr(644,root,mailman) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sitelist.cfg
-%ghost %attr(660,root,mailman) %{_sysconfdir}/aliases
-%ghost %attr(660,root,mailman) %{_sysconfdir}/aliases.db
-%ghost %attr(640,root,mailman) %{_sysconfdir}/adm.pw
+%attr(660,root,mailman) %ghost %{_sysconfdir}/aliases
+%attr(660,root,mailman) %ghost %{_sysconfdir}/aliases.db
+%attr(640,root,mailman) %ghost %{_sysconfdir}/adm.pw
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/cron.d/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/%{name}
