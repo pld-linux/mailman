@@ -2,19 +2,19 @@
 # Conditional build:
 %bcond_with	umbrella_hack	# break anonimization (for use with moderated umbrella list of moderated lists)
 
-%define		rel	5
+%define		rel	1
 Summary:	The GNU Mailing List Management System
 Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
 Summary(pt_BR.UTF-8):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
-Version:	2.1.12
+Version:	2.1.13
 Release:	%{rel}%{?with_umbrella_hack:.umh}
 Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/mailman/%{name}-%{version}.tgz
-# Source0-md5:	d565a6d2d0ec6d2dd6936a81e1c1ca86
+# Source0-md5:	3235323ccb3e0135c10b7c66a440390b
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 # Source1-md5:	6b55f9f8051c76961b84a12ed17fc14f
 Source2:	%{name}.conf
@@ -452,7 +452,6 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %dir %{_libdir}/%{name}/mail
 %dir %{_libdir}/%{name}/scripts
 %dir %{_libdir}/%{name}/templates
-%dir %{_libdir}/%{name}/pythonlib
 %dir %{_libdir}/%{name}/messages
 %dir %{_libdir}/%{name}/tests
 %dir %{_libdir}/%{name}/Mailman
@@ -533,7 +532,6 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %{_libdir}/%{name}/icons/*
 %attr(2755,root,mailman) %{_libdir}/%{name}/mail/mailman
 %{_libdir}/%{name}/templates/*
-%{_libdir}/%{name}/pythonlib/*
 %{_libdir}/%{name}/messages/*
 %{_libdir}/%{name}/tests/*
 
