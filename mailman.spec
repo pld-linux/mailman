@@ -13,7 +13,7 @@ Release:	%{rel}%{?with_umbrella_hack:.umh}
 Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
-Source0:	http://dl.sourceforge.net/mailman/%{name}-%{version}.tgz
+Source0:	http://downloads.sourceforge.net/mailman/%{name}-%{version}.tgz
 # Source0-md5:	3235323ccb3e0135c10b7c66a440390b
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 # Source1-md5:	6b55f9f8051c76961b84a12ed17fc14f
@@ -215,8 +215,7 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{/etc/{cron.d,logrotate.d,rc.d/init.d,sysconfig,smrsh},%{_mandir}} \
 	$RPM_BUILD_ROOT{%{_sysconfdir},%{_logarchdir}}
 
-PYTHONPATH=$RPM_BUILD_ROOT%{_libdir}/%{name}:$RPM_BUILD_ROOT%{_libdir}/%{name}/pythonlib/
-export PYTHONPATH
+export PYTHONPATH=$RPM_BUILD_ROOT%{_libdir}/%{name}:$RPM_BUILD_ROOT%{_libdir}/%{name}/pythonlib
 
 %{__make} doinstall \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -232,10 +231,10 @@ sed -e 's#/usr/lib/mailman#%{_libdir}/mailman#g' %{SOURCE2} \
 	> $RPM_BUILD_ROOT%{_sysconfdir}/apache.conf
 sed -e 's#/usr/lib/mailman#%{_libdir}/mailman#g' %{SOURCE3} \
 	> $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
-install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
-install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}
+cp -a %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
+cp -a %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}
 
-install cron/crontab.in $RPM_BUILD_ROOT/etc/cron.d/%{name}
+cp -a cron/crontab.in $RPM_BUILD_ROOT/etc/cron.d/%{name}
 
 install -p contrib/{subscribe_list,add_nonmembers} $RPM_BUILD_ROOT%{_libdir}/%{name}/bin
 
@@ -287,6 +286,10 @@ rm $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py.dist
 rm -f $RPM_BUILD_ROOT%{_mandir}/README-mailman-man-pages
 rm -f $RPM_BUILD_ROOT%{_mandir}/diff.arch.8
 rm -f $RPM_BUILD_ROOT%{_libdir}/mailman/messages/*/LC_MESSAGES/*.po
+rm -rf $RPM_BUILD_ROOT%{_libdir}/mailman/tests
+
+# create dirs to package them
+touch $RPM_BUILD_ROOT%{_queuedir}/{archive,bad,bounces,commands,in,news,out,retry,shunt,virgin}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -383,7 +386,7 @@ mv -f /var/spool/mailman/locks/* %{_lockdir}/
 mv -f /var/spool/mailman/qfiles/* %{_queuedir}/
 # Fix symlinks for public archives
 cd %{_var}/lib/mailman/archives/public/
-for i in * ; do
+for i in *; do
 	link=$(readlink "$i")
 	dn=$(dirname "$link")
 	if [ "$dn" = "/var/spool/mailman/archives/private" ]; then
@@ -453,7 +456,6 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %dir %{_libdir}/%{name}/scripts
 %dir %{_libdir}/%{name}/templates
 %dir %{_libdir}/%{name}/messages
-%dir %{_libdir}/%{name}/tests
 %dir %{_libdir}/%{name}/Mailman
 
 # move to %{py_sitedir}?
@@ -533,7 +535,6 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %attr(2755,root,mailman) %{_libdir}/%{name}/mail/mailman
 %{_libdir}/%{name}/templates/*
 %{_libdir}/%{name}/messages/*
-%{_libdir}/%{name}/tests/*
 
 %dir %{_var}/lib/%{name}
 %dir %{_var}/lib/%{name}/archives
@@ -545,6 +546,7 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %dir %{_var}/lib/%{name}/lists
 %dir %{_var}/lib/%{name}/spam
 %dir %{_queuedir}
+%dir %{_queuedir}/*
 %dir %{_lockdir}
 %dir %{_logdir}
 %dir %{_logarchdir}
