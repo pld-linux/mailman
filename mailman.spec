@@ -2,7 +2,7 @@
 # Conditional build:
 %bcond_with	umbrella_hack	# break anonimization (for use with moderated umbrella list of moderated lists)
 
-%define		rel	3
+%define		rel	4
 Summary:	The GNU Mailing List Management System
 Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
@@ -57,6 +57,7 @@ Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Requires:	/sbin/chkconfig
 Requires:	crondaemon
+Requires:	mailcap >= 2.3-5
 Requires:	rc-scripts
 Requires:	smtpdaemon
 Requires:	webapps
