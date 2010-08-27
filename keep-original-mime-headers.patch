@@ -1,0 +1,59 @@
+save original mime headers from attachment to .raw file and send them back when
+attachment is accessed over cgi. as the logistic of saving attachment with
+filename is quite unreliable, even if the content-types match for input and
+output the filename extension offered may make no sense on client computer.
+
+for example input email has:
+Name: test.rtf
+Type: application/msword
+Size: 17084 bytes
+
+Mailman will detect from mimetype .dot extension:
+python -c 'from mimetypes import guess_all_extensions; print guess_all_extensions("application/msword");'
+['.wiz', '.dot', '.doc']
+
+and save as test.wiz, client will request such file, and will get:
+Content-Type: application/msword
+
+and will save as test.wiz, now client desktop has no ideas how to open .wiz
+file and has to rename file manually to .rtf to actually being able top open it
+with double click.
+
+saving and sending original headers ensures we get original filename that was
+in email. works for private archives but unfortunately as public archives are
+sent out direcly by webserver which we have no control over the extra headers
+to send. (altho if we mod_asis could work here, but that means totally
+incompatible storage from previous versions)
+
+Signed-off-by: Elan Ruusamäe <glen@delfi.ee>
+--- mailman-2.1.13/Mailman/Cgi/private.py~	2010-08-27 14:28:41.000000000 +0300
++++ mailman-2.1.13/Mailman/Cgi/private.py	2010-08-27 14:28:45.036366738 +0300
+@@ -175,6 +175,11 @@
+             f = gzip.open(true_filename, 'r')
+         else:
+             f = open(true_filename, 'r')
++            # if .txt exists, dump it out as it contains extra headers
++            if os.path.exists(true_filename + '.raw'):
++                fh = open(true_filename + '.raw', 'r')
++                sys.stdout.write(fh.read())
++                fh.close()
+     except IOError:
+         msg = _('Private archive file not found')
+         doc.SetTitle(msg)
+--- mailman-2.1.13/Mailman/Handlers/Scrubber.py~	2010-08-27 15:27:27.000000000 +0300
++++ mailman-2.1.13/Mailman/Handlers/Scrubber.py	2010-08-27 15:27:33.452165228 +0300
+@@ -520,6 +520,14 @@
+     fp = open(path, 'w')
+     fp.write(decodedpayload)
+     fp.close()
++
++    # print Content-Type and Content-Disposition we found to .raw for Cgi.private to use
++    f = open(path + '.raw', 'w')
++    for k, v in msg.items():
++        if k.lower() in ['content-type', 'content-disposition']:
++            f.write("%s: %s\n" % (k, v.replace("\n ", " ")))
++    f.close()
++
+     # Now calculate the url
+     baseurl = mlist.GetBaseArchiveURL()
+     # Private archives will likely have a trailing slash.  Normalize.

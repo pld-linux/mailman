@@ -2,7 +2,7 @@
 # Conditional build:
 %bcond_with	umbrella_hack	# break anonimization (for use with moderated umbrella list of moderated lists)
 
-%define		rel	5
+%define		rel	5.13
 Summary:	The GNU Mailing List Management System
 Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
@@ -36,6 +36,7 @@ Patch9:		%{name}-umbrella-anon-hack.patch
 Patch10:	%{name}-daemonize-fds.patch
 Patch11:	%{name}-httpauth.patch
 Patch12:	%{name}-MM_FIND_USER_NAME.patch
+Patch13:	keep-original-mime-headers.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -182,6 +183,7 @@ uruchamiać mailmana.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
 
 # Conflicts with python built-in email package
 sed -i -e 's,EMAILPKG=,#EMAILPKG=,g' misc/Makefile.in
@@ -290,7 +292,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/mailman/messages/*/LC_MESSAGES/*.po
 rm -rf $RPM_BUILD_ROOT%{_libdir}/mailman/tests
 
 # create dirs to package them
-touch $RPM_BUILD_ROOT%{_queuedir}/{archive,bad,bounces,commands,in,news,out,retry,shunt,virgin}
+install -d $RPM_BUILD_ROOT%{_queuedir}/{archive,bad,bounces,commands,in,news,out,retry,shunt,virgin}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
