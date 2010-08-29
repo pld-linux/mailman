@@ -59,8 +59,8 @@ Signed-off-by: Elan Ruusamäe <glen@delfi.ee>
      # Now calculate the url
      baseurl = mlist.GetBaseArchiveURL()
      # Private archives will likely have a trailing slash.  Normalize.
---- mailman-2.1.13/Mailman/Defaults.py~	2010-08-27 17:48:45.000000000 +0300
-+++ mailman-2.1.13/Mailman/Defaults.py	2010-08-29 16:15:45.888393508 +0300
+--- mailman-2.1.13/Mailman/Defaults.py.in~	2010-08-27 17:48:45.000000000 +0300
++++ mailman-2.1.13/Mailman/Defaults.py.in	2010-08-29 16:15:45.888393508 +0300
 @@ -335,6 +335,11 @@
  # in the archives too.
  ARCHIVER_OBSCURES_EMAILADDRS = Yes
