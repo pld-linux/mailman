@@ -53,7 +53,7 @@ Signed-off-by: Elan Ruusamäe <glen@delfi.ee>
 +        f = open(path + '.raw', 'w')
 +        for k, v in msg.items():
 +            if k.lower() in ['content-type', 'content-disposition']:
-+                f.write("%s: %s\n" % (k, v.replace("\n ", " ").replace("\n\t", " "))
++                f.write("%s: %s\n" % (k, v.replace("\n ", " ").replace("\n\t", " ")))
 +        f.close()
 +
      # Now calculate the url
