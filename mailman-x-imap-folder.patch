@@ -1,0 +1,70 @@
+--- mailman-2.1.9/Mailman/Gui/General.py	2006-08-30 17:54:22.000000000 +0300
++++ mailman-2.1.9/Mailman/Gui/General.py	2007-09-20 17:45:31.857725007 +0300
+@@ -409,6 +409,13 @@
+              headers.)"""))
+             )
+ 
++        # add X-IMAP-Folder header
++        rtn.append(
++            ('x_imap_folder', mm_cfg.String, WIDTH, 0,
++             _('''If filled add to each outgroing email X-IMAP-Folder header
++             with this value.'''))
++            )
++
+         # Discard held messages after this number of days
+         rtn.append(
+             ('max_days_to_hold', mm_cfg.Number, 7, 0,
+--- mailman-2.1.9/Mailman/Handlers/CookHeaders.py	2006-02-17 04:42:35.000000000 +0200
++++ mailman-2.1.9/Mailman/Handlers/CookHeaders.py	2007-09-20 17:50:50.507634678 +0300
+@@ -88,6 +88,11 @@
+     # Mark message so we know we've been here, but leave any existing
+     # X-BeenThere's intact.
+     msg['X-BeenThere'] = mlist.GetListEmail()
++
++    # X-IMAP-Folder header, used commonly for server side filtering to folders.
++    if mlist.x_imap_folder:
++        msg['X-IMAP-Folder'] = mlist.x_imap_folder
++
+     # Add Precedence: and other useful headers.  None of these are standard
+     # and finding information on some of them are fairly difficult.  Some are
+     # just common practice, and we'll add more here as they become necessary.
+@@ -170,6 +175,7 @@
+             add((str(i18ndesc), mlist.GetListEmail()))
+             del msg['Cc']
+             msg['Cc'] = COMMASPACE.join([formataddr(pair) for pair in new])
++
+     # Add list-specific headers as defined in RFC 2369 and RFC 2919, but only
+     # if the message is being crafted for a specific list (e.g. not for the
+     # password reminders).
+--- mailman-2.1.9/Mailman/MailList.py	2006-03-12 04:24:53.000000000 +0200
++++ mailman-2.1.9/Mailman/MailList.py	2007-09-20 16:45:37.445694938 +0300
+@@ -360,6 +360,7 @@
+         self.available_languages = []
+         self.include_rfc2369_headers = 1
+         self.include_list_post_header = 1
++        self.x_imap_folder = ''
+         self.filter_mime_types = mm_cfg.DEFAULT_FILTER_MIME_TYPES
+         self.pass_mime_types = mm_cfg.DEFAULT_PASS_MIME_TYPES
+         self.filter_filename_extensions = \
+--- mailman-2.1.9/Mailman/Version.py	2006-09-13 06:21:03.000000000 +0300
++++ mailman-2.1.9/Mailman/Version.py	2007-09-20 16:49:33.199894057 +0300
+@@ -37,7 +37,7 @@
+                (REL_LEVEL << 4)  | (REL_SERIAL << 0))
+ 
+ # config.pck schema version number
+-DATA_FILE_VERSION = 97
++DATA_FILE_VERSION = 98
+ 
+ # qfile/*.db schema version number
+ QFILE_SCHEMA_VERSION = 3
+--- mailman-2.1.9/Mailman/versions.py	2005-12-30 20:50:08.000000000 +0200
++++ mailman-2.1.9/Mailman/versions.py	2007-09-20 16:49:02.206553877 +0300
+@@ -407,6 +407,8 @@
+     add_only_if_missing('collapse_alternatives',
+                         mm_cfg.DEFAULT_COLLAPSE_ALTERNATIVES)
+ 
++    add_only_if_missing('x_imap_folder', '')
++
+ 
+ 
+ def UpdateOldUsers(mlist):

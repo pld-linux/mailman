@@ -1,0 +1,8 @@
+/var/log/mailman/* {
+	olddir /var/log/archive/mailman
+	create 660 mailman mailman
+	monthly
+	postrotate
+		/sbin/service mailman restart >/dev/null
+	endscript
+}

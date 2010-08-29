@@ -1,0 +1,36 @@
+--- mailman-2.1.12/configure.in~	2010-01-20 14:28:15.842832566 +0100
++++ mailman-2.1.12/configure.in	2010-01-20 14:34:13.560833631 +0100
+@@ -318,31 +318,8 @@
+ # $1 == variable name
+ # $2 == user id to check for
+ AC_SUBST($1)
+-changequote(,)
+-if test -z "$$1"
+-then
+-    cat > conftest.py <<EOF
+-import pwd
+-uid = ''
+-for user in "$2".split():
+-    try:
+-        try:
+-            uname = pwd.getpwuid(int(user))[0]
+-            break
+-        except ValueError:
+-            uname = pwd.getpwnam(user)[0]
+-            break
+-    except KeyError:
+-        uname = ''
+-fp = open("conftest.out", "w")
+-fp.write("%s\n" % uname)
+-fp.close()
+-EOF
+-    $PYTHON conftest.py
+-    $1=`cat conftest.out`
+-fi
+-changequote([, ])
+-rm -f conftest.out conftest.py])
++$1=$2
++])
+ 
+ # Check for some other uid to use than `mailman'
+ AC_MSG_CHECKING(for --with-username)

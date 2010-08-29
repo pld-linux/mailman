@@ -1,0 +1,218 @@
+#! /usr/bin/python
+#
+# Copyright (C) 1998,1999,2000,2001,2002 by the Free Software Foundation, Inc.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software 
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#
+# argv[1] should be the name of the list.
+# argv[2] should be the list of non-digested users.
+# argv[3] should be the list of digested users.
+
+# Make sure that the list of email addresses doesn't contain any comments,
+# like majordomo may throw in.  For now, you just have to remove them manually.
+
+"""Add members to a list from the command line.
+
+Usage:
+    subscribe_list [options] listname [listname ...]
+
+Options:
+
+    --regular-member=addr1
+    -r addr1
+        Add addr1 as a regular (non-digest) member.
+
+    --digest-member=addr1
+    -d addr1
+        Add add1 as a digest member.
+
+    --welcome-msg=<y|n>
+    -w <y|n>
+        Set whether or not to send the list members a welcome message,
+        overriding whatever the list's `send_welcome_msg' setting is.
+
+    --admin-notify=<y|n>
+    -a <y|n>
+        Set whether or not to send the list administrators a notification on
+        the success/failure of these subscriptions, overriding whatever the
+        list's `admin_notify_mchanges' setting is.
+
+    --help
+    -h
+        Print this help message and exit.
+
+    listname
+        The name of the Mailman list you are adding members to.  It must
+        already exist.
+
+You must supply at least one of -n and -d options.  At most one of the
+files can be `-'.
+"""
+
+import sys
+import os
+import getopt
+from cStringIO import StringIO
+
+import paths
+# Import this /after/ paths so that the sys.path is properly hacked
+from email.Utils import parseaddr
+
+from Mailman import MailList
+from Mailman import Utils
+from Mailman import Message
+from Mailman import Errors
+from Mailman import mm_cfg
+from Mailman import i18n
+
+_ = i18n._
+
+
+
+def usage(status, msg=''):
+    print >> sys.stderr, _(__doc__)
+    if msg:
+        print >> sys.stderr, msg
+    sys.exit(status)
+
+
+
+class Tee:
+    def __init__(self, outfp):
+        self.__outfp = outfp
+
+    def write(self, msg):
+        sys.stdout.write(msg)
+        self.__outfp.write(msg)
+
+
+class UserDesc: pass
+
+
+
+def add(mlist, member, digest, ack, outfp):
+    tee = Tee(outfp)
+
+    mlist_name = mlist.internal_name()
+    
+    userdesc = UserDesc()
+    userdesc.fullname, userdesc.address = parseaddr(member)
+    userdesc.digest = digest
+
+    try:
+        mlist.ApprovedAddMember(userdesc, ack, 0)
+    except Errors.MMAlreadyAMember:
+        print >> tee, _('Already a member of %(mlist_name)s: %(member)s')
+    except Errors.MMBadEmailError:
+        if userdesc.address == '':
+            print >> tee, _('Bad/Invalid email address: blank line')
+        else:
+            print >> tee, _('Bad/Invalid email address: %(member)s')
+    except MMHostileAddress:
+        print >> tee, _('Hostile address (illegal characters): %(member)s')
+    else:
+        print >> tee, _('Subscribed: %(member)s to %(mlist_name)s')
+
+
+
+def main():
+    try:
+        opts, args = getopt.getopt(sys.argv[1:],
+                                   'a:r:d:w:h',
+                                   ['admin-notify=',
+                                    'regular-member=',
+                                    'digest-member=',
+				    'welcome-msg=',
+                                    'help'])
+    except getopt.error, msg:
+        usage(1, msg)
+
+    if len(args) < 1:
+        usage(1, args)
+
+    listnames = args
+
+    send_welcome_msg = None
+    admin_notif = None
+    member_address = None
+    digest_member = 0
+    for opt, arg in opts:
+        if opt in ('-h', '--help'):
+            usage(0)
+        elif opt in ('-d', '--digest-member'):
+            member_address = arg
+            digest_member = 1
+        elif opt in ('-r', '--regular-member'):
+            member_address = arg
+            digest_member = 0
+        elif opt in ('-w', '--welcome-msg'):
+            if arg.lower()[0] == 'y':
+                send_welcome_msg = 1
+            elif arg.lower()[0] == 'n':
+                send_welcome_msg = 0
+            else:
+                usage(1, _('Bad argument to -w/--welcome-msg: %(arg)s'))
+        elif opt in ('-a', '--admin-notify'):
+            if arg.lower()[0] == 'y':
+                admin_notif = 1
+            elif arg.lower()[0] == 'n':
+                admin_notif = 0
+            else:
+                usage(1, _('Bad argument to -a/--admin-notify: %(arg)s'))
+                
+    if member_address is None:
+        usage(1)
+
+    listnames = [n.lower().strip() for n in listnames]
+    if not listnames:
+        print _('Nothing to do.')
+        sys.exit(0)
+
+    for listname in listnames:
+        try:
+            mlist = MailList.MailList(listname)
+        except Errors.MMUnknownListError:
+            usage(1, _('No such list: %(listname)s'))
+
+        # Set up defaults
+        if send_welcome_msg is None:
+            send_welcome_msg = mlist.send_welcome_msg
+            if admin_notif is None:
+                admin_notif = mlist.admin_notify_mchanges
+
+        otrans = i18n.get_translation()
+        # Read the regular and digest member files
+        try:
+            s = StringIO()
+            i18n.set_language(mlist.preferred_language)
+
+            add(mlist, member_address, digest_member, send_welcome_msg, s)
+
+            if admin_notif:
+                realname = mlist.real_name
+                subject = _('%(realname)s subscription notification')
+                msg = Message.UserNotification(
+                    mlist.owner, Utils.get_site_email(), subject, s.getvalue(),
+                    mlist.preferred_language)
+                msg.send(mlist)
+
+            mlist.Save()
+        finally:
+            mlist.Unlock()
+            i18n.set_translation(otrans)
+
+
+if __name__ == '__main__':
+    main()

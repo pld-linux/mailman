@@ -1,0 +1,15 @@
+--- mailman-2.1.11/bin/mailmanctl~	2009-03-06 15:02:12.706376997 +0200
++++ mailman-2.1.11/bin/mailmanctl	2009-03-06 14:55:45.366717626 +0200
+@@ -480,6 +480,12 @@
+         os.chdir(mm_cfg.PREFIX)
+         # Set our file mode creation umask
+         os.umask(007)
++        # Redirect the standard file descriptors to /dev/null.
++        nullfd = os.open("/dev/null", os.O_RDWR|os.O_APPEND)
++        os.dup2(nullfd, 0);
++        os.dup2(nullfd, 1);
++        os.dup2(nullfd, 2);
++        os.close(nullfd)
+         # I don't think we have any unneeded file descriptors.
+         #
+         # Now start all the qrunners.  This returns a dictionary where the
