@@ -2,7 +2,7 @@
 # Conditional build:
 %bcond_with	umbrella_hack	# break anonimization (for use with moderated umbrella list of moderated lists)
 
-%define		rel	5.15
+%define		rel	6
 Summary:	The GNU Mailing List Management System
 Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
@@ -213,6 +213,8 @@ install -p %{SOURCE6} %{SOURCE7} contrib
 
 %{__make}
 
+%py_lint Mailman bin misc
+
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{/etc/{cron.d,logrotate.d,rc.d/init.d,sysconfig,smrsh},%{_mandir}} \
@@ -288,6 +290,7 @@ rm $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py.dist
 
 rm -f $RPM_BUILD_ROOT%{_mandir}/README-mailman-man-pages
 rm -f $RPM_BUILD_ROOT%{_mandir}/diff.arch.8
+rm -f $RPM_BUILD_ROOT%{_libdir}/%{name}/cron/crontab.in
 rm -rf $RPM_BUILD_ROOT%{_libdir}/mailman/tests
 rm -f $RPM_BUILD_ROOT%{_libdir}/mailman/messages/*/LC_MESSAGES/*.po
 
@@ -537,7 +540,6 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %attr(755,root,root) %{_libdir}/%{name}/cron/mailpasswds
 %attr(755,root,root) %{_libdir}/%{name}/cron/nightly_gzip
 %attr(755,root,root) %{_libdir}/%{name}/cron/senddigests
-%{_libdir}/%{name}/cron/crontab.in
 %{_libdir}/%{name}/cron/paths.py*
 %{_libdir}/%{name}/scripts/*
 %{_libdir}/%{name}/icons/*
