@@ -28,32 +28,48 @@ incompatible storage from previous versions)
 Signed-off-by: Elan Ruusamäe <glen@delfi.ee>
 --- mailman-2.1.13/Mailman/Cgi/private.py~	2010-08-27 14:28:41.000000000 +0300
 +++ mailman-2.1.13/Mailman/Cgi/private.py	2010-08-27 14:28:45.036366738 +0300
-@@ -175,6 +175,11 @@
+@@ -175,6 +175,12 @@
              f = gzip.open(true_filename, 'r')
          else:
              f = open(true_filename, 'r')
-+            # if .txt exists, dump it out as it contains extra headers
-+            if os.path.exists(true_filename + '.raw'):
-+                fh = open(true_filename + '.raw', 'r')
-+                sys.stdout.write(fh.read())
-+                fh.close()
++            if mm_cfg.ARCHIVER_STORES_ATTACHMENT_HEADERS:
++                # if .raw exists, dump it out as it contains extra headers
++                if os.path.exists(true_filename + '.raw'):
++                    fh = open(true_filename + '.raw', 'r')
++                    sys.stdout.write(fh.read())
++                    fh.close()
      except IOError:
          msg = _('Private archive file not found')
          doc.SetTitle(msg)
 --- mailman-2.1.13/Mailman/Handlers/Scrubber.py~	2010-08-27 15:27:27.000000000 +0300
 +++ mailman-2.1.13/Mailman/Handlers/Scrubber.py	2010-08-27 15:27:33.452165228 +0300
-@@ -520,6 +520,14 @@
+@@ -520,6 +520,15 @@
      fp = open(path, 'w')
      fp.write(decodedpayload)
      fp.close()
 +
 +    # print Content-Type and Content-Disposition we found to .raw for Cgi.private to use
-+    f = open(path + '.raw', 'w')
-+    for k, v in msg.items():
-+        if k.lower() in ['content-type', 'content-disposition']:
-+            f.write("%s: %s\n" % (k, v.replace("\n ", " ")))
-+    f.close()
++    if mm_cfg.ARCHIVER_STORES_ATTACHMENT_HEADERS:
++        f = open(path + '.raw', 'w')
++        for k, v in msg.items():
++            if k.lower() in ['content-type', 'content-disposition']:
++                f.write("%s: %s\n" % (k, v.replace("\n ", " ")))
++        f.close()
 +
      # Now calculate the url
      baseurl = mlist.GetBaseArchiveURL()
      # Private archives will likely have a trailing slash.  Normalize.
+--- mailman-2.1.13/Mailman/Defaults.py~	2010-08-27 17:48:45.000000000 +0300
++++ mailman-2.1.13/Mailman/Defaults.py	2010-08-29 16:15:45.888393508 +0300
+@@ -335,6 +335,11 @@
+ # in the archives too.
+ ARCHIVER_OBSCURES_EMAILADDRS = Yes
+ 
++# Whether archive stores attachment headers which contain original MIME type
++# and filenames For private archives those headers are sent back as well when
++# serving content. Note that this changes behaviour and maybe insecure.
++ARCHIVER_STORES_ATTACHMENT_HEADERS = No
++
+ # Pipermail assumes that message bodies contain US-ASCII text.
+ # Change this option to define a different character set to be used as
+ # the default character set for the archive.  The term "character set"
