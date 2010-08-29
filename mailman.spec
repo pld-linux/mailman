@@ -2,7 +2,7 @@
 # Conditional build:
 %bcond_with	umbrella_hack	# break anonimization (for use with moderated umbrella list of moderated lists)
 
-%define		rel	5.13
+%define		rel	5.15
 Summary:	The GNU Mailing List Management System
 Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
@@ -288,8 +288,14 @@ rm $RPM_BUILD_ROOT%{_libdir}/%{name}/Mailman/mm_cfg.py.dist
 
 rm -f $RPM_BUILD_ROOT%{_mandir}/README-mailman-man-pages
 rm -f $RPM_BUILD_ROOT%{_mandir}/diff.arch.8
-rm -f $RPM_BUILD_ROOT%{_libdir}/mailman/messages/*/LC_MESSAGES/*.po
 rm -rf $RPM_BUILD_ROOT%{_libdir}/mailman/tests
+rm -f $RPM_BUILD_ROOT%{_libdir}/mailman/messages/*/LC_MESSAGES/*.po
+
+> %{name}.lang
+for a in $RPM_BUILD_ROOT%{_libdir}/mailman/{messages,templates}/*; do
+	l=${a##*/}
+	echo "%lang($l) ${a#$RPM_BUILD_ROOT}"
+done >> %{name}.lang
 
 # create dirs to package them
 install -d $RPM_BUILD_ROOT%{_queuedir}/{archive,bad,bounces,commands,in,news,out,retry,shunt,virgin}
@@ -429,7 +435,7 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 /usr/sbin/webapp register httpd %{_webapp}
 %service -q httpd reload
 
-%files
+%files -f %{name}.lang
 %defattr(644,root,root,755)
 %doc BUGS FAQ NEWS README README.CONTRIB README.NETSCAPE README.USERAGENT TODO UPGRADING INSTALL
 %doc Mailman/mm_cfg.py.dist Mailman/Defaults.py
@@ -536,8 +542,6 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %{_libdir}/%{name}/scripts/*
 %{_libdir}/%{name}/icons/*
 %attr(2755,root,mailman) %{_libdir}/%{name}/mail/mailman
-%{_libdir}/%{name}/templates/*
-%{_libdir}/%{name}/messages/*
 
 %dir %{_var}/lib/%{name}
 %dir %{_var}/lib/%{name}/archives
