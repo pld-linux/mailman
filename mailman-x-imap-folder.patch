@@ -36,24 +36,24 @@
      # Add list-specific headers as defined in RFC 2369 and RFC 2919, but only
      # if the message is being crafted for a specific list (e.g. not for the
      # password reminders).
---- mailman-2.1.9/Mailman/MailList.py	2006-03-12 04:24:53.000000000 +0200
-+++ mailman-2.1.9/Mailman/MailList.py	2007-09-20 16:45:37.445694938 +0300
-@@ -360,6 +360,7 @@
+--- mailman-2.1.14/Mailman/MailList.py~	2010-09-20 21:18:27.000000000 +0300
++++ mailman-2.1.14/Mailman/MailList.py	2010-09-21 18:33:08.352249806 +0300
+@@ -363,6 +363,7 @@
          self.available_languages = []
          self.include_rfc2369_headers = 1
          self.include_list_post_header = 1
 +        self.x_imap_folder = ''
+         self.include_sender_header = 1
          self.filter_mime_types = mm_cfg.DEFAULT_FILTER_MIME_TYPES
          self.pass_mime_types = mm_cfg.DEFAULT_PASS_MIME_TYPES
-         self.filter_filename_extensions = \
 --- mailman-2.1.9/Mailman/Version.py	2006-09-13 06:21:03.000000000 +0300
 +++ mailman-2.1.9/Mailman/Version.py	2007-09-20 16:49:33.199894057 +0300
 @@ -37,7 +37,7 @@
                 (REL_LEVEL << 4)  | (REL_SERIAL << 0))
  
  # config.pck schema version number
--DATA_FILE_VERSION = 97
-+DATA_FILE_VERSION = 98
+-DATA_FILE_VERSION = 98
++DATA_FILE_VERSION = 99
  
  # qfile/*.db schema version number
  QFILE_SCHEMA_VERSION = 3
