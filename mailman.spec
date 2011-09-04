@@ -2,7 +2,7 @@
 # Conditional build:
 %bcond_with	umbrella_hack	# break anonimization (for use with moderated umbrella list of moderated lists)
 
-%define		rel	1
+%define		rel	2
 Summary:	The GNU Mailing List Management System
 Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
@@ -37,6 +37,7 @@ Patch10:	%{name}-daemonize-fds.patch
 Patch11:	%{name}-httpauth.patch
 Patch12:	%{name}-MM_FIND_USER_NAME.patch
 Patch13:	keep-original-mime-headers.patch
+Patch14:	%{name}-browser-save-passwd.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -184,6 +185,7 @@ uruchamiać mailmana.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 
 # Conflicts with python built-in email package
 sed -i -e 's,EMAILPKG=,#EMAILPKG=,g' misc/Makefile.in

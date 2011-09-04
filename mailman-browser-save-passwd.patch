@@ -1,0 +1,481 @@
+diff -ur mailman-2.1.14/templates/ar/admlogin.html mailman-2.1.14-form/templates/ar/admlogin.html
+--- mailman-2.1.14/templates/ar/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/ar/admlogin.html	2011-09-04 10:55:52.865551595 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">ŸÉŸÑŸÖÿ© ÿ≥ÿ± %(who)s ÿßŸÑŸÇÿßÿ¶ŸÖÿ©:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/ast/admlogin.html mailman-2.1.14-form/templates/ast/admlogin.html
+--- mailman-2.1.14/templates/ast/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/ast/admlogin.html	2011-09-04 10:55:52.868884928 +0200
+@@ -15,7 +15,8 @@
+     <tr>
+       <td><div align="right">Llista Contrase&ntilde;es %(who)s:</div>
+ </td>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/ca/admlogin.html mailman-2.1.14-form/templates/ca/admlogin.html
+--- mailman-2.1.14/templates/ca/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/ca/admlogin.html	2011-09-04 10:55:52.868884928 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div align="right">Contrasenya de %(who)s de la llista:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/cs/admlogin.html mailman-2.1.14-form/templates/cs/admlogin.html
+--- mailman-2.1.14/templates/cs/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/cs/admlogin.html	2011-09-04 10:55:52.872218260 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">Heslo pro %(who)s:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/da/admlogin.html mailman-2.1.14-form/templates/da/admlogin.html
+--- mailman-2.1.14/templates/da/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/da/admlogin.html	2011-09-04 10:55:52.872218260 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">Listens %(who)s adgangskode:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/de/admlogin.html mailman-2.1.14-form/templates/de/admlogin.html
+--- mailman-2.1.14/templates/de/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/de/admlogin.html	2011-09-04 10:55:52.875551592 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">%(who)s-Passwort:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/en/admlogin.html mailman-2.1.14-form/templates/en/admlogin.html
+--- mailman-2.1.14/templates/en/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/en/admlogin.html	2011-09-04 10:55:52.875551592 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">List %(who)s Password:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/es/admlogin.html mailman-2.1.14-form/templates/es/admlogin.html
+--- mailman-2.1.14/templates/es/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/es/admlogin.html	2011-09-04 10:55:52.878884925 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">Clave del %(who)s de la lista:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/et/admlogin.html mailman-2.1.14-form/templates/et/admlogin.html
+--- mailman-2.1.14/templates/et/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/et/admlogin.html	2011-09-04 10:55:52.878884925 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">Listi %(who)s parool:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/eu/admlogin.html mailman-2.1.14-form/templates/eu/admlogin.html
+--- mailman-2.1.14/templates/eu/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/eu/admlogin.html	2011-09-04 10:55:52.878884925 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">%(who)sren Pasahitza:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/fi/admlogin.html mailman-2.1.14-form/templates/fi/admlogin.html
+--- mailman-2.1.14/templates/fi/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/fi/admlogin.html	2011-09-04 10:55:52.882218259 +0200
+@@ -15,7 +15,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">Listan %(who)s Salasana:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/fr/admlogin.html mailman-2.1.14-form/templates/fr/admlogin.html
+--- mailman-2.1.14/templates/fr/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/fr/admlogin.html	2011-09-04 10:55:52.882218259 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD> <div ALIGN="Right">Mot de passe %(who)s de la liste: </div> </TD>
+-      <TD> <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD> <INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle> <INPUT type="SUBMIT" 
+diff -ur mailman-2.1.14/templates/gl/admlogin.html mailman-2.1.14-form/templates/gl/admlogin.html
+--- mailman-2.1.14/templates/gl/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/gl/admlogin.html	2011-09-04 10:55:52.885551594 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right"></Chave de %(who)s da rolda:></div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/he/admlogin.html mailman-2.1.14-form/templates/he/admlogin.html
+--- mailman-2.1.14/templates/he/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/he/admlogin.html	2011-09-04 10:55:52.885551594 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="left">◊°◊ô◊°◊û◊™ ◊î◊®◊©◊ô◊û◊î %(who)s:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/hr/admlogin.html mailman-2.1.14-form/templates/hr/admlogin.html
+--- mailman-2.1.14/templates/hr/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/hr/admlogin.html	2011-09-04 10:55:52.888884928 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">%(who)sska lozinka liste:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/hu/admlogin.html mailman-2.1.14-form/templates/hu/admlogin.html
+--- mailman-2.1.14/templates/hu/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/hu/admlogin.html	2011-09-04 10:55:52.888884928 +0200
+@@ -13,7 +13,8 @@
+     </TR>
+     <tr>
+       <TD> <div ALIGN="Right">Lista %(who)s Jelszava: </div> </TD>
+-      <TD> <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD> <INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle> <INPUT TYPE="SUBMIT" name="admlogin"
+diff -ur mailman-2.1.14/templates/ia/admlogin.html mailman-2.1.14-form/templates/ia/admlogin.html
+--- mailman-2.1.14/templates/ia/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/ia/admlogin.html	2011-09-04 10:55:52.892218261 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">Contrasigno de %(who)s al lista:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/it/admlogin.html mailman-2.1.14-form/templates/it/admlogin.html
+--- mailman-2.1.14/templates/it/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/it/admlogin.html	2011-09-04 10:55:52.892218261 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+     <TD><div ALIGN="Right">Password di lista per %(who)s:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/ja/admlogin.html mailman-2.1.14-form/templates/ja/admlogin.html
+--- mailman-2.1.14/templates/ja/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/ja/admlogin.html	2011-09-04 10:55:52.892218261 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">•Í•π•» %(who)s •—•π•Ô°º•…:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/ko/admlogin.html mailman-2.1.14-form/templates/ko/admlogin.html
+--- mailman-2.1.14/templates/ko/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/ko/admlogin.html	2011-09-04 10:58:38.895559084 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD> <div ALIGN="Right"> ∏ﬁ¿œ∏µ ∏ÆΩ∫∆Æ ∞¸∏Æ¿⁄ ∫Òπ–π¯»£: </div> </TD>
+-      <TD> <INPUT TYPE=password NAME=adminpw SIZE=30></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle> <INPUT TYPE=SUBMIT name="request_login"
+diff -ur mailman-2.1.14/templates/lt/admlogin.html mailman-2.1.14-form/templates/lt/admlogin.html
+--- mailman-2.1.14/templates/lt/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/lt/admlogin.html	2011-09-04 10:55:52.895551593 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">Forumo %(who)s slapta˛odis:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/nl/admlogin.html mailman-2.1.14-form/templates/nl/admlogin.html
+--- mailman-2.1.14/templates/nl/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/nl/admlogin.html	2011-09-04 10:55:52.898884926 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">Lijst%(who)s wachtwoord:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/no/admlogin.html mailman-2.1.14-form/templates/no/admlogin.html
+--- mailman-2.1.14/templates/no/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/no/admlogin.html	2011-09-04 10:55:52.898884926 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">Listens %(who)s passord:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/pl/admlogin.html mailman-2.1.14-form/templates/pl/admlogin.html
+--- mailman-2.1.14/templates/pl/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/pl/admlogin.html	2011-09-04 10:55:52.902218260 +0200
+@@ -15,7 +15,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">Has≥o %(who)s:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/pt/admlogin.html mailman-2.1.14-form/templates/pt/admlogin.html
+--- mailman-2.1.14/templates/pt/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/pt/admlogin.html	2011-09-04 10:55:52.902218260 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">List %(who)s Password:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/pt_BR/admlogin.html mailman-2.1.14-form/templates/pt_BR/admlogin.html
+--- mailman-2.1.14/templates/pt_BR/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/pt_BR/admlogin.html	2011-09-04 10:55:52.905551594 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">Senha de %(who)s na Lista:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/ro/admlogin.html mailman-2.1.14-form/templates/ro/admlogin.html
+--- mailman-2.1.14/templates/ro/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/ro/admlogin.html	2011-09-04 10:55:52.905551594 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right"><b>%(who)s</b>: parola de acces</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/ru/admlogin.html mailman-2.1.14-form/templates/ru/admlogin.html
+--- mailman-2.1.14/templates/ru/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/ru/admlogin.html	2011-09-04 10:55:52.908884928 +0200
+@@ -15,7 +15,8 @@
+       <!-- %(who)s -->
+       <!-- »≈.  ”Ãœ◊œ Õœƒ≈“¡‘œ“, ¡ƒÕ…Œ…Œ”‘“¡‘œ“ Œ¡ƒœ ”ÀÃœŒ—‘ÿ... :( -->
+       <TD><div ALIGN="Right">˜◊≈ƒ…‘≈ –¡“œÃÿ %(who)s:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT" name="admlogin" value="Ó¡ﬁ¡‘ÿ “¡¬œ‘’..."></td>
+diff -ur mailman-2.1.14/templates/sk/admlogin.html mailman-2.1.14-form/templates/sk/admlogin.html
+--- mailman-2.1.14/templates/sk/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/sk/admlogin.html	2011-09-04 10:55:52.908884928 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">Heslo pre %(who)s:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/sl/admlogin.html mailman-2.1.14-form/templates/sl/admlogin.html
+--- mailman-2.1.14/templates/sl/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/sl/admlogin.html	2011-09-04 10:55:52.908884928 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">Geslo za %(who)s:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/sr/admlogin.html mailman-2.1.14-form/templates/sr/admlogin.html
+--- mailman-2.1.14/templates/sr/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/sr/admlogin.html	2011-09-04 10:55:52.912218262 +0200
+@@ -12,7 +12,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">–õ–æ–∑–∏–Ω–∫–∞ –∑–∞ –ª–∏—Å—Ç—É%(who)s:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/sv/admlogin.html mailman-2.1.14-form/templates/sv/admlogin.html
+--- mailman-2.1.14/templates/sv/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/sv/admlogin.html	2011-09-04 10:55:52.912218262 +0200
+@@ -13,7 +13,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">Listan %(who)s l&ouml;senord:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/tr/admlogin.html mailman-2.1.14-form/templates/tr/admlogin.html
+--- mailman-2.1.14/templates/tr/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/tr/admlogin.html	2011-09-04 10:55:52.915551595 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">Liste %(who)s ﬁifresi:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/uk/admlogin.html mailman-2.1.14-form/templates/uk/admlogin.html
+--- mailman-2.1.14/templates/uk/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/uk/admlogin.html	2011-09-04 10:55:52.915551595 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">–í–≤–µ–¥—ñ—Ç—å –ø–∞—Ä–æ–ª—å –∫–æ—Ä–∏—Å—Ç—É–≤–∞—á–∞ %(who)s:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/vi/admlogin.html mailman-2.1.14-form/templates/vi/admlogin.html
+--- mailman-2.1.14/templates/vi/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/vi/admlogin.html	2011-09-04 10:55:52.918884928 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">M·∫≠t kh·∫©u h·ªôp th∆∞ %(who)s:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/zh_CN/admlogin.html mailman-2.1.14-form/templates/zh_CN/admlogin.html
+--- mailman-2.1.14/templates/zh_CN/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/zh_CN/admlogin.html	2011-09-04 10:55:52.918884928 +0200
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">ÊòæÁ§∫ %(who)sÂØÜÁ†Å:</div></TD>
+-      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle><INPUT type="SUBMIT"
+diff -ur mailman-2.1.14/templates/zh_TW/admlogin.html mailman-2.1.14-form/templates/zh_TW/admlogin.html
+--- mailman-2.1.14/templates/zh_TW/admlogin.html	2010-09-20 20:18:27.000000000 +0200
++++ mailman-2.1.14-form/templates/zh_TW/admlogin.html	2011-09-04 10:59:24.015561119 +0200
+@@ -13,7 +13,8 @@
+     </TR>
+     <tr>
+       <TD> <div ALIGN="Right"> Â£á‰∏ªÂØÜÁ¢º: </div> </TD>
+-      <TD> <INPUT TYPE=password NAME=adminpw SIZE=30></TD>
++      <TD><INPUT TYPE="HIDDEN" NAME="userid" VALUE="%(listname)s">
++          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
+     </tr>
+     <tr>
+       <td colspan=2 align=middle> <INPUT TYPE=SUBMIT name="request_login"
