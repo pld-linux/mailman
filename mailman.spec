@@ -23,6 +23,7 @@ Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	add_nonmembers
 Source7:	subscribe_list
+Source8:	%{name}.tmpfiles
 Patch0:		%{name}-MM_FIND_GROUP_NAME.patch
 Patch1:		%{name}-dont-send-broken-reminder-ugly-hack.patch
 Patch2:		%{name}-mailmanctl-status.patch
@@ -220,7 +221,8 @@ install -p %{SOURCE6} %{SOURCE7} contrib
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{/etc/{cron.d,logrotate.d,rc.d/init.d,sysconfig,smrsh},%{_mandir}} \
-	$RPM_BUILD_ROOT{%{_sysconfdir},%{_logarchdir}}
+	$RPM_BUILD_ROOT{%{_sysconfdir},%{_logarchdir}} \
+	$RPM_BUILD_ROOT/usr/lib/tmpfiles.d
 
 export PYTHONPATH=$RPM_BUILD_ROOT%{_libdir}/%{name}:$RPM_BUILD_ROOT%{_libdir}/%{name}/pythonlib
 
@@ -240,6 +242,7 @@ sed -e 's#/usr/lib/mailman#%{_libdir}/mailman#g' %{SOURCE3} \
 	> $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 cp -a %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 cp -a %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}
+install %{SOURCE8} $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/%{name}.conf
 
 cp -a cron/crontab.in $RPM_BUILD_ROOT/etc/cron.d/%{name}
 
@@ -562,6 +565,7 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %dir %{_logdir}
 %dir %{_logarchdir}
 %dir %{_piddir}
+/usr/lib/tmpfiles.d/%{name}.conf
 
 %files sendmail
 %defattr(644,root,root,755)
