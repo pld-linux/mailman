@@ -10,7 +10,7 @@ Summary(pt_BR.UTF-8):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
 Version:	2.1.14
 Release:	%{rel}%{?with_umbrella_hack:.umh}
-Epoch:		5
+Epoch:		6
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://downloads.sourceforge.net/mailman/%{name}-%{version}.tgz
@@ -71,7 +71,7 @@ Provides:	group(mailman)
 Provides:	user(mailman)
 # for converting text/html into plain text in default configuration:
 Suggests:	lynx
-Conflicts:	logrotate < 3.7-4
+Conflicts:	logrotate < 3.8.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_queuedir	/var/spool/%{name}

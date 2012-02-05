@@ -1,4 +1,5 @@
 /var/log/mailman/* {
+	su root mailman
 	olddir /var/log/archive/mailman
 	create 660 mailman mailman
 	monthly
