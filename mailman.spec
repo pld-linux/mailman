@@ -2,7 +2,7 @@
 # Conditional build:
 %bcond_with	umbrella_hack	# break anonimization (for use with moderated umbrella list of moderated lists)
 
-%define		rel	6
+%define		rel	5
 Summary:	The GNU Mailing List Management System
 Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
@@ -17,14 +17,13 @@ Source0:	http://downloads.sourceforge.net/mailman/%{name}-%{version}.tgz
 # Source0-md5:	9ea163871ceccbd33fee4c9e335fcf7b
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 # Source1-md5:	6b55f9f8051c76961b84a12ed17fc14f
-Source2:	%{name}-apache.conf
+Source2:	%{name}.conf
 Source3:	%{name}.init
 Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	add_nonmembers
 Source7:	subscribe_list
 Source8:	%{name}.tmpfiles
-Source9:	%{name}-httpd.conf
 Patch0:		%{name}-MM_FIND_GROUP_NAME.patch
 Patch1:		%{name}-dont-send-broken-reminder-ugly-hack.patch
 Patch2:		%{name}-mailmanctl-status.patch
@@ -72,7 +71,6 @@ Provides:	group(mailman)
 Provides:	user(mailman)
 # for converting text/html into plain text in default configuration:
 Suggests:	lynx
-Conflicts:	apache-base < 2.4.0-1
 Conflicts:	logrotate < 3.8.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -236,7 +234,7 @@ export PYTHONPATH=$RPM_BUILD_ROOT%{_libdir}/%{name}:$RPM_BUILD_ROOT%{_libdir}/%{
 
 bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
 
-sed -e 's#/usr/lib/mailman#%{_libdir}/mailman#g' %{SOURCE9} \
+sed -e 's#/usr/lib/mailman#%{_libdir}/mailman#g' %{SOURCE2} \
 	> $RPM_BUILD_ROOT%{_sysconfdir}/httpd.conf
 sed -e 's#/usr/lib/mailman#%{_libdir}/mailman#g' %{SOURCE2} \
 	> $RPM_BUILD_ROOT%{_sysconfdir}/apache.conf
@@ -365,10 +363,10 @@ fi
 %triggerun -- apache1 < 1.3.37-3, apache1-base
 %webapp_unregister apache %{_webapp}
 
-%triggerin -- apache-base
+%triggerin -- apache < 2.2.0, apache-base
 %webapp_register httpd %{_webapp}
 
-%triggerun -- apache-base
+%triggerun -- apache < 2.2.0, apache-base
 %webapp_unregister httpd %{_webapp}
 
 %triggerpostun -- mailman < 1:2.1.7-2.1
