@@ -44,6 +44,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	python >= 2.1
 BuildRequires:	python-devel
+BuildRequires:	python-dns
 BuildRequires:	python-modules
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.234
@@ -61,12 +62,13 @@ Requires(pre):	/usr/sbin/useradd
 Requires:	/sbin/chkconfig
 Requires:	crondaemon
 Requires:	mailcap >= 2.3-5
+Requires:	python-dns
+Requires:	python-modules
 Requires:	rc-scripts
 Requires:	smtpdaemon
 Requires:	webapps
 Requires:	webserver
 Requires:	webserver(indexfile)
-%pyrequires_eq	python-modules
 Provides:	group(mailman)
 Provides:	user(mailman)
 # for converting text/html into plain text in default configuration:
