@@ -14,12 +14,12 @@
          # Discard held messages after this number of days
          rtn.append(
              ('max_days_to_hold', mm_cfg.Number, 7, 0,
---- mailman-2.1.9/Mailman/Handlers/CookHeaders.py	2006-02-17 04:42:35.000000000 +0200
-+++ mailman-2.1.9/Mailman/Handlers/CookHeaders.py	2007-09-20 17:50:50.507634678 +0300
-@@ -88,6 +88,11 @@
-     # Mark message so we know we've been here, but leave any existing
+--- mailman-2.1.20/Mailman/Handlers/CookHeaders.py~	2015-03-31 20:21:49.000000000 +0300
++++ mailman-2.1.20/Mailman/Handlers/CookHeaders.py	2015-05-25 11:28:53.400847919 +0300
+@@ -107,6 +107,11 @@
      # X-BeenThere's intact.
-     msg['X-BeenThere'] = mlist.GetListEmail()
+     change_header('X-BeenThere', mlist.GetListEmail(),
+                   mlist, msg, msgdata, delete=False)
 +
 +    # X-IMAP-Folder header, used commonly for server side filtering to folders.
 +    if mlist.x_imap_folder:
@@ -28,14 +28,6 @@
      # Add Precedence: and other useful headers.  None of these are standard
      # and finding information on some of them are fairly difficult.  Some are
      # just common practice, and we'll add more here as they become necessary.
-@@ -170,6 +175,7 @@
-             add((str(i18ndesc), mlist.GetListEmail()))
-             del msg['Cc']
-             msg['Cc'] = COMMASPACE.join([formataddr(pair) for pair in new])
-+
-     # Add list-specific headers as defined in RFC 2369 and RFC 2919, but only
-     # if the message is being crafted for a specific list (e.g. not for the
-     # password reminders).
 --- mailman-2.1.14/Mailman/MailList.py~	2010-09-20 21:18:27.000000000 +0300
 +++ mailman-2.1.14/Mailman/MailList.py	2010-09-21 18:33:08.352249806 +0300
 @@ -363,6 +363,7 @@
@@ -46,17 +38,6 @@
          self.include_sender_header = 1
          self.filter_mime_types = mm_cfg.DEFAULT_FILTER_MIME_TYPES
          self.pass_mime_types = mm_cfg.DEFAULT_PASS_MIME_TYPES
---- mailman-2.1.9/Mailman/Version.py	2006-09-13 06:21:03.000000000 +0300
-+++ mailman-2.1.9/Mailman/Version.py	2007-09-20 16:49:33.199894057 +0300
-@@ -37,7 +37,7 @@
-                (REL_LEVEL << 4)  | (REL_SERIAL << 0))
- 
- # config.pck schema version number
--DATA_FILE_VERSION = 98
-+DATA_FILE_VERSION = 99
- 
- # qfile/*.db schema version number
- QFILE_SCHEMA_VERSION = 3
 --- mailman-2.1.9/Mailman/versions.py	2005-12-30 20:50:08.000000000 +0200
 +++ mailman-2.1.9/Mailman/versions.py	2007-09-20 16:49:02.206553877 +0300
 @@ -407,6 +407,8 @@

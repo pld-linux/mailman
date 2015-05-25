@@ -106,10 +106,9 @@ diff -r -u mailman-2.1.5.orig/bin/mailmanctl mailman-2.1.5/bin/mailmanctl
      elif command == 'start':
          # First, complain loudly if there's no site list.
          check_for_site_list()
-diff -u -r mailman-2.1.5.orig/misc/mailman.in mailman-2.1.5/misc/mailman.in
---- mailman-2.1.5.orig/misc/mailman.in	2003-09-25 18:13:26.000000000 -0400
-+++ mailman-2.1.5/misc/mailman.in	2005-02-15 10:48:26.445983000 -0500
-@@ -36,19 +36,70 @@
+--- mailman-2.1.20/misc/mailman.in~	2015-03-31 20:21:49.000000000 +0300
++++ mailman-2.1.20/misc/mailman.in	2015-05-25 11:22:11.283298992 +0300
+@@ -37,23 +37,61 @@
  MAILMANHOME=@prefix@
  MAILMANCTL=$MAILMANHOME/bin/mailmanctl
  
@@ -119,69 +118,60 @@ diff -u -r mailman-2.1.5.orig/misc/mailman.in mailman-2.1.5/misc/mailman.in
 +RETVAL=0
 +prog="mailman"
 +
-+function start()
-+{
-+    echo -n $"Starting $prog: "
++start() {
++    msg_starting "$prog"
 +    daemon $PYTHON $MAILMANCTL -s -q start
 +    RETVAL=$?
 +    [ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
-+    echo
-+    return $RETVAL
 +}
 +
-+function stop()
-+{
-+    echo -n $"Shutting down $prog: "
++stop() {
++    msg_stopping "$prog"
 +    daemon $PYTHON $MAILMANCTL -q stop
 +    RETVAL=$?
 +    [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$prog
-+    echo
-+    return $RETVAL
 +}
 +
-+function restart()
-+{
++restart() {
 +    stop
 +    start
 +    RETVAL=$?
-+    return $RETVAL
 +}
++
 +
  case "$1" in
  'start')
 -    #rm -f $MAILMANHOME/locks/*
 -    $PYTHON $MAILMANCTL -s -q start
 +    start
-+    RETVAL=$?
      ;;
  
  'stop')
 -    $PYTHON $MAILMANCTL -q stop
 +    stop
-+    RETVAL=$?
      ;;
  
  'restart')
 -    $PYTHON $MAILMANCTL -q restart
 +    restart
-+    RETVAL=$?
-+    ;;
-+
+     ;;
+ 
+ 'reopen')
+     $PYTHON $MAILMANCTL -q reopen
+     ;;
+ 
 +'condrestart')
 +    $PYTHON $MAILMANCTL -q -u status
 +    retval=$?
-+    if [ $retval -eq 0 ]
-+    then
-+	restart
-+	RETVAL=$?
++    if [ $retval -eq 0 ]; then
++		restart
 +    fi
 +    ;;
 +
 +'status')
 +    $PYTHON $MAILMANCTL -u status
 +    RETVAL=$?
-     ;;
- 
++
  esac
 -exit 0
 +exit $RETVAL

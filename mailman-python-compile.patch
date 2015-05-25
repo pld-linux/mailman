@@ -40,15 +40,14 @@ compiling them. This resulting in leaving the wrong debug path in the
 the compile_dir command and started the directory recursion one level
 higher.
 
-diff -u -r mailman-2.1.5.orig/Makefile.in mailman-2.1.5.pyc/Makefile.in
---- mailman-2.1.5.orig/Makefile.in	2003-03-31 14:26:57.000000000 -0500
-+++ mailman-2.1.5.pyc/Makefile.in	2004-11-09 12:49:42.000000000 -0500
+--- mailman-2.1.20/Makefile.in~	2015-03-31 20:21:49.000000000 +0300
++++ mailman-2.1.20/Makefile.in	2015-05-25 11:25:09.402548855 +0300
 @@ -124,7 +124,7 @@
  	do \
  	    (cd $$d; $(MAKE) DESTDIR=$(DESTDIR) install); \
  	done
--	$(PYTHON) -c 'from compileall import *; compile_dir("$(DESTDIR)$(prefix)/Mailman")'
-+	$(PYTHON) -c 'from compileall import *; compile_dir("$(DESTDIR)$(prefix)", 20, "$(prefix)", 1)'
+-	$(PYTHON) -c 'from compileall import *; compile_dir("$(DESTDIR)$(prefix)/Mailman", ddir="$(prefix)/Mailman")'
++	$(PYTHON) -c 'from compileall import *; compile_dir("$(DESTDIR)$(prefix)", ddir="$(prefix)")'
  
  # Only run bin/update if we aren't installing in DESTDIR, as this
  # means there are probably no lists to deal with, and it wouldn't

@@ -1,3 +1,8 @@
+
+NOTE: be sure to use vim -b when editing this file!
+
+http://stackoverflow.com/questions/5461153/how-to-completely-turn-off-vims-abilty-to-recode-files
+
 diff -ur mailman-2.1.14/templates/ar/admlogin.html mailman-2.1.14-form/templates/ar/admlogin.html
 --- mailman-2.1.14/templates/ar/admlogin.html	2010-09-20 20:18:27.000000000 +0200
 +++ mailman-2.1.14-form/templates/ar/admlogin.html	2011-09-04 10:55:52.865551595 +0200
@@ -206,13 +211,12 @@ diff -ur mailman-2.1.14/templates/hu/admlogin.html mailman-2.1.14-form/templates
      </tr>
      <tr>
        <td colspan=2 align=middle> <INPUT TYPE="SUBMIT" name="admlogin"
-diff -ur mailman-2.1.14/templates/ia/admlogin.html mailman-2.1.14-form/templates/ia/admlogin.html
---- mailman-2.1.14/templates/ia/admlogin.html	2010-09-20 20:18:27.000000000 +0200
-+++ mailman-2.1.14-form/templates/ia/admlogin.html	2011-09-04 10:55:52.892218261 +0200
-@@ -14,7 +14,8 @@
+--- mailman-2.1.20/templates/ia/admlogin.html~	2015-05-25 11:30:53.000000000 +0300
++++ mailman-2.1.20/templates/ia/admlogin.html	2015-05-25 11:30:54.870489260 +0300
+@@ -15,7 +15,8 @@
      </TR>
      <tr>
-       <TD><div ALIGN="Right">Contrasigno de %(who)s al lista:</div></TD>
+       <TD><div ALIGN="Right">Contrasigno de %(who)s pro le lista:</div></TD>
 -      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
 +      <TD><INPUT STYLE="display: none;" TYPE="text" NAME="userid" VALUE="%(listname)s">
 +          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
@@ -349,19 +353,18 @@ diff -ur mailman-2.1.14/templates/ro/admlogin.html mailman-2.1.14-form/templates
      </tr>
      <tr>
        <td colspan=2 align=middle><INPUT type="SUBMIT"
-diff -ur mailman-2.1.14/templates/ru/admlogin.html mailman-2.1.14-form/templates/ru/admlogin.html
---- mailman-2.1.14/templates/ru/admlogin.html	2010-09-20 20:18:27.000000000 +0200
-+++ mailman-2.1.14-form/templates/ru/admlogin.html	2011-09-04 10:55:52.908884928 +0200
-@@ -15,7 +15,8 @@
-       <!-- %(who)s -->
-       <!-- хе.  слово модератор, админинстратор надо склонять... :( -->
-       <TD><div ALIGN="Right">Введите пароль %(who)s:</div></TD>
+--- mailman-2.1.20/templates/ru/admlogin.html~	2015-03-31 20:21:49.000000000 +0300
++++ mailman-2.1.20/templates/ru/admlogin.html	2015-05-25 11:37:56.109031155 +0300
+@@ -14,7 +14,8 @@
+     </TR>
+     <tr>
+       <TD><div ALIGN="Right">п▓п╡п╣п╢п╦я┌п╣ п©п╟я─п╬п╩я▄ %(who)s:</div></TD>
 -      <TD><INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
 +      <TD><INPUT STYLE="display: none;" TYPE="text" NAME="userid" VALUE="%(listname)s">
 +          <INPUT TYPE="password" NAME="adminpw" SIZE="30"></TD>
      </tr>
      <tr>
-       <td colspan=2 align=middle><INPUT type="SUBMIT" name="admlogin" value="Начать работу..."></td>
+       <td colspan=2 align=middle><INPUT type="SUBMIT" name="admlogin" value="п²п╟я┤п╟я┌я▄ я─п╟п╠п╬я┌я┐..."></td>
 diff -ur mailman-2.1.14/templates/sk/admlogin.html mailman-2.1.14-form/templates/sk/admlogin.html
 --- mailman-2.1.14/templates/sk/admlogin.html	2010-09-20 20:18:27.000000000 +0200
 +++ mailman-2.1.14-form/templates/sk/admlogin.html	2011-09-04 10:55:52.908884928 +0200
