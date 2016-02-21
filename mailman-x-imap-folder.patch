@@ -1,6 +1,6 @@
 diff -ur mailman-2.1.20.org/Mailman/Gui/General.py mailman-2.1.20/Mailman/Gui/General.py
 --- mailman-2.1.20.org/Mailman/Gui/General.py	2015-03-31 19:21:49.000000000 +0200
-+++ mailman-2.1.20/Mailman/Gui/General.py	2016-02-21 10:17:02.796900202 +0100
++++ mailman-2.1.20/Mailman/Gui/General.py	2016-02-21 10:25:57.685943034 +0100
 @@ -505,6 +505,13 @@
                   here."""))
                  )
@@ -17,7 +17,7 @@ diff -ur mailman-2.1.20.org/Mailman/Gui/General.py mailman-2.1.20/Mailman/Gui/Ge
              ('max_days_to_hold', mm_cfg.Number, 7, 0,
 diff -ur mailman-2.1.20.org/Mailman/Handlers/CookHeaders.py mailman-2.1.20/Mailman/Handlers/CookHeaders.py
 --- mailman-2.1.20.org/Mailman/Handlers/CookHeaders.py	2015-03-31 19:21:49.000000000 +0200
-+++ mailman-2.1.20/Mailman/Handlers/CookHeaders.py	2016-02-21 10:17:02.796900202 +0100
++++ mailman-2.1.20/Mailman/Handlers/CookHeaders.py	2016-02-21 10:25:57.685943034 +0100
 @@ -107,6 +107,11 @@
      # X-BeenThere's intact.
      change_header('X-BeenThere', mlist.GetListEmail(),
@@ -32,7 +32,7 @@ diff -ur mailman-2.1.20.org/Mailman/Handlers/CookHeaders.py mailman-2.1.20/Mailm
      # just common practice, and we'll add more here as they become necessary.
 diff -ur mailman-2.1.20.org/Mailman/MailList.py mailman-2.1.20/Mailman/MailList.py
 --- mailman-2.1.20.org/Mailman/MailList.py	2015-03-31 19:21:49.000000000 +0200
-+++ mailman-2.1.20/Mailman/MailList.py	2016-02-21 10:17:02.800233612 +0100
++++ mailman-2.1.20/Mailman/MailList.py	2016-02-21 10:25:57.685943034 +0100
 @@ -367,6 +367,7 @@
          self.available_languages = []
          self.include_rfc2369_headers = 1
@@ -43,19 +43,19 @@ diff -ur mailman-2.1.20.org/Mailman/MailList.py mailman-2.1.20/Mailman/MailList.
          self.pass_mime_types = mm_cfg.DEFAULT_PASS_MIME_TYPES
 diff -ur mailman-2.1.20.org/Mailman/versions.py mailman-2.1.20/Mailman/versions.py
 --- mailman-2.1.20.org/Mailman/versions.py	2015-03-31 19:21:49.000000000 +0200
-+++ mailman-2.1.20/Mailman/versions.py	2016-02-21 10:18:04.798328541 +0100
-@@ -70,6 +70,10 @@
-         if hasattr(mlist, name):
-             delattr(mlist, name)
++++ mailman-2.1.20/Mailman/versions.py	2016-02-21 10:26:55.443940355 +0100
+@@ -168,6 +168,10 @@
+         else:
+             return None
  
-+
-+def add_only_if_missing(attr, initval, l=l):
-+    if not hasattr(l, attr):
-+        setattr(l, attr, initval)
- 
- 
- uniqueval = []
-@@ -414,13 +418,12 @@
++    def add_only_if_missing(attr, initval, l=l):
++        if not hasattr(l, attr):
++            setattr(l, attr, initval)
++
+     # Migrate to 2.1b3, baw 17-Aug-2001
+     if hasattr(l, 'dont_respond_to_post_requests'):
+         oldval = getattr(l, 'dont_respond_to_post_requests')
+@@ -414,6 +418,8 @@
      PreferStored('author_is_list', 'from_is_list',
                   mm_cfg.DEFAULT_FROM_IS_LIST)
  
@@ -64,10 +64,3 @@ diff -ur mailman-2.1.20.org/Mailman/versions.py mailman-2.1.20/Mailman/versions.
  
  
  def NewVars(l):
-     """Add defaults for these new variables if they don't exist."""
--    def add_only_if_missing(attr, initval, l=l):
--        if not hasattr(l, attr):
--            setattr(l, attr, initval)
-     # 1.2 beta 1, baw 18-Feb-2000
-     # Autoresponder mixin class attributes
-     add_only_if_missing('autorespond_postings', 0)
