@@ -1,8 +1,9 @@
---- mailman-2.1.9/Mailman/Gui/General.py	2006-08-30 17:54:22.000000000 +0300
-+++ mailman-2.1.9/Mailman/Gui/General.py	2007-09-20 17:45:31.857725007 +0300
-@@ -409,6 +409,13 @@
-              headers.)"""))
-             )
+diff -ur mailman-2.1.20.org/Mailman/Gui/General.py mailman-2.1.20/Mailman/Gui/General.py
+--- mailman-2.1.20.org/Mailman/Gui/General.py	2015-03-31 19:21:49.000000000 +0200
++++ mailman-2.1.20/Mailman/Gui/General.py	2016-02-21 10:17:02.796900202 +0100
+@@ -505,6 +505,13 @@
+                  here."""))
+                 )
  
 +        # add X-IMAP-Folder header
 +        rtn.append(
@@ -14,8 +15,9 @@
          # Discard held messages after this number of days
          rtn.append(
              ('max_days_to_hold', mm_cfg.Number, 7, 0,
---- mailman-2.1.20/Mailman/Handlers/CookHeaders.py~	2015-03-31 20:21:49.000000000 +0300
-+++ mailman-2.1.20/Mailman/Handlers/CookHeaders.py	2015-05-25 11:28:53.400847919 +0300
+diff -ur mailman-2.1.20.org/Mailman/Handlers/CookHeaders.py mailman-2.1.20/Mailman/Handlers/CookHeaders.py
+--- mailman-2.1.20.org/Mailman/Handlers/CookHeaders.py	2015-03-31 19:21:49.000000000 +0200
++++ mailman-2.1.20/Mailman/Handlers/CookHeaders.py	2016-02-21 10:17:02.796900202 +0100
 @@ -107,6 +107,11 @@
      # X-BeenThere's intact.
      change_header('X-BeenThere', mlist.GetListEmail(),
@@ -28,9 +30,10 @@
      # Add Precedence: and other useful headers.  None of these are standard
      # and finding information on some of them are fairly difficult.  Some are
      # just common practice, and we'll add more here as they become necessary.
---- mailman-2.1.14/Mailman/MailList.py~	2010-09-20 21:18:27.000000000 +0300
-+++ mailman-2.1.14/Mailman/MailList.py	2010-09-21 18:33:08.352249806 +0300
-@@ -363,6 +363,7 @@
+diff -ur mailman-2.1.20.org/Mailman/MailList.py mailman-2.1.20/Mailman/MailList.py
+--- mailman-2.1.20.org/Mailman/MailList.py	2015-03-31 19:21:49.000000000 +0200
++++ mailman-2.1.20/Mailman/MailList.py	2016-02-21 10:17:02.800233612 +0100
+@@ -367,6 +367,7 @@
          self.available_languages = []
          self.include_rfc2369_headers = 1
          self.include_list_post_header = 1
@@ -38,14 +41,33 @@
          self.include_sender_header = 1
          self.filter_mime_types = mm_cfg.DEFAULT_FILTER_MIME_TYPES
          self.pass_mime_types = mm_cfg.DEFAULT_PASS_MIME_TYPES
---- mailman-2.1.9/Mailman/versions.py	2005-12-30 20:50:08.000000000 +0200
-+++ mailman-2.1.9/Mailman/versions.py	2007-09-20 16:49:02.206553877 +0300
-@@ -407,6 +407,8 @@
-     add_only_if_missing('collapse_alternatives',
-                         mm_cfg.DEFAULT_COLLAPSE_ALTERNATIVES)
+diff -ur mailman-2.1.20.org/Mailman/versions.py mailman-2.1.20/Mailman/versions.py
+--- mailman-2.1.20.org/Mailman/versions.py	2015-03-31 19:21:49.000000000 +0200
++++ mailman-2.1.20/Mailman/versions.py	2016-02-21 10:18:04.798328541 +0100
+@@ -70,6 +70,10 @@
+         if hasattr(mlist, name):
+             delattr(mlist, name)
+ 
++
++def add_only_if_missing(attr, initval, l=l):
++    if not hasattr(l, attr):
++        setattr(l, attr, initval)
+ 
+ 
+ uniqueval = []
+@@ -414,13 +418,12 @@
+     PreferStored('author_is_list', 'from_is_list',
+                  mm_cfg.DEFAULT_FROM_IS_LIST)
  
 +    add_only_if_missing('x_imap_folder', '')
 +
  
  
- def UpdateOldUsers(mlist):
+ def NewVars(l):
+     """Add defaults for these new variables if they don't exist."""
+-    def add_only_if_missing(attr, initval, l=l):
+-        if not hasattr(l, attr):
+-            setattr(l, attr, initval)
+     # 1.2 beta 1, baw 18-Feb-2000
+     # Autoresponder mixin class attributes
+     add_only_if_missing('autorespond_postings', 0)
