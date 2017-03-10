@@ -1,0 +1,14 @@
+[Unit]
+Description=mailman qrunner daemon
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/lib/mailman/bin/mailmanctl -q -s -u start
+ExecStop=/usr/lib/mailman/bin/mailmanctl -u stop
+ExecReload=/usr/lib/mailman/bin/mailmanctl -u reopen
+Restart=on-failure
+User=mailman
+
+[Install]
+WantedBy=multi-user.target

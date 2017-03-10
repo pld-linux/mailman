@@ -1,0 +1,6 @@
+[Unit]
+Description=mailman checkdbs cronjob
+
+[Service]
+ExecStart=/usr/lib/mailman/cron/checkdbs
+User=mailman

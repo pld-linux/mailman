@@ -1,0 +1,13 @@
+[Unit]
+Description=mailman nightly_gzip cronjob timer
+
+[Timer]
+# At 3:27am every night, regenerate the gzip'd archive file.  Only
+# turn this on if the internal archiver is used and
+# GZIP_ARCHIVE_TXT_FILES is false in mm_cfg.py
+OnCalendar=03:27
+
+[Install]
+WantedBy=cronjobs.target
+
+# vi: ft=systemd

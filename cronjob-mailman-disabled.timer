@@ -1,0 +1,12 @@
+[Unit]
+Description=mailman diabled cronjob timer
+
+[Timer]
+# At 9AM, send notifications to disabled members that are due to be
+# reminded to re-enable their accounts.
+OnCalendar=09:00
+
+[Install]
+WantedBy=cronjobs.target
+
+# vi: ft=systemd

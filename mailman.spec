@@ -2,7 +2,7 @@
 # Conditional build:
 %bcond_with	umbrella_hack	# break anonimization (for use with moderated umbrella list of moderated lists)
 
-%define		rel	1
+%define		rel	2
 Summary:	The GNU Mailing List Management System
 Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
@@ -24,6 +24,21 @@ Source5:	%{name}.logrotate
 Source6:	add_nonmembers
 Source7:	subscribe_list
 Source8:	%{name}.tmpfiles
+Source9:	%{name}.service
+Source10:	cronjob-mailman-checkdbs.timer
+Source11:	cronjob-mailman-cull_bad_shunt.timer
+Source12:	cronjob-mailman-disabled.timer
+Source13:	cronjob-mailman-gate_news.timer
+Source14:	cronjob-mailman-mailpasswds.timer
+Source15:	cronjob-mailman-nightly_gzip.timer
+Source16:	cronjob-mailman-senddigests.timer
+Source20:	cronjob-mailman-checkdbs.service
+Source21:	cronjob-mailman-cull_bad_shunt.service
+Source22:	cronjob-mailman-disabled.service
+Source23:	cronjob-mailman-gate_news.service
+Source24:	cronjob-mailman-mailpasswds.service
+Source25:	cronjob-mailman-nightly_gzip.service
+Source26:	cronjob-mailman-senddigests.service
 Patch0:		%{name}-MM_FIND_GROUP_NAME.patch
 Patch1:		%{name}-dont-send-broken-reminder-ugly-hack.patch
 Patch2:		%{name}-mailmanctl-status.patch
@@ -47,7 +62,8 @@ BuildRequires:	python-devel
 BuildRequires:	python-dns
 BuildRequires:	python-modules
 BuildRequires:	rpm-pythonprov
-BuildRequires:	rpmbuild(macros) >= 1.234
+BuildRequires:	rpmbuild(macros) >= 1.644
+BuildRequires:	sed >= 4.0
 Requires(post):	/bin/hostname
 Requires(post):	grep
 Requires(post,preun):	/sbin/chkconfig
@@ -60,12 +76,13 @@ Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Requires:	/sbin/chkconfig
-Requires:	crondaemon
+Requires:	cronjobs
 Requires:	mailcap >= 2.3-5
 Requires:	python-dns
 Requires:	python-modules
 Requires:	rc-scripts
 Requires:	smtpdaemon
+Requires:	systemd-units >= 38
 Requires:	webapps
 Requires:	webserver
 Requires:	webserver(indexfile)
@@ -223,7 +240,7 @@ install -p %{SOURCE6} %{SOURCE7} contrib
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{/etc/{cron.d,logrotate.d,rc.d/init.d,sysconfig,smrsh},%{_mandir}} \
-	$RPM_BUILD_ROOT{%{_sysconfdir},%{_logarchdir}} \
+	$RPM_BUILD_ROOT{%{_sysconfdir},%{_logarchdir},%{systemdunitdir}} \
 	$RPM_BUILD_ROOT/usr/lib/tmpfiles.d
 
 export PYTHONPATH=$RPM_BUILD_ROOT%{_libdir}/%{name}:$RPM_BUILD_ROOT%{_libdir}/%{name}/pythonlib
@@ -247,6 +264,11 @@ cp -a %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}
 install %{SOURCE8} $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/%{name}.conf
 
 cp -a cron/crontab.in $RPM_BUILD_ROOT/etc/cron.d/%{name}
+
+cp -p %{SOURCE9} $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} %{SOURCE14} %{SOURCE15} %{SOURCE16} $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p %{SOURCE20} %{SOURCE21} %{SOURCE22} %{SOURCE23} %{SOURCE24} %{SOURCE25} %{SOURCE26} $RPM_BUILD_ROOT%{systemdunitdir}
+sed -i -e 's#/usr/lib/mailman#%{_libdir}/mailman#g' $RPM_BUILD_ROOT%{systemdunitdir}/*
 
 install -p contrib/{subscribe_list,add_nonmembers} $RPM_BUILD_ROOT%{_libdir}/%{name}/bin
 
@@ -345,12 +367,14 @@ if [ ! -f %{_sysconfdir}/aliases ]; then
 	chmod 660 %{_sysconfdir}/aliases{,.db}
 fi
 %service mailman restart "Mailman Qrunner Daemon"
+%systemd_post mailman.service cronjob-mailman-checkdbs.timer cronjob-mailman-mailpasswds.timer cronjob-mailman-cull_bad_shunt.timer cronjob-mailman-nightly_gzip.timer cronjob-mailman-disabled.timer cronjob-mailman-senddigests.timer cronjob-mailman-gate_news.timer
 
 %preun
 if [ "$1" = "0" ]; then
 	%service mailman stop
 	/sbin/chkconfig --del mailman
 fi
+%systemd_preun mailman.service cronjob-mailman-checkdbs.timer cronjob-mailman-mailpasswds.timer cronjob-mailman-cull_bad_shunt.timer cronjob-mailman-nightly_gzip.timer cronjob-mailman-disabled.timer cronjob-mailman-senddigests.timer cronjob-mailman-gate_news.timer
 
 %postun
 if [ "$1" = "0" ]; then
@@ -358,6 +382,7 @@ if [ "$1" = "0" ]; then
 	%groupremove mailman
 	%service -q crond restart
 fi
+%systemd_reload
 
 %triggerin -- apache1 < 1.3.37-3, apache1-base
 %webapp_register apache %{_webapp}
@@ -444,6 +469,10 @@ fi
 rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 /usr/sbin/webapp register httpd %{_webapp}
 %service -q httpd reload
+
+%triggerpostun -- mailman < 5:2.1.23-2
+%systemd_trigger mailman.service
+%systemd_service_enable cronjob-mailman-checkdbs.timer cronjob-mailman-mailpasswds.timer cronjob-mailman-cull_bad_shunt.timer cronjob-mailman-nightly_gzip.timer cronjob-mailman-disabled.timer cronjob-mailman-senddigests.timer cronjob-mailman-gate_news.timer
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
@@ -568,6 +597,9 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %dir %{_logarchdir}
 %dir %{_piddir}
 /usr/lib/tmpfiles.d/%{name}.conf
+
+%systemdunitdir/*.service
+%systemdunitdir/*.timer
 
 %files sendmail
 %defattr(644,root,root,755)

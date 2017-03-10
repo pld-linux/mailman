@@ -1,0 +1,6 @@
+[Unit]
+Description=mailman mailpasswds cronjob
+
+[Service]
+ExecStart=/usr/lib/mailman/cron/mailpasswds
+User=mailman

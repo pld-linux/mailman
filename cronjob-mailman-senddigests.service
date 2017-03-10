@@ -1,0 +1,6 @@
+[Unit]
+Description=mailman senddigests cronjob
+
+[Service]
+ExecStart=/usr/lib/mailman/cron/senddigests
+User=mailman

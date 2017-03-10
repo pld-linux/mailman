@@ -1,0 +1,6 @@
+[Unit]
+Description=mailman nightly_gzip cronjob
+
+[Service]
+ExecStart=/usr/lib/mailman/cron/nightly_gzip
+User=mailman

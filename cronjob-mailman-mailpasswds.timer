@@ -1,0 +1,12 @@
+[Unit]
+Description=mailman diabled cronjob timer
+
+[Timer]
+# 5 AM on the first of each month, mail out password reminders.
+OnCalendar=*-*-01 05:00
+Persistent=true
+
+[Install]
+WantedBy=cronjobs.target
+
+# vi: ft=systemd

@@ -1,0 +1,13 @@
+[Unit]
+Description=mailman checkdbs cronjob timer
+
+[Timer]
+# At 8AM every day, mail reminders to admins as to pending requests.
+# They are less likely to ignore these reminders if they're mailed
+# early in the morning, but of course, this is local time... ;)
+OnCalendar=08:00
+
+[Install]
+WantedBy=cronjobs.target
+
+# vi: ft=systemd

@@ -1,0 +1,11 @@
+[Unit]
+Description=mailman cull_bad_shunt cronjob timer
+
+[Timer]
+# At 4:30AM daily, cull old entries from the 'bad' and 'shunt' queues.
+OnCalendar=04:30
+
+[Install]
+WantedBy=cronjobs.target
+
+# vi: ft=systemd

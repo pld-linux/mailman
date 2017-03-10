@@ -1,0 +1,6 @@
+[Unit]
+Description=mailman gate_news cronjob
+
+[Service]
+ExecStart=/usr/lib/mailman/cron/gate_news
+User=mailman

@@ -1,0 +1,11 @@
+[Unit]
+Description=mailman senddigests cronjob timer
+
+[Timer]
+# Noon, mail digests for lists that do periodic as well as threshhold delivery.
+OnCalendar=12:00
+
+[Install]
+WantedBy=cronjobs.target
+
+# vi: ft=systemd

@@ -1,0 +1,6 @@
+[Unit]
+Description=mailman cull_bad_shunt cronjob
+
+[Service]
+ExecStart=/usr/lib/mailman/cron/cull_bad_shunt
+User=mailman

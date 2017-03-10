@@ -1,0 +1,13 @@
+[Unit]
+Description=mailman gate_news cronjob timer
+
+[Timer]
+# Every 5 mins, try to gate news to mail.  You can comment this one out
+# if you don't want to allow gating, or don't have any going on right now,
+# or want to exclusively use a callback strategy instead of polling.
+OnCalendar=*:00/5
+
+[Install]
+WantedBy=cronjobs.target
+
+# vi: ft=systemd
