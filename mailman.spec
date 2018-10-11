@@ -2,19 +2,19 @@
 # Conditional build:
 %bcond_with	umbrella_hack	# break anonimization (for use with moderated umbrella list of moderated lists)
 
-%define		rel	2
+%define		rel	1
 Summary:	The GNU Mailing List Management System
 Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
 Summary(pt_BR.UTF-8):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
-Version:	2.1.23
+Version:	2.1.29
 Release:	%{rel}%{?with_umbrella_hack:.umh}
 Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://downloads.sourceforge.net/mailman/%{name}-%{version}.tgz
-# Source0-md5:	ceb2d8427e29f4e69b2505423ffeb60b
+# Source0-md5:	463ce7efb4e6f214f28ef17dbe0b7b79
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 # Source1-md5:	6b55f9f8051c76961b84a12ed17fc14f
 Source2:	%{name}.conf
@@ -53,7 +53,6 @@ Patch10:	%{name}-daemonize-fds.patch
 Patch11:	%{name}-httpauth.patch
 Patch12:	%{name}-MM_FIND_USER_NAME.patch
 Patch13:	keep-original-mime-headers.patch
-Patch14:	%{name}-browser-save-passwd.patch
 URL:		http://www.list.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -205,7 +204,6 @@ uruchamiać mailmana.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
-%patch14 -p1
 
 # Conflicts with python built-in email package
 sed -i -e 's,EMAILPKG=,#EMAILPKG=,g' misc/Makefile.in
@@ -540,6 +538,7 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %attr(2755,root,mailman) %{_libdir}/%{name}/bin/list_lists
 %attr(2755,root,mailman) %{_libdir}/%{name}/bin/list_members
 %attr(2755,root,mailman) %{_libdir}/%{name}/bin/list_owners
+%attr(2755,root,mailman) %{_libdir}/%{name}/bin/mailman-config
 %attr(2755,root,mailman) %{_libdir}/%{name}/bin/mailmanctl
 %attr(2755,root,mailman) %{_libdir}/%{name}/bin/mmsitepass
 %attr(2755,root,mailman) %{_libdir}/%{name}/bin/newlist
