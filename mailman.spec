@@ -8,13 +8,13 @@ Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
 Summary(pt_BR.UTF-8):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
-Version:	2.1.29
+Version:	2.1.33
 Release:	%{rel}%{?with_umbrella_hack:.umh}
-Epoch:		5
+Epoch:		1
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://downloads.sourceforge.net/mailman/%{name}-%{version}.tgz
-# Source0-md5:	463ce7efb4e6f214f28ef17dbe0b7b79
+# Source0-md5:	232a45d9809fb8a539fa0ae92d90c235
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 # Source1-md5:	6b55f9f8051c76961b84a12ed17fc14f
 Source2:	%{name}.conf
@@ -210,6 +210,8 @@ sed -i -e 's,EMAILPKG=,#EMAILPKG=,g' misc/Makefile.in
 
 install -p %{SOURCE6} %{SOURCE7} contrib
 
+%{__sed} -i -e '1s,^#!.*python,#!%{__python},' contrib/{add_nonmembers,subscribe_list}
+
 %build
 %{__aclocal}
 %{__autoconf}
@@ -229,6 +231,7 @@ install -p %{SOURCE6} %{SOURCE7} contrib
 	--with-cgi-gid='http' \
 	--with-mailhost=localhost.localdomain \
 	--with-urlhost=localhost.localdomain \
+	--with-python=%{__python} \
 	--without-permcheck
 
 %{__make}
