@@ -1,9 +1,9 @@
-diff -ur mailman-2.1.20.org/Mailman/Gui/General.py mailman-2.1.20/Mailman/Gui/General.py
---- mailman-2.1.20.org/Mailman/Gui/General.py	2015-03-31 19:21:49.000000000 +0200
-+++ mailman-2.1.20/Mailman/Gui/General.py	2016-02-21 10:25:57.685943034 +0100
-@@ -505,6 +505,13 @@
-                  here."""))
-                 )
+diff -urNp -x '*.orig' mailman-2.1.34.org/Mailman/Gui/General.py mailman-2.1.34/Mailman/Gui/General.py
+--- mailman-2.1.34.org/Mailman/Gui/General.py	2020-06-27 02:21:21.000000000 +0200
++++ mailman-2.1.34/Mailman/Gui/General.py	2021-10-23 13:33:28.222571670 +0200
+@@ -518,6 +518,13 @@ class General(GUIBase):
+                Cc: headers, set this to No."""))
+              )
  
 +        # add X-IMAP-Folder header
 +        rtn.append(
@@ -15,10 +15,10 @@ diff -ur mailman-2.1.20.org/Mailman/Gui/General.py mailman-2.1.20/Mailman/Gui/Ge
          # Discard held messages after this number of days
          rtn.append(
              ('max_days_to_hold', mm_cfg.Number, 7, 0,
-diff -ur mailman-2.1.20.org/Mailman/Handlers/CookHeaders.py mailman-2.1.20/Mailman/Handlers/CookHeaders.py
---- mailman-2.1.20.org/Mailman/Handlers/CookHeaders.py	2015-03-31 19:21:49.000000000 +0200
-+++ mailman-2.1.20/Mailman/Handlers/CookHeaders.py	2016-02-21 10:25:57.685943034 +0100
-@@ -107,6 +107,11 @@
+diff -urNp -x '*.orig' mailman-2.1.34.org/Mailman/Handlers/CookHeaders.py mailman-2.1.34/Mailman/Handlers/CookHeaders.py
+--- mailman-2.1.34.org/Mailman/Handlers/CookHeaders.py	2020-06-27 02:21:21.000000000 +0200
++++ mailman-2.1.34/Mailman/Handlers/CookHeaders.py	2021-10-23 13:33:28.222571670 +0200
+@@ -115,6 +115,11 @@ def process(mlist, msg, msgdata):
      # X-BeenThere's intact.
      change_header('X-BeenThere', mlist.GetListEmail(),
                    mlist, msg, msgdata, delete=False)
@@ -30,10 +30,10 @@ diff -ur mailman-2.1.20.org/Mailman/Handlers/CookHeaders.py mailman-2.1.20/Mailm
      # Add Precedence: and other useful headers.  None of these are standard
      # and finding information on some of them are fairly difficult.  Some are
      # just common practice, and we'll add more here as they become necessary.
-diff -ur mailman-2.1.20.org/Mailman/MailList.py mailman-2.1.20/Mailman/MailList.py
---- mailman-2.1.20.org/Mailman/MailList.py	2015-03-31 19:21:49.000000000 +0200
-+++ mailman-2.1.20/Mailman/MailList.py	2016-02-21 10:25:57.685943034 +0100
-@@ -367,6 +367,7 @@
+diff -urNp -x '*.orig' mailman-2.1.34.org/Mailman/MailList.py mailman-2.1.34/Mailman/MailList.py
+--- mailman-2.1.34.org/Mailman/MailList.py	2020-06-27 02:21:21.000000000 +0200
++++ mailman-2.1.34/Mailman/MailList.py	2021-10-23 13:33:28.222571670 +0200
+@@ -391,6 +391,7 @@ class MailList(HTMLFormatter, Deliverer,
          self.available_languages = []
          self.include_rfc2369_headers = 1
          self.include_list_post_header = 1
@@ -41,10 +41,10 @@ diff -ur mailman-2.1.20.org/Mailman/MailList.py mailman-2.1.20/Mailman/MailList.
          self.include_sender_header = 1
          self.filter_mime_types = mm_cfg.DEFAULT_FILTER_MIME_TYPES
          self.pass_mime_types = mm_cfg.DEFAULT_PASS_MIME_TYPES
-diff -ur mailman-2.1.20.org/Mailman/versions.py mailman-2.1.20/Mailman/versions.py
---- mailman-2.1.20.org/Mailman/versions.py	2015-03-31 19:21:49.000000000 +0200
-+++ mailman-2.1.20/Mailman/versions.py	2016-02-21 10:26:55.443940355 +0100
-@@ -168,6 +168,10 @@
+diff -urNp -x '*.orig' mailman-2.1.34.org/Mailman/versions.py mailman-2.1.34/Mailman/versions.py
+--- mailman-2.1.34.org/Mailman/versions.py	2020-06-27 02:21:21.000000000 +0200
++++ mailman-2.1.34/Mailman/versions.py	2021-10-23 13:33:28.222571670 +0200
+@@ -168,6 +168,10 @@ def UpdateOldVars(l, stored_state):
          else:
              return None
  
@@ -55,7 +55,7 @@ diff -ur mailman-2.1.20.org/Mailman/versions.py mailman-2.1.20/Mailman/versions.
      # Migrate to 2.1b3, baw 17-Aug-2001
      if hasattr(l, 'dont_respond_to_post_requests'):
          oldval = getattr(l, 'dont_respond_to_post_requests')
-@@ -414,6 +418,8 @@
+@@ -414,6 +418,8 @@ def UpdateOldVars(l, stored_state):
      PreferStored('author_is_list', 'from_is_list',
                   mm_cfg.DEFAULT_FROM_IS_LIST)
  

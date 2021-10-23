@@ -2,11 +2,12 @@ Maybe for security have USE_HTTP_AUTH = ['user1', 'user2']
 
 NOTE: you won't be able to authorize with list password anymore.
 
---- mailman-2.1.11/Mailman/Defaults.py.in~	2009-06-08 16:45:29.000000000 +0300
-+++ mailman-2.1.11/Mailman/Defaults.py.in	2009-06-08 16:45:31.967055253 +0300
-@@ -1319,6 +1319,10 @@
- AuthListModerator = 4 # List Moderator (can only handle held requests)
+diff -urNp -x '*.orig' mailman-2.1.34.org/Mailman/Defaults.py.in mailman-2.1.34/Mailman/Defaults.py.in
+--- mailman-2.1.34.org/Mailman/Defaults.py.in	2021-10-23 13:34:18.675199759 +0200
++++ mailman-2.1.34/Mailman/Defaults.py.in	2021-10-23 13:34:18.988549415 +0200
+@@ -1749,6 +1749,10 @@ AuthListModerator = 4 # List Moderator (
  AuthSiteAdmin = 5     # Site Administrator (total control over everything)
+ AuthListPoster = 6    # List poster (Approved: <pw> header in posts only)
  
 +# If value is True, site administrator is trusted from REMOTE_USER CGI variable
 +# Use this to if you want to use password authentication for site admin.
@@ -15,9 +16,10 @@ NOTE: you won't be able to authorize with list password anymore.
  # Useful directories
  LIST_DATA_DIR   = os.path.join(VAR_PREFIX, 'lists')
  LOG_DIR         = '@LOG_DIR@'
---- mailman-2.1.11/Mailman/Utils.py~	2009-06-08 16:45:22.000000000 +0300
-+++ mailman-2.1.11/Mailman/Utils.py	2009-06-08 16:45:25.094129761 +0300
-@@ -411,6 +411,11 @@
+diff -urNp -x '*.orig' mailman-2.1.34.org/Mailman/Utils.py mailman-2.1.34/Mailman/Utils.py
+--- mailman-2.1.34.org/Mailman/Utils.py	2020-06-27 02:21:21.000000000 +0200
++++ mailman-2.1.34/Mailman/Utils.py	2021-10-23 13:34:18.988549415 +0200
+@@ -481,6 +481,11 @@ def get_global_password(siteadmin=True):
  
  
  def check_global_password(response, siteadmin=True):

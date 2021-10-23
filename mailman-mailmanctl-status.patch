@@ -1,6 +1,7 @@
---- mailman-2.1.23/bin/mailmanctl~	2016-08-28 14:46:13.000000000 +0300
-+++ mailman-2.1.23/bin/mailmanctl	2016-08-28 14:47:55.871820256 +0300
-@@ -35,7 +35,7 @@
+diff -urNp -x '*.orig' mailman-2.1.34.org/bin/mailmanctl mailman-2.1.34/bin/mailmanctl
+--- mailman-2.1.34.org/bin/mailmanctl	2020-06-27 02:21:21.000000000 +0200
++++ mailman-2.1.34/bin/mailmanctl	2021-10-23 13:32:24.269240325 +0200
+@@ -36,7 +36,7 @@ in the file data/master-qrunner.pid but
  pid directly.  The `start', `stop', `restart', and `reopen' commands handle
  everything for you.
  
@@ -9,7 +10,7 @@
  
  Options:
  
-@@ -89,6 +89,9 @@
+@@ -90,6 +90,9 @@ Commands:
  
      reopen  - This will close all log files, causing them to be re-opened the
                next time a message is written to them
@@ -19,7 +20,7 @@
  """
  
  import sys
-@@ -189,6 +192,52 @@
+@@ -190,6 +193,52 @@ def qrunner_state():
          return 0
      return 1
  
@@ -72,7 +73,7 @@
  
  def acquire_lock_1(force):
      # Be sure we can acquire the master qrunner lock.  If not, it means some
-@@ -387,13 +387,15 @@
+@@ -338,13 +387,15 @@ def main():
          command = COMMASPACE.join(args)
          usage(1, C_('Bad command: %(command)s'))
  
@@ -91,9 +92,9 @@
      if command == 'stop':
          # Sent the master qrunner process a SIGINT, which is equivalent to
          # giving cron/qrunner a ctrl-c or KeyboardInterrupt.  This will
-@@ -361,6 +412,14 @@
+@@ -363,6 +414,14 @@ def main():
          if not quiet:
-             print _('Re-opening all log files')
+             print C_('Re-opening all log files')
          kill_watcher(signal.SIGHUP)
 +    elif command == 'status':
 +        status, pid = mailman_status()
@@ -106,9 +107,10 @@
      elif command == 'start':
          # First, complain loudly if there's no site list.
          check_for_site_list()
---- mailman-2.1.20/misc/mailman.in~	2015-03-31 20:21:49.000000000 +0300
-+++ mailman-2.1.20/misc/mailman.in	2015-05-25 11:22:11.283298992 +0300
-@@ -37,23 +37,61 @@
+diff -urNp -x '*.orig' mailman-2.1.34.org/misc/mailman.in mailman-2.1.34/misc/mailman.in
+--- mailman-2.1.34.org/misc/mailman.in	2020-06-27 02:21:21.000000000 +0200
++++ mailman-2.1.34/misc/mailman.in	2021-10-23 13:32:24.269240325 +0200
+@@ -49,23 +49,61 @@ PYTHON=@PYTHON@
  MAILMANHOME=@prefix@
  MAILMANCTL=$MAILMANHOME/bin/mailmanctl
  
