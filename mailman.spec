@@ -2,19 +2,19 @@
 # Conditional build:
 %bcond_with	umbrella_hack	# break anonimization (for use with moderated umbrella list of moderated lists)
 
-%define		rel	2
+%define		rel	1
 Summary:	The GNU Mailing List Management System
 Summary(es.UTF-8):	El Sistema de Mantenimiento de listas de GNU
 Summary(pl.UTF-8):	System Zarządzania Listami Pocztowymi GNU
 Summary(pt_BR.UTF-8):	O Sistema de Manutenção de listas da GNU
 Name:		mailman
-Version:	2.1.34
+Version:	2.1.35
 Release:	%{rel}%{?with_umbrella_hack:.umh}
 Epoch:		5
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://downloads.sourceforge.net/mailman/%{name}-%{version}.tgz
-# Source0-md5:	b02c7cfad08d2e967bb1b79bab08021e
+# Source0-md5:	9ebb78ca975fdf4b8fd875ca31a4d833
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-man-pages.tar.bz2
 # Source1-md5:	6b55f9f8051c76961b84a12ed17fc14f
 Source2:	%{name}.conf
@@ -397,7 +397,7 @@ fi
 %triggerun -- apache < 2.2.0, apache-base
 %webapp_unregister httpd %{_webapp}
 
-%triggerpostun -- mailman < 1:2.1.7-2.1
+%triggerpostun -- mailman < 5:2.1.23-2
 if [ -f /var/spool/cron/%{name} ]; then
 	crontab -u %{name} -r
 fi
@@ -471,7 +471,7 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 /usr/sbin/webapp register httpd %{_webapp}
 %service -q httpd reload
 
-%triggerpostun -- mailman < 5:2.1.23-2
+# triggerpostun < 5:2.1.23-2
 %systemd_trigger mailman.service
 %systemd_service_enable cronjob-mailman-checkdbs.timer cronjob-mailman-mailpasswds.timer cronjob-mailman-cull_bad_shunt.timer cronjob-mailman-nightly_gzip.timer cronjob-mailman-disabled.timer cronjob-mailman-senddigests.timer cronjob-mailman-gate_news.timer
 

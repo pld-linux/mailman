@@ -100,9 +100,9 @@ diff -urNp -x '*.orig' mailman-2.1.34.org/bin/mailmanctl mailman-2.1.34/bin/mail
 +        status, pid = mailman_status()
 +        if not quiet:
 +            if status == 0:
-+                print _("mailman (pid %(pid)d) is running...")
++                print C_("mailman (pid %(pid)d) is running...")
 +            else:
-+                print _("mailman is stopped")
++                print C_("mailman is stopped")
 +        sys.exit(status)
      elif command == 'start':
          # First, complain loudly if there's no site list.
