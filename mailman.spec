@@ -472,8 +472,7 @@ rm -f /etc/httpd/httpd.conf/90_%{name}.conf
 %service -q httpd reload
 
 # triggerpostun < 5:2.1.23-2
-%systemd_trigger mailman.service
-%systemd_service_enable cronjob-mailman-checkdbs.timer cronjob-mailman-mailpasswds.timer cronjob-mailman-cull_bad_shunt.timer cronjob-mailman-nightly_gzip.timer cronjob-mailman-disabled.timer cronjob-mailman-senddigests.timer cronjob-mailman-gate_news.timer
+%systemd_trigger mailman.service cronjob-mailman-checkdbs.timer cronjob-mailman-mailpasswds.timer cronjob-mailman-cull_bad_shunt.timer cronjob-mailman-nightly_gzip.timer cronjob-mailman-disabled.timer cronjob-mailman-senddigests.timer cronjob-mailman-gate_news.timer
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
