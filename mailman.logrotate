@@ -4,6 +4,6 @@
 	create 660 mailman mailman
 	monthly
 	postrotate
-		/sbin/service mailman restart >/dev/null
+		/sbin/service mailman flush-logs
 	endscript
 }

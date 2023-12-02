@@ -63,6 +63,16 @@ condrestart() {
 	fi
 }
 
+flushlogs() {
+    if [ -f /var/lock/subsys/mailman ]; then
+                daemon --user mailman /usr/lib/mailman/bin/mailmanctl -u reopen > /dev/null
+                RETVAL=$?
+    else
+                msg_not_running "Mailman Qrunner Daemon"
+                RETVAL=1
+    fi
+}
+
 RETVAL=0
 # See how we were called.
 case "$1" in
@@ -82,12 +92,15 @@ case "$1" in
   force-reload)
 	condrestart 7
 	;;
+  flush-logs)
+        flushlogs
+        ;;
   status)
 	/usr/lib/mailman/bin/mailmanctl status
 	exit $?
 	;;
   *)
-	msg_usage "$0 {start|stop|restart|try-restart|force-reload|status}"
+	msg_usage "$0 {start|stop|restart|try-restart|force-reload|status|flush-logs}"
 	exit 3
 esac
 
