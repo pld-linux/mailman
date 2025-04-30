@@ -1,4 +1,5 @@
-#
+# TODO:
+# - migrate to maintained python3 fork: https://github.com/cpanel/mailman2-python3
 # Conditional build:
 %bcond_with	umbrella_hack	# break anonimization (for use with moderated umbrella list of moderated lists)
 
