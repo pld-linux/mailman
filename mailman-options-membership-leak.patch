@@ -1,0 +1,140 @@
+Fix membership information leak through the options page on lists with
+private rosters (LP: #1968443, LP: #2015416, LP: #2017813) and the 500
+Internal Server Error the earlier LP: #1951769 fix could cause for a
+non-existent user (LP: #1961762).  Backport of Mark Sapiro's
+consolidated GNU Mailman 2.1.40 fix against the 2.1.39 base.
+
+--- mailman-2.1.39/Mailman/Cgi/options.py
++++ mailman-2.1.39/Mailman/Cgi/options.py
+@@ -1,4 +1,4 @@
+-# Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
++# Copyright (C) 1998-2023 by the Free Software Foundation, Inc.
+ #
+ # This program is free software; you can redistribute it and/or
+ # modify it under the terms of the GNU General Public License
+@@ -164,13 +164,40 @@
+         loginpage(mlist, doc, None, language)
+         print doc.Format()
+         return
+-    # Sanity check the user, but only give the "no such member" error when
+-    # using public rosters, otherwise, we'll leak membership information.
++    # Sanity check the user, but we have to give the appropriate error msg
++    # to not potentially leak membership info. This is a kludge here. We
++    # have to check membership here to avoid LP: #1951769, but then we have
++    # to give the appropriate error to avoid LP: #1968443
++    msgc = _('If you are a list member, a confirmation email has been sent.')
++    msgb = _('You already have a subscription pending confirmation')
++    msga = _("""If you are a list member, your unsubscription request has been
++             forwarded to the list administrator for approval.""")
++    msgd = _("""If you are a list member,
++            your password has been emailed to you.""")
+     if not mlist.isMember(user):
+         if mlist.private_roster == 0:
+             doc.addError(_('No such member: %(safeuser)s.'))
+-            loginpage(mlist, doc, None, language)
+-            print doc.Format()
++            user = None
++        elif cgidata.has_key('login-unsub'):
++            syslog('mischief',
++                   'Unsub attempt of non-member w/ private rosters: %s',
++                   user)
++            if mlist.unsubscribe_policy:
++                doc.addError(msga, tag='')
++            else:
++                doc.addError(msgc, tag='')
++            user = None
++        elif cgidata.has_key('login-remind'):
++            syslog('mischief',
++                   'Reminder attempt of non-member w/ private rosters: %s',
++                   user)
++            doc.addError(msgd, tag='')
++            user = None
++        # We get here with a non-None user in the case of a non-member with
++        # private rosters.  This creates a possible membership leak, but we
++        # fix that a different way. See LP: #2017813.
++        loginpage(mlist, doc, user, language)
++        print doc.Format()
+         return
+ 
+     # Avoid cross-site scripting attacks
+@@ -204,10 +231,6 @@
+     i18n.set_language(userlang)
+ 
+     # Are we processing an unsubscription request from the login screen?
+-    msgc = _('If you are a list member, a confirmation email has been sent.')
+-    msgb = _('You already have a subscription pending confirmation')
+-    msga = _("""If you are a list member, your unsubscription request has been
+-             forwarded to the list administrator for approval.""")
+     if cgidata.has_key('login-unsub'):
+         # Because they can't supply a password for unsubscribing, we'll need
+         # to do the confirmation dance.
+@@ -233,39 +256,20 @@
+             finally:
+                 mlist.Unlock()
+         else:
+-            # Not a member
+-            if mlist.private_roster == 0:
+-                # Public rosters
+-                doc.addError(_('No such member: %(safeuser)s.'))
+-            else:
+-                syslog('mischief',
+-                       'Unsub attempt of non-member w/ private rosters: %s',
+-                       user)
+-                if mlist.unsubscribe_policy:
+-                    doc.addError(msga, tag='')
+-                else:
+-                    doc.addError(msgc, tag='')
++            # Not a member handled above.
++            pass
+         loginpage(mlist, doc, user, language)
+         print doc.Format()
+         return
+ 
+     # Are we processing a password reminder from the login screen?
+-    msg = _("""If you are a list member,
+-            your password has been emailed to you.""")
+     if cgidata.has_key('login-remind'):
+         if mlist.isMember(user):
+             mlist.MailUserPassword(user)
+-            doc.addError(msg, tag='')
++            doc.addError(msgd, tag='')
+         else:
+-            # Not a member
+-            if mlist.private_roster == 0:
+-                # Public rosters
+-                doc.addError(_('No such member: %(safeuser)s.'))
+-            else:
+-                syslog('mischief',
+-                       'Reminder attempt of non-member w/ private rosters: %s',
+-                       user)
+-                doc.addError(msg, tag='')
++            # Not a member handled above.
++            pass
+         loginpage(mlist, doc, user, language)
+         print doc.Format()
+         return
+@@ -293,7 +297,9 @@
+         # to authenticate via cgi (instead of cookie), then print an error
+         # message.
+         if cgidata.has_key('password'):
+-            doc.addError(_('Authentication failed.'))
++            if mlist.private_roster == 0:
++                # Only add error with public rosters lp: #2015416
++                doc.addError(_('Authentication failed.'))
+             remote = os.environ.get('HTTP_FORWARDED_FOR',
+                      os.environ.get('HTTP_X_FORWARDED_FOR',
+                      os.environ.get('REMOTE_ADDR',
+@@ -307,9 +313,11 @@
+                 syslog('mischief',
+                        'Login failure with private rosters: %s from %s',
+                        user, remote)
+-                user = None
++                # Don't clear user here. See LP: #2017813.
+             # give an HTTP 401 for authentication failure
+-            print 'Status: 401 Unauthorized'
++            if mlist.private_roster == 0:
++                # Only add error with public rosters lp: #2015416
++                print 'Status: 401 Unauthorized'
+         loginpage(mlist, doc, user, language)
+         print doc.Format()
+         return
